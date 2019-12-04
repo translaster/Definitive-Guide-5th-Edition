@@ -6,7 +6,7 @@
 
 In this chapter, we are going to explore integrating some Asterisk features and functions into a database. There are several databases available for Linux, and Asterisk supports the most popular of them through its ODBC connector. While this chapter will demonstrate examples using the ODBC connector with a MySQL database, you will find that most of the concepts will apply to any database supported by unixODBC.
 
-Integrating Asterisk with databases is one of the fundamental aspects of building a large clustered or distributed system. The power of the database will enable you to use dynamically changing data in your dialplans, for tasks like sharing information across an array of Asterisk systems or integrating with web-based services. Our favorite dialplan function, which we will cover later in this chapter, is func\_odbc. We’ll also take a look at the Asterisk Realtime Architecture \(ARA\), call detail records \(CDR\), and logging details from any ACD queues you might have.
+Integrating Asterisk with databases is one of the fundamental aspects of building a large clustered or distributed system. The power of the database will enable you to use dynamically changing data in your dialplans, for tasks like sharing information across an array of Asterisk systems or integrating with web-based services. Our favorite dialplan function, which we will cover later in this chapter, is func_odbc. We’ll also take a look at the Asterisk Realtime Architecture (ARA), call detail records (CDR), and logging details from any ACD queues you might have.
 
 While not all Asterisk deployments will require relational databases, understanding how to harness them opens a treasure chest full of new ways to design your telecom solution.
 
