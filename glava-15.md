@@ -12,7 +12,7 @@ While not all Asterisk deployments will require relational databases, understand
 
 ## Your Choice of Database
 
-In [Chapter 3](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch03.html%22%20/l%20%22asterisk-Install), we installed and configured MySQL, plus the ODBC connector to it, and we’ve been using the tables that Asterisk provides to allow various configuration options to be stored in the database.
+In [Главе 3](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch03.html%22%20/l%20%22asterisk-Install), we installed and configured MySQL, plus the ODBC connector to it, and we’ve been using the tables that Asterisk provides to allow various configuration options to be stored in the database.
 
 We chose MySQL primarily because it is still the most popular open source database engine, and rather than bouncing around, duplicating trivial commands on various different engines, we left implementing other types of databases to the skill set of the reader. If you want to use a different database such as MariaDB, PostGreSQL, Microsoft SQL, or in fact dozens \(perhaps hundreds\) of other databases supported by unixODBC, it’s quite likely that Asterisk will work with it.
 
