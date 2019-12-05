@@ -1,44 +1,43 @@
 # Глава 15. Интеграция реляционной базы данных
 
->Few things are harder to put up with than the annoyance of a good example.
+> Нет ничего более раздражающего, чем хороший пример
 >
 > _--Марк Твен_
 
-In this chapter, we are going to explore integrating some Asterisk features and functions into a database. There are several databases available for Linux, and Asterisk supports the most popular of them through its ODBC connector. While this chapter will demonstrate examples using the ODBC connector with a MySQL database, you will find that most of the concepts will apply to any database supported by unixODBC.
+В этой главе мы рассмотрим интеграцию некоторых особенностей и функций Asterisk в базу данных. Существует несколько баз данных, доступных для Linux, и Asterisk поддерживает наиболее популярные из них через свой ODBC-коннектор. Хотя в этой главе будут продемонстрированы примеры использования ODBC-коннектора с базой данных MySQL, вы также обнаружите, что большинство концепций будет применяться к любой базе данных, поддерживаемой unixODBC.
 
-Integrating Asterisk with databases is one of the fundamental aspects of building a large clustered or distributed system. The power of the database will enable you to use dynamically changing data in your dialplans, for tasks like sharing information across an array of Asterisk systems or integrating with web-based services. Our favorite dialplan function, which we will cover later in this chapter, is func_odbc. We’ll also take a look at the Asterisk Realtime Architecture (ARA), call detail records (CDR), and logging details from any ACD queues you might have.
+Интеграция Asterisk с базами данных является одним из фундаментальных аспектов построения большой кластерной или распределенной системы. Мощь базы данных позволит вам использовать динамически изменяющиеся данные в ваших диалпланах для таких задач, как обмен информацией в массиве систем Asterisk или интеграция с веб-службами. Наша любимая функция диалплана, которую мы рассмотрим позже в этой главе - это `func_odbc`. Мы также рассмотрим архитектуру Asterisk Realtime Architecture (ARA), записи сведений о вызовах (CDR) и сведения о регистрации из любых очередей ACD, которые у вас могут быть.
 
-While not all Asterisk deployments will require relational databases, understanding how to harness them opens a treasure chest full of new ways to design your telecom solution.
+Хотя не все развертывания Asterisk требуют реляционных баз данных, понимание того, как их использовать, открывает сокровищницу, полную новых способов разработки вашего телекоммуникационного решения.
 
-## Your Choice of Database
+## Ваш выбор базы данных
+В [Главе 3](glava-03.md) мы установили и настроили MySQL плюс ODBC-коннектор к нему и использовали таблицы, которые предоставляет Asterisk, чтобы позволить различным параметрам конфигурации храниться в базе данных.
 
-In [Главе 3](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch03.html%22%20/l%20%22asterisk-Install), we installed and configured MySQL, plus the ODBC connector to it, and we’ve been using the tables that Asterisk provides to allow various configuration options to be stored in the database.
+Мы выбрали MySQL в первую очередь потому, что это самый популярный движок баз данных с открытым исходным кодом, и вместо того, чтобы прыгать вокруг, дублируя тривиальные команды на разных движках, мы оставили реализацию других типов баз данных для набора навыков читателю. Если вы хотите использовать другую базу данных, такую как MariaDB, PostGreSQL, Microsoft SQL, или фактически десяток (возможно, сотни) других баз данных, поддерживаемых unixODBC, вполне вероятно, что Asterisk будет работать и с ней.
 
-We chose MySQL primarily because it is still the most popular open source database engine, and rather than bouncing around, duplicating trivial commands on various different engines, we left implementing other types of databases to the skill set of the reader. If you want to use a different database such as MariaDB, PostGreSQL, Microsoft SQL, or in fact dozens \(perhaps hundreds\) of other databases supported by unixODBC, it’s quite likely that Asterisk will work with it.
+Asterisk также предлагает собственные коннекторы для нескольких баз данных; однако ODBC работает так хорошо, что мы никогда не находили очевидной причины делать что-то иначе. Мы собираемся как рекомендовать использовать ODBC, так и сосредоточиться исключительно на нем. Если вы предпочитаете что-то другое, эта глава все равно должна предоставить вам основные принципы, а также некоторые рабочие примеры, и оттуда вы, конечно, можете перейти к другим методологиям.
 
-Asterisk also offers native connectors to several databases; however, ODBC works so well we’ve never found any obvious reason to do things any other way. We’re going to both recommend ODBC, and also focus exclusively on it. If you have a preference for something else, this chapter should still provide you with the fundamentals, as well as some working examples, and from there you are of course free to branch out into other methodologies.
+Обратите внимание, что независимо от выбранной базы данных, эта книга не может научить вас базам данных. Мы постарались, насколько это возможно, привести примеры, которые не требуют слишком большого опыта в администрировании баз данных (DBA), но простой факт заключается в том, что базовые навыки DBA являются необходимым условием для полного использования возможностей любой базы данных, в том числе любой, которую вы можете интегрировать с вашей системой Asterisk. В наши дни навыки работы с базами данных необходимы практически для всех дисциплин системного администрирования, поэтому мы сочли целесообразным предположить, по крайней мере, базовый уровень знакомства с концепциями баз данных.
 
-Note that regardless of the database you choose, this book cannot teach you about databases. We have tried as best as we can to provide examples that do not require too much expertise in database administration (DBA), but the simple fact is that basic DBA skills are a prerequisite for being able to fully harness the power of any database, including any you might wish to integrate with your Asterisk system. Database skills are essential to nearly all system administrative disciplines these days, so we felt it was appropriate to assume at least a basic level of familiarity with database concepts.
+## Управлением базами данных
 
-## Managing Databases
+Хотя в эту книгу не входит обучение управлению базами данных, по крайней мере, стоит кратко отметить некоторые приложения, которые можно использовать для управления базами данных. Есть много вариантов, некоторые из которых являются локальными клиентскими приложениями, запущенными с Вашего компьютера и подключающимися к базе данных, а другие - веб-приложениями, которые могут обслуживаться с того же компьютера, на котором запущена сама база данных, что позволяет вам подключаться удаленно.
 
-While it isn’t within the scope of this book to teach you how to manage databases, it is at least worth noting briefly some of the applications you could use to help with database management. There are many options, some of which are local client applications running from your computer and connecting to the database, and others being web-based applications that could be served from the same computer running the database itself, thereby allowing you to connect remotely.
+Некоторые из тех, которые мы использовали, включают:
 
-Some of the ones we’ve used include:
+* [phpMyAdmin](http://www.phpmyadmin.net/)
+* [MySQL Workbench](http://wb.mysql.com/)
+* [Navicat (коммерческая)](http://www.navicat.com/)
 
-* phpMyAdmin
-* MySQL Workbench
-* Navicat \(commercial\)
+В наших примерах мы будем использовать командную строку MySQL не потому, что она превосходит, а просто потому, что она присутствует в любой системе с MySQL, так что вы уже получили ее и использовали в этой книге.
 
-In our examples we will be using the MySQL command line, not because it is superior, but simply because it’s ubiquitous on any system with MySQL, so you’ve already got it and have been using it in this book.
+Для разработки более производительной базы данных командная строка, вероятно окажется не такой мощной, как хорошо продуманный графический интерфейс. Возьмите хотя бы копию MySQL Workbench и дайте ему закрутиться.
 
-For more heavy-duty database design, the command line is probably not as powerful as a well-designed GUI would be. Grab a copy of MySQL Workbench at least and give it a whirl.
+### Устранение неисправностей базы данных
 
-### Troubleshooting Database Issues
+При работе с подключениями к базе данных ODBC и Asterisk важно помнить, что подключение ODBC абстрагирует часть информации, передаваемой между Asterisk и базой данных. В тех случаях, когда все работает не так, как ожидалось, вам может потребоваться включить ведение лога для базы данных, чтобы увидеть, что Asterisk отправляет в базу данных (например, какие инструкции `SELECT`, `INSERT` или `UPDATE` запускаются из Asterisk), что видит база данных и почему она может отклонять инструкции.
 
-When working with ODBC database connections and Asterisk, it is important to remember that the ODBC connection abstracts some of the information passed between Asterisk and the database. In cases where things are not working as expected, you may need to enable logging on your database platform to see what Asterisk is sending to the database \(e.g., which SELECT, INSERT, or UPDATE statements are being triggered from Asterisk\), what the database is seeing, and why the database may be rejecting the statements.
-
-For example, one of the most common problems found with ODBC database integration is an incorrectly defined table or a missing column that Asterisk expects to exist. While great strides have been made in the form of adaptive modules, not all parts of Asterisk are adaptive. In the case of ODBC voicemail storage, you may have missed a column such as flag, which is a new column not found in versions of Asterisk prior to 11.[1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405309816) As noted, in order to debug why your data is not being written to the database as expected, you should enable statement logging on the database side, and then determine what statement is being executed and why the database is rejecting it.
+Например, одной из наиболее распространенных проблем, обнаруживаемых при интеграции базы данных ODBC, является неверно определенная таблица или отсутствующий столбец, который Asterisk ожидает. В то время как большие успехи были сделаны в виде адаптивных модулей, не все части Asterisk являются адаптивными. В случае хранения голосовой почты ODBC, возможно, вы пропустили столбец, например `flag`, который является новым, отсутствующим в версиях Asterisk до 11.[1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405309816) как уже отмечалось, чтобы понять, почему ваши данные не записываются в базу данных как положено, вы должны включить логирование на стороне базы данных, а затем определить, какой оператор выполняется и почему база данных отклоняет его.
 
 ### SQL Injection
 
