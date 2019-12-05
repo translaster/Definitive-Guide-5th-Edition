@@ -25,19 +25,19 @@ Asterisk также предлагает собственные коннекто
 
 Некоторые из тех, которые мы использовали, включают:
 
-* phpMyAdmin
-* MySQL Workbench
-* Navicat (коммерческая)
+* [phpMyAdmin](http://www.phpmyadmin.net/)
+* [MySQL Workbench](http://wb.mysql.com/)
+* [Navicat (коммерческая)](http://www.navicat.com/)
 
 В наших примерах мы будем использовать командную строку MySQL не потому, что она превосходит, а просто потому, что она присутствует в любой системе с MySQL, так что вы уже получили ее и использовали в этой книге.
 
 Для разработки более производительной базы данных командная строка, вероятно окажется не такой мощной, как хорошо продуманный графический интерфейс. Возьмите хотя бы копию MySQL Workbench и дайте ему закрутиться.
 
-### Troubleshooting Database Issues
+### Устранение неисправностей базы данных
 
-When working with ODBC database connections and Asterisk, it is important to remember that the ODBC connection abstracts some of the information passed between Asterisk and the database. In cases where things are not working as expected, you may need to enable logging on your database platform to see what Asterisk is sending to the database \(e.g., which SELECT, INSERT, or UPDATE statements are being triggered from Asterisk\), what the database is seeing, and why the database may be rejecting the statements.
+При работе с подключениями к базе данных ODBC и Asterisk важно помнить, что подключение ODBC абстрагирует часть информации, передаваемой между Asterisk и базой данных. В тех случаях, когда все работает не так, как ожидалось, вам может потребоваться включить ведение лога для базы данных, чтобы увидеть, что Asterisk отправляет в базу данных (например, какие инструкции `SELECT`, `INSERT` или `UPDATE` запускаются из Asterisk), что видит база данных и почему она может отклонять инструкции.
 
-For example, one of the most common problems found with ODBC database integration is an incorrectly defined table or a missing column that Asterisk expects to exist. While great strides have been made in the form of adaptive modules, not all parts of Asterisk are adaptive. In the case of ODBC voicemail storage, you may have missed a column such as flag, which is a new column not found in versions of Asterisk prior to 11.[1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405309816) As noted, in order to debug why your data is not being written to the database as expected, you should enable statement logging on the database side, and then determine what statement is being executed and why the database is rejecting it.
+Например, одной из наиболее распространенных проблем, обнаруживаемых при интеграции базы данных ODBC, является неверно определенная таблица или отсутствующий столбец, который Asterisk ожидает. В то время как большие успехи были сделаны в виде адаптивных модулей, не все части Asterisk являются адаптивными. В случае хранения голосовой почты ODBC, возможно, вы пропустили столбец, например `flag`, который является новым, отсутствующим в версиях Asterisk до 11.[1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405309816) как уже отмечалось, чтобы понять, почему ваши данные не записываются в базу данных как положено, вы должны включить логирование на стороне базы данных, а затем определить, какой оператор выполняется и почему база данных отклоняет его.
 
 ### SQL Injection
 
