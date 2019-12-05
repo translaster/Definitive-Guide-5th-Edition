@@ -4,21 +4,20 @@
 >
 > _--Марк Твен_
 
-In this chapter, we are going to explore integrating some Asterisk features and functions into a database. There are several databases available for Linux, and Asterisk supports the most popular of them through its ODBC connector. While this chapter will demonstrate examples using the ODBC connector with a MySQL database, you will find that most of the concepts will apply to any database supported by unixODBC.
+В этой главе мы рассмотрим интеграцию некоторых особенностей и функций Asterisk в базу данных. Существует несколько баз данных, доступных для Linux, и Asterisk поддерживает наиболее популярные из них через свой ODBC-коннектор. Хотя в этой главе будут продемонстрированы примеры использования ODBC-коннектора с базой данных MySQL, вы также обнаружите, что большинство концепций будет применяться к любой базе данных, поддерживаемой unixODBC.
 
-Integrating Asterisk with databases is one of the fundamental aspects of building a large clustered or distributed system. The power of the database will enable you to use dynamically changing data in your dialplans, for tasks like sharing information across an array of Asterisk systems or integrating with web-based services. Our favorite dialplan function, which we will cover later in this chapter, is func_odbc. We’ll also take a look at the Asterisk Realtime Architecture (ARA), call detail records (CDR), and logging details from any ACD queues you might have.
+Интеграция Asterisk с базами данных является одним из фундаментальных аспектов построения большой кластерной или распределенной системы. Мощь базы данных позволит вам использовать динамически изменяющиеся данные в ваших диалпланах для таких задач, как обмен информацией в массиве систем Asterisk или интеграция с веб-службами. Наша любимая функция диалплана, которую мы рассмотрим позже в этой главе - это `func_odbc`. Мы также рассмотрим архитектуру Asterisk Realtime Architecture (ARA), записи сведений о вызовах (CDR) и сведения о регистрации из любых очередей ACD, которые у вас могут быть.
 
-While not all Asterisk deployments will require relational databases, understanding how to harness them opens a treasure chest full of new ways to design your telecom solution.
+Хотя не все развертывания Asterisk требуют реляционных баз данных, понимание того, как их использовать, открывает сокровищницу, полную новых способов разработки вашего телекоммуникационного решения.
 
-## Your Choice of Database
-
-In [Главе 3](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch03.html%22%20/l%20%22asterisk-Install), we installed and configured MySQL, plus the ODBC connector to it, and we’ve been using the tables that Asterisk provides to allow various configuration options to be stored in the database.
+## Ваш выбор базы данных
+В [Главе 3](glava-03.md) мы установили и настроили MySQL плюс ODBC-коннектор к нему и использовали таблицы, которые предоставляет Asterisk, чтобы позволить различным параметрам конфигурации храниться в базе данных.
 
 We chose MySQL primarily because it is still the most popular open source database engine, and rather than bouncing around, duplicating trivial commands on various different engines, we left implementing other types of databases to the skill set of the reader. If you want to use a different database such as MariaDB, PostGreSQL, Microsoft SQL, or in fact dozens \(perhaps hundreds\) of other databases supported by unixODBC, it’s quite likely that Asterisk will work with it.
 
 Asterisk also offers native connectors to several databases; however, ODBC works so well we’ve never found any obvious reason to do things any other way. We’re going to both recommend ODBC, and also focus exclusively on it. If you have a preference for something else, this chapter should still provide you with the fundamentals, as well as some working examples, and from there you are of course free to branch out into other methodologies.
 
-Note that regardless of the database you choose, this book cannot teach you about databases. We have tried as best as we can to provide examples that do not require too much expertise in database administration (DBA), but the simple fact is that basic DBA skills are a prerequisite for being able to fully harness the power of any database, including any you might wish to integrate with your Asterisk system. Database skills are essential to nearly all system administrative disciplines these days, so we felt it was appropriate to assume at least a basic level of familiarity with database concepts.
+Note that regardless of the database you choose, this book cannot teach you about databases. We have tried as best as we can to provide examples that do not require too much expertise in database administration \(DBA\), but the simple fact is that basic DBA skills are a prerequisite for being able to fully harness the power of any database, including any you might wish to integrate with your Asterisk system. Database skills are essential to nearly all system administrative disciplines these days, so we felt it was appropriate to assume at least a basic level of familiarity with database concepts.
 
 ## Managing Databases
 
