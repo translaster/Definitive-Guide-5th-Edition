@@ -1,6 +1,6 @@
 # Глава 15. Интеграция реляционной базы данных
 
->Few things are harder to put up with than the annoyance of a good example.
+> Нет ничего более раздражающего, чем хороший пример
 >
 > _--Марк Твен_
 
@@ -13,25 +13,25 @@
 ## Ваш выбор базы данных
 В [Главе 3](glava-03.md) мы установили и настроили MySQL плюс ODBC-коннектор к нему и использовали таблицы, которые предоставляет Asterisk, чтобы позволить различным параметрам конфигурации храниться в базе данных.
 
-We chose MySQL primarily because it is still the most popular open source database engine, and rather than bouncing around, duplicating trivial commands on various different engines, we left implementing other types of databases to the skill set of the reader. If you want to use a different database such as MariaDB, PostGreSQL, Microsoft SQL, or in fact dozens \(perhaps hundreds\) of other databases supported by unixODBC, it’s quite likely that Asterisk will work with it.
+Мы выбрали MySQL в первую очередь потому, что это самый популярный движок баз данных с открытым исходным кодом, и вместо того, чтобы прыгать вокруг, дублируя тривиальные команды на разных движках, мы оставили реализацию других типов баз данных для набора навыков читателю. Если вы хотите использовать другую базу данных, такую как MariaDB, PostGreSQL, Microsoft SQL, или фактически десяток (возможно, сотни) других баз данных, поддерживаемых unixODBC, вполне вероятно, что Asterisk будет работать и с ней.
 
-Asterisk also offers native connectors to several databases; however, ODBC works so well we’ve never found any obvious reason to do things any other way. We’re going to both recommend ODBC, and also focus exclusively on it. If you have a preference for something else, this chapter should still provide you with the fundamentals, as well as some working examples, and from there you are of course free to branch out into other methodologies.
+Asterisk также предлагает собственные коннекторы для нескольких баз данных; однако ODBC работает так хорошо, что мы никогда не находили очевидной причины делать что-то иначе. Мы собираемся как рекомендовать использовать ODBC, так и сосредоточиться исключительно на нем. Если вы предпочитаете что-то другое, эта глава все равно должна предоставить вам основные принципы, а также некоторые рабочие примеры, и оттуда вы, конечно, можете перейти к другим методологиям.
 
-Note that regardless of the database you choose, this book cannot teach you about databases. We have tried as best as we can to provide examples that do not require too much expertise in database administration \(DBA\), but the simple fact is that basic DBA skills are a prerequisite for being able to fully harness the power of any database, including any you might wish to integrate with your Asterisk system. Database skills are essential to nearly all system administrative disciplines these days, so we felt it was appropriate to assume at least a basic level of familiarity with database concepts.
+Обратите внимание, что независимо от выбранной базы данных, эта книга не может научить вас базам данных. Мы постарались, насколько это возможно, привести примеры, которые не требуют слишком большого опыта в администрировании баз данных (DBA), но простой факт заключается в том, что базовые навыки DBA являются необходимым условием для полного использования возможностей любой базы данных, в том числе любой, которую вы можете интегрировать с вашей системой Asterisk. В наши дни навыки работы с базами данных необходимы практически для всех дисциплин системного администрирования, поэтому мы сочли целесообразным предположить, по крайней мере, базовый уровень знакомства с концепциями баз данных.
 
-## Managing Databases
+## Управлением базами данных
 
-While it isn’t within the scope of this book to teach you how to manage databases, it is at least worth noting briefly some of the applications you could use to help with database management. There are many options, some of which are local client applications running from your computer and connecting to the database, and others being web-based applications that could be served from the same computer running the database itself, thereby allowing you to connect remotely.
+Хотя в эту книгу не входит обучение управлению базами данных, по крайней мере, стоит кратко отметить некоторые приложения, которые можно использовать для управления базами данных. Есть много вариантов, некоторые из которых являются локальными клиентскими приложениями, запущенными с Вашего компьютера и подключающимися к базе данных, а другие - веб-приложениями, которые могут обслуживаться с того же компьютера, на котором запущена сама база данных, что позволяет вам подключаться удаленно.
 
-Some of the ones we’ve used include:
+Некоторые из тех, которые мы использовали, включают:
 
 * phpMyAdmin
 * MySQL Workbench
-* Navicat \(commercial\)
+* Navicat (коммерческая)
 
-In our examples we will be using the MySQL command line, not because it is superior, but simply because it’s ubiquitous on any system with MySQL, so you’ve already got it and have been using it in this book.
+В наших примерах мы будем использовать командную строку MySQL не потому, что она превосходит, а просто потому, что она присутствует в любой системе с MySQL, так что вы уже получили ее и использовали в этой книге.
 
-For more heavy-duty database design, the command line is probably not as powerful as a well-designed GUI would be. Grab a copy of MySQL Workbench at least and give it a whirl.
+Для разработки более производительной базы данных командная строка, вероятно окажется не такой мощной, как хорошо продуманный графический интерфейс. Возьмите хотя бы копию MySQL Workbench и дайте ему закрутиться.
 
 ### Troubleshooting Database Issues
 
