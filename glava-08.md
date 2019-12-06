@@ -294,65 +294,35 @@ exten => 103,1,Dial\(${UserB\_SoftPhone}\)
 Небольшая проблема заключается в том, что наши пользователи не могут ни получать свои сообщения, ни настраивать свои приветствия, ни какие-либо другие параметры голосовой почты. Мы исправим это в следующей секции.
 
 
-### The VoiceMailMain\(\) Dialplan Application
+### Приложение диалплана VoiceMailMain\(\)
 
-Users can retrieve their voicemail messages, change their voicemail options, and record their voicemail greetings using the VoiceMailMain\(\) application. VoiceMailMain\(\) accepts two arguments: the mailbox number \(and context if necessary\), plus a few options. Both arguments are optional.
+Пользователи могут получать сообщения голосовой почты, изменять параметры и записывать приветствия с помощью приложения VoiceMailMain\(\). VoiceMailMain\(\) принимает два аргумента: номер почтового ящика \(и, если необходимо, контекст\), а также несколько параметров. Оба аргумента являются необязательными.
 
-The structure of the VoiceMailMain\(\) application looks like this:
-
+Структура приложения VoiceMailMain\(\) выглядит следующим образом:
+<code>
 VoiceMailMain\(\[mailbox\]\[@context\]\[,options\]\)
+</code>
+<br>
 
-If you do not pass any arguments to VoiceMailMain\(\), it will play a prompt asking the caller to provide their mailbox number. The options that can be supplied are listed in [Table 8-6](8.%20Voicemail%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Voicemail_id292757).
+При использовании приложения VoiceMailMain\(\) без аргументов, будет воспроизведено сообщение предлагающее вызывающему абоненту предоставить номер своего почтового ящика. Варианты, которые могут быть предоставлены, перечислены в [_Таблице 8-6_]()
 
-Table 8-6. VoiceMailMain\(\) optional arguments
+| Аргумент | Цель |
+| :--- | :--- |
+| p | Позволяет обрабатывать параметр почтового ящика как префикс к номеру почтового ящика |
+| g(#) | Увеличивает громкость на # децибел при воспроизведении сообщений |
+| s | Пропускает проверку пароля |
+| a(folder) | Запускает сессию в одной из следующих папок голосовой почты (по умолчанию 0):<br> 0 - INBOX<br>1 - Old<br>2 - Work<br>3 - Family<br>4 - Friends<br>5 - Cust1<br>6 - Cust2<br>7 - Cust3<br>8 - Cust4<br>9 - Cust5 |
 
-<table>
-  <thead>
-    <tr>
-      <th style="text-align:left">Argument</th>
-      <th style="text-align:left">Purpose</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align:left">p</td>
-      <td style="text-align:left">Allows you to treat the mailbox parameter as a prefix to the mailbox number.</td>
-    </tr>
-    <tr>
-      <td style="text-align:left">g(#)</td>
-      <td style="text-align:left">Increases the gain by # decibels when playing back messages.</td>
-    </tr>
-    <tr>
-      <td style="text-align:left">s</td>
-      <td style="text-align:left">Skips the password check.</td>
-    </tr>
-    <tr>
-      <td style="text-align:left">a(folder)</td>
-      <td style="text-align:left">
-        <p>Starts the session in one of the following voicemail folders (defaults
-          to 0):</p>
-        <ul>
-          <li>0 - INBOX</li>
-          <li>1 - Old</li>
-          <li>2 - Work</li>
-          <li>3 - Family</li>
-          <li>4 - Friends</li>
-          <li>5 - Cust1</li>
-          <li>6 - Cust2</li>
-          <li>7 - Cust3</li>
-          <li>8 - Cust4</li>
-          <li>9 - Cust5</li>
-        </ul>
-      </td>
-    </tr>
-  </tbody>
-</table>To allow users to dial an extension to check their voicemail, you could add an extension to the dialplan like this:
+_Таблица 8-6. необязательные аргументы VoiceMailMain\(\)._
 
+Чтобы позволить пользователям набирать добавочный номер для проверки своей голосовой почты, вы можете добавить этот номер в абонентскую группу следующим образом:
+
+```
 exten => \*98,1,NoOp\(Access voicemail retrieval.\)
-
  same => n,VoiceMailMain\(\)
+```
 
-Any user whose device is assigned to the \[sets\] context can now dial \*98, and they’ll be able to log into their mailbox to listen to messages, record their name, set their greeting, and so forth.
+Любой пользователь, чье устройство обозначено в контексте \[sets\], теперь может набрать \*98, и войти в свой почтовый ящик, чтобы прослушивать сообщения, записывать свое имя, устанавливать приветствие и т.д.
 
 ### Standard Voicemail Keymap
 
