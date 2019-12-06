@@ -324,13 +324,13 @@ exten => \*98,1,NoOp\(Access voicemail retrieval.\)
 
 Любой пользователь, чье устройство обозначено в контексте \[sets\], теперь может набрать \*98, и войти в свой почтовый ящик, чтобы прослушивать сообщения, записывать свое имя, устанавливать приветствие и т.д.
 
-### Standard Voicemail Keymap
+### Стандартные комбинации кнопок голосовой почты
 
-[Figure 8-1](8.%20Voicemail%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Voicemail_id293125_8-1) shows the standard keymap configuration for Asterisk Mail. Some options may be enabled or disabled based on the configuration of voicemail.conf \(e.g., envelope=no\). This can be given to users as a reference.
+[Рисунок 8-1] Показывает стандартную конфигурацию комбинаций клавиш для почты Asterisk. Некоторые параметры могут быть включены или отключены в зависимости от конфигурации voicemail.conf \(например, envelope=no\). Рисунок можно дать пользователям в качестве памятки.
 
 ![](.gitbook/assets/0%20%287%29.png)
 
-**Figure 8-1. Keymap configuration for Comedian Mail**
+_Figure 8-1. Кнопки конфигурации для Comedian Mail_
 
 ### Creating a Dial-by-Name Directory
 
