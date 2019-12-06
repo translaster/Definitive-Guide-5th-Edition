@@ -39,31 +39,35 @@ Asterisk также предлагает собственные коннекто
 
 Например, одной из наиболее распространенных проблем, обнаруживаемых при интеграции базы данных ODBC, является неверно определенная таблица или отсутствующий столбец, который Asterisk ожидает. В то время как большие успехи были сделаны в виде адаптивных модулей, не все части Asterisk являются адаптивными. В случае хранения голосовой почты ODBC, возможно, вы пропустили столбец, например `flag`, который является новым, отсутствующим в версиях Asterisk до 11.[1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405309816) как уже отмечалось, чтобы понять, почему ваши данные не записываются в базу данных как положено, вы должны включить логирование на стороне базы данных, а затем определить, какой оператор выполняется и почему база данных отклоняет его.
 
-### SQL Injection
+### SQL-инъекция
 
-Security is always a consideration when you are building networked applications, and database security is no exception.
+Безопасность всегда учитывается при создании сетевых приложений, и безопасность базы данных не является исключением.
 
-In the case of Asterisk, you have to think about what input you are accepting from users \(typically what they are able to submit to the dialplan\), and work to sanitize that input to ensure you are only allowing characters that are valid to your application. As an example, a typical telephone call would only allow digits as input \(and possibly the \* and \# characters\), so there would be no reason to accept any other characters. Bear in mind that the SIP protocol allows more than just numbers as part of an address, so don’t assume that somebody attempting to compromise your system is limited to just digits.
+В случае Asterisk вам нужно подумать о том, какие входные данные вы принимаете от пользователей (обычно то, что они могут отправить в диалплан) и работать над очисткой этого ввода, чтобы убедиться, что вы разрешаете только символы, которые действительны для вашего приложения. Например, типичный телефонный звонок допускает только цифры в качестве входных данных (и, возможно, символы `*` и `#`), поэтому нет никаких причин принимать любые другие символы. Имейте в виду, что протокол SIP позволяет больше, чем просто цифры в качестве части адреса, поэтому не думайте, что те, кто пытается скомпрометировать вашу систему, ограничатся только цифрами.
 
-A little extra time spent sanitizing your allowed input will improve the security of your application.
+Немного дополнительного времени, потраченного на очистку разрешенного ввода, повысит безопасность вашего приложения.
 
-## Powering Your Dialplan with func\_odbc
+## Мощь диалплана с функцией func_odbc
 
-The func\_odbc dialplan function module allows you to define and use relatively simple functions in your dialplan that will retrieve information from databases as calls are being processed. There are all kinds of ways in which this might be used, such as managing users or allowing the sharing of dynamic information within a clustered set of Asterisk machines. We won’t claim that this will make designing and writing dialplan code easier, but we will promise that it will allow you to add a whole new level of power to your dialplans, especially if you are comfortable working with databases. We don’t know anybody in the Asterisk community who does not love func\_odbc.
+Функциональный модуль диалплана `func_odbc` позволяет определять и использовать относительно простые функции в вашем диалплане, которые будут извлекать информацию из баз данных при обработке вызовов. Существует множество способов, которыми это может быть использовано, например, управление пользователями или разрешение совместного использования динамической информации в кластеризованном наборе машин Asterisk. Мы не будем утверждать, что это облегчит разработку и написание кода диалплана, но обещаем что это позволит вам добавить совершенно новый уровень мощности к вашим диалпланам, особенно если вам удобно работать с базами данных. Мы не знаем никого в сообществе Asterisk, кто бы не любил `func_odbc`.
 
-The way func\_odbc works is by allowing you to define SQL queries, to which you assign function names. The func\_odbc.conf file is where you specify the relationships between the functions you create and the SQL statements you wish them to perform. You use the named functions you have created in your dialplan to retrieve and update values in the database.
+Способ работы `func_odbc` заключается в том, что вы можете определять SQL-запросы, которым присваиваете имена функций. Файл _func_odbc.conf_ - это место, где вы указываете отношения между создаваемыми функциями и исполняемыми инструкциями SQL. Именованные функции, созданные в диалплане, используются для извлечения и обновления значений в базе данных.
 
-In order to get you into the right frame of mind for what follows, we want you to picture a Dagwood sandwich.[2](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405291112)
+Для того, чтобы у Вас было хорошее настроение для того, что следует, мы хотим чтобы вы представили себе Дагвуд сэндвич.[2](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405291112)
 
-Can you relay the total experience of such a thing by showing someone a picture of a tomato, or by waving a slice of cheese about? Hardly. That is the conundrum we faced when trying to give useful examples of why func\_odbc is so powerful. So, we decided to build the whole sandwich for you. It’s quite a mouthful, but after a few bites of this, peanut butter and jelly is never going to be the same.
+Можете ли вы передать общий опыт такой вещи, показав кому-то фотографию помидора или размахивая ломтиком сыра? Едва. Именно с этой загадкой мы столкнулись, пытаясь привести полезные примеры того, почему `func_odbc` настолько мощен. Итак, мы решили собрать целый сэндвич для вас. Это довольно полный рот, но после нескольких укусов этого, арахисовое масло и желе никогда не будет тем же самым.
 
-## ODBC Configuration File Relationships
+---
 
-Several files must all line up in order for Asterisk to be able to use ODBC from the dialplan. [Figure 15-1](15.%20Relational%20Database%20Integration%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22asterisk-DB-FIG-1) attempts to convey this visually. You will probably find this diagram more helpful once you have worked through the examples in the following sections.
+## Отношения файлов конфигурации ODBC
 
-![](.gitbook/assets/0%20%286%29.png)
+Чтобы Asterisk мог использовать ODBC из диалплана, все файлы должны быть выстроены в линию. Рисунок 5-1 пытается передать это визуально. Вы, вероятно, найдете эту диаграмму более полезной, как только проработаете примеры в следующих разделах.
 
-**Figure 15-1. Relationships between func\_odbc.conf, res\_odbc.conf, /etc/odbc.ini \(unixODBC\), and the database connection**
+---
+
+![](.gitbook/assets/pic15-1.png)
+
+_Рисунок 15-1. Отношения между func_odbc.conf, res_odbc.conf, /etc/odbc.ini (unixODBC) и подключением к базе данных_
 
 ## A Gentle Introduction to func\_odbc
 
