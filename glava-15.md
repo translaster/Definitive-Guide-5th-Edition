@@ -69,38 +69,29 @@ Asterisk также предлагает собственные коннекто
 
 _Рисунок 15-1. Отношения между func_odbc.conf, res_odbc.conf, /etc/odbc.ini (unixODBC) и подключением к базе данных_
 
-## A Gentle Introduction to func\_odbc
+## Мягкое введение в func_odbc
 
-Before we dive into func\_odbc, we feel a wee bit of history is in order.
+Прежде чем мы погрузимся в `func_odbc`, чувствуем, что немного истории не помешает.
 
-The very first use of func\_odbc, which occurred while its author was still writing it, is also a good introduction to its use. A customer of one of the module’s authors noted that some people calling into his switch had figured out a way to make free calls with his system. While his eventual intent was to change his dialplan to avoid those problems, he needed to blacklist certain caller IDs in the meantime, and the database he wanted to use for this was a Microsoft SQL Server database.
+Самое первое использование `func_odbc`, которое произошло когда его автор все еще находился в процессе его написания, также является хорошим введением в его использование. Клиент одного из авторов модуля отметил, что некоторые люди, звонившие в его коммутатор, придумали способ совершать бесплатные звонки через его систему. В то время как его конечным намерением было изменить свой диалплан для избежания этих проблем, ему нужно было внести в черный список определенные идентификаторы вызывающих абонентов, и база данных, которую он хотел использовать для этого, была базой данных Microsoft SQL Server.
 
-With a few exceptions, this is the actual dialplan:
-
-\[span3pri\]
-
-exten =&gt; \_50054XX,1,NoOp\(\)
-
- same =&gt; n,Set\(CDR\(accountcode\)=pricall\)
-
- ; Does this callerID appear in the database?
-
- same =&gt; n,GotoIf\($\[${ODBC\_ANIBLOCK\(${CALLERID\(number\)}\)}\]?busy\)
-
- same =&gt; n\(dial\),Dial\(DAHDI/G1/${EXTEN}\)
-
- same =&gt; n\(busy\),Busy\(10\) ; Yes, you are on the blacklist.
-
- same =&gt; n,Hangup
-
-This dialplan, in a nutshell, passes all calls to another system for routing purposes, except those calls whose caller IDs are in a blacklist. The calls coming into this system used a block of 100 seven-digit DIDs. You will note a dialplan function is being used that you won’t find listed in any of the functions that ship with Asterisk: ODBC\_ANIBLOCK\(\). This function was instead defined in another configuration file, func\_odbc.conf:
-
-\[ANIBLOCK\]
-
+За некоторыми исключениями, это фактический диалплан:
+```
+[span3pri]
+exten => _50054XX,1,NoOp()
+   same => n,Set(CDR(accountcode)=pricall)
+   ; Does this callerID appear in the database?
+   same => n,GotoIf($[${ODBC_ANIBLOCK(${CALLERID(number)})}]?busy)
+   same => n(dial),Dial(DAHDI/G1/${EXTEN})
+   same => n(busy),Busy(10) ; Да, вы в черном списке.
+   same => n,Hangup
+   ```
+Этот диалплан, в двух словах, передает все вызовы в другую систему для целей маршрутизации, за исключением тех вызовов, чьи идентификаторы абонентов находятся в черном списке. Звонки, поступающие в эту систему, использовали блок из 100 семизначных DID. Вы заметите, что используется функция диалплана, которую вы не найдете ни в одной из функций, которые поставляются с Asterisk: `ODBC_ANIBLOCK()`. Вместо этого эта функция была определена в другом файле конфигурации _func_odbc.conf_:
+```
+[ANIBLOCK]
 dsn=telesys
-
-readsql=SELECT IF\(COUNT\(1\)&gt;0, 1, 0\) FROM Aniblock WHERE NUMBER='${ARG1}'
-
+readsql=SELECT IF(COUNT(1)>0, 1, 0) FROM Aniblock WHERE NUMBER='${ARG1}'
+```
 So, your ODBC\_ANIBLOCK\(\)[3](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405269208) function connects to a data source in res\_odbc.conf named telesys and selects a count of records that have the NUMBER specified by the argument, which is \(referring to the preceding dialplan\) the caller ID. Nominally, this function should return either a 1 \(indicating the caller ID exists in the Aniblock table\) or a 0 \(if it does not\). This value also evaluates directly to true or false, which means we don’t need to use an expression in our dialplan to complicate the logic.
 
 And that, in a nutshell, is what func\_odbc is all about: writing custom dialplan functions that return a result from a database. Next up, a more detailed example of how one might use func\_odbc.
