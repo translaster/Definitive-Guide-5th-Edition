@@ -92,7 +92,7 @@ exten => _50054XX,1,NoOp()
 dsn=telesys
 readsql=SELECT IF(COUNT(1)>0, 1, 0) FROM Aniblock WHERE NUMBER='${ARG1}'
 ```
-So, your ODBC\_ANIBLOCK\(\)[3](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405269208) function connects to a data source in res\_odbc.conf named telesys and selects a count of records that have the NUMBER specified by the argument, which is \(referring to the preceding dialplan\) the caller ID. Nominally, this function should return either a 1 \(indicating the caller ID exists in the Aniblock table\) or a 0 \(if it does not\). This value also evaluates directly to true or false, which means we don’t need to use an expression in our dialplan to complicate the logic.
+So, your ODBC_ANIBLOCK()[3](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405269208) function connects to a data source in res\_odbc.conf named telesys and selects a count of records that have the NUMBER specified by the argument, which is \(referring to the preceding dialplan\) the caller ID. Nominally, this function should return either a 1 \(indicating the caller ID exists in the Aniblock table\) or a 0 \(if it does not\). This value also evaluates directly to true or false, which means we don’t need to use an expression in our dialplan to complicate the logic.
 
 And that, in a nutshell, is what func\_odbc is all about: writing custom dialplan functions that return a result from a database. Next up, a more detailed example of how one might use func\_odbc.
 
