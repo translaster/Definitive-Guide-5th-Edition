@@ -92,120 +92,95 @@ exten => _50054XX,1,NoOp()
 dsn=telesys
 readsql=SELECT IF(COUNT(1)>0, 1, 0) FROM Aniblock WHERE NUMBER='${ARG1}'
 ```
-So, your ODBC_ANIBLOCK()[3](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405269208) function connects to a data source in res\_odbc.conf named telesys and selects a count of records that have the NUMBER specified by the argument, which is \(referring to the preceding dialplan\) the caller ID. Nominally, this function should return either a 1 \(indicating the caller ID exists in the Aniblock table\) or a 0 \(if it does not\). This value also evaluates directly to true or false, which means we don’t need to use an expression in our dialplan to complicate the logic.
+Итак, ваша функция `ODBC_ANIBLOCK()`[3](3) подключается к источнику данных в _res_odbc.conf_ называемому `telesys` и выбирает количество записей, которые имеют номер, указанный аргументом, который является (ссылаясь на предыдущий диалплан) идентификатором вызывающего абонента. Номинально эта функция должна возвращать либо `1` (указывая, что идентификатор вызывающего абонента существует в таблице `Aniblock`), либо `0` (если это не так). Это значение также вычисляется непосредственно как `true` или `false`, что означает, что нам не нужно использовать выражение в нашем диалплане, для усложнения логику.
 
-And that, in a nutshell, is what func_odbc is all about: writing custom dialplan functions that return a result from a database. Next up, a more detailed example of how one might use func_odbc.
+Вот в двух словах, то, что такое `func_odbc`: написание пользовательских функций диалплана, которые возвращают результат из базы данных. Далее, более подробный пример того, как можно использовать `func_odbc`.
 
-## Getting Funky with func_odbc: Hot-Desking
+## Веселимся с func_odbc: горячий стол
 
-OK, back to the Dagwood sandwich we promised.
+Ладно, вернемся к Дагвуд-сэндвичу, который мы обещали.
 
-We believe the value of func\_odbc will become very clear to you if you work through the following example, which will produce a new feature on your Asterisk system that depends heavily on func\_odbc.
+Мы считаем, что значение `func_odbc` станет для вас более ясным, если вы будете работать со следующим примером, который создаст новую функцию в вашей системе Asterisk, которая сильно зависит от `func_odbc`.
 
-Picture a small company with a sales force of five people who have to share two desks. This is not as cruel as it seems, because these folks spend most of their time on the road, and they are each only in the office for at most one day each week.
+Представьте себе небольшую компанию с отделом продаж из пяти человек, которым приходится делить два стола. Это не так жестоко, как кажется, потому что эти люди большую часть своего времени проводят в дороге, и каждый из них находится в офисе не более одного дня в неделю.
 
-Still, when they do get into the office, they’d like the system to know which desk they are sitting at, so that their calls can be directed there. Also, the boss wants to be able to track when they are in the office and control calling privileges from those phones when no one is there.
+Тем не менее, когда они попадают в офис, они хотели бы, чтобы система знала, за каким столом они сидят и их звонки могли быть направлены туда. Кроме того, босс хочет иметь возможность отслеживать, когда они находятся в офисе и контролировать привилегии вызова с этих телефонов, когда там никого нет.
 
-This need is typically solved by what is called a hot-desking feature. We have built one for you in order to show you the power of func\_odbc.
+Эта потребность, как правило, решается с помощью так называемой функции _горячего стола_. Мы построили её для вас, чтобы показать вам силу `func_odbc`.
 
-Let’s start with the easy stuff, and create two new phone credentials in our database.
+Давайте начнем с простых вещей, и создадим две новых учетных записи телефонов в нашей базе данных.
 
-First, the endpoints table:
-
-MySQL&gt; INSERT INTO asterisk.ps\_endpoints \(id,transport,aors,auth,context,disallow,allow, \
-
-direct\_media,callerid\)
-
-VALUES
-
-\('HOTDESK\_1','transport-tls','HOTDESK\_1','HOTDESK\_1','hotdesk','all','ulaw','no', \
-
-'HOTDESK\_1'\),
-
-\('HOTDESK\_2','transport-tls','HOTDESK\_2','HOTDESK\_2','hotdesk','all','ulaw','no', \
-
-'HOTDESK\_2'\);
-
-Then, the auths:
-
-MySQL&gt; INSERT INTO asterisk.ps\_auths \(id,auth\_type,password,username\)
+Во-первых, таблица конечных точек:
+```
+MySQL> INSERT INTO asterisk.ps_endpoints (id,transport,aors,auth,context,disallow,allow, \
+direct_media,callerid)
 
 VALUES
-
-\('HOTDESK\_1','userpass','notsohot1','HOTDESK\_1'\),
-
-\('HOTDESK\_2','userpass','notsohot2','HOTDESK\_2'\);
-
-Finally, the aors:
-
-MySQL&gt; INSERT INTO asterisk.ps\_aors
-
-\(id,max\_contacts\)
+('HOTDESK_1','transport-tls','HOTDESK_1','HOTDESK_1','hotdesk','all','ulaw','no', \
+'HOTDESK_1'),
+('HOTDESK_2','transport-tls','HOTDESK_2','HOTDESK_2','hotdesk','all','ulaw','no', \
+'HOTDESK_2');
+```
+И `auths`:
+```
+MySQL> INSERT INTO asterisk.ps_auths (id,auth_type,password,username)
 
 VALUES
+('HOTDESK_1','userpass','notsohot1','HOTDESK_1'),
+('HOTDESK_2','userpass','notsohot2','HOTDESK_2');
+```
+Наконец `aors`:
+```
+MySQL> INSERT INTO asterisk.ps_aors
+(id,max_contacts)
 
-\('HOTDESK\_1',1\),
+VALUES
+('HOTDESK_1',1),
+('HOTDESK_2',1);
+```
+Обратите внимание, что мы сказали этим двум конечным точкам войти в диалплан в контексте с именем `[hotdesk]`. Мы определим его в ближайшее время.
 
-\('HOTDESK\_2',1\);
+Это все для нашей конфигурации конечной точки. У нас есть несколько ломтиков хлеба, которые еще не стали бутербродом.
 
-Notice that we’ve told these two endpoints to enter the dialplan at a context named \[hotdesk\]. We’ll define that shortly.
+Теперь давайте создадим пользовательскую базу данных, которую будем использовать для этого.
 
-That’s all for our endpoint configuration. We’ve got a few slices of bread, which is hardly a sandwich yet.
-
-Now let’s get the custom database built that we’re going to use for this.
-
-Connect to your MySQL console as root:
-
+Подключитесь к консоли MySQL как `root`:
+```
 $ mysql -u root -p
+```
+Сначала нам нужна новая схема, чтобы разместить все это. Технически это возможно поместить в схему `asterisk`, но мы предпочитаем оставить её в покое, зарезервированную только для всех скриптов Alembik Asterisk, которые выполняются с ней во время обновлений.
+```
+MySQL> CREATE SCHEMA pbx;
 
-First we want a new schema to put all this in. It’s technically possible to put this in the asterisk schema, but we prefer to leave that schema alone, reserved only for whatever Asterisk’s Alembic scripts do with it during upgrades.
+MySQL> GRANT SELECT,INSERT,UPDATE,DELETE,EXECUTE,SHOW VIEW ON pbx.* TO 'asterisk'@'::1';
 
-MySQL&gt; CREATE SCHEMA pbx;
-
-MySQL&gt; GRANT SELECT,INSERT,UPDATE,DELETE,EXECUTE,SHOW VIEW ON pbx.\* TO 'asterisk'@'::1';
-
-MySQL&gt; GRANT SELECT,INSERT,UPDATE,DELETE,EXECUTE,SHOW VIEW ON pbx.\* TO \
-
+MySQL> GRANT SELECT,INSERT,UPDATE,DELETE,EXECUTE,SHOW VIEW ON pbx.* TO \
 'asterisk'@'127.0.0.1';
 
-MySQL&gt; GRANT SELECT,INSERT,UPDATE,DELETE,EXECUTE,SHOW VIEW ON pbx.\* TO \
-
+MySQL> GRANT SELECT,INSERT,UPDATE,DELETE,EXECUTE,SHOW VIEW ON pbx.* TO \
 'asterisk'@'localhost';
 
-MySQL&gt; GRANT SELECT,INSERT,UPDATE,DELETE,EXECUTE,SHOW VIEW ON pbx.\* TO \
-
+MySQL> GRANT SELECT,INSERT,UPDATE,DELETE,EXECUTE,SHOW VIEW ON pbx.* TO \
 'asterisk'@'localhost.localdomain';
 
-MySQL&gt; FLUSH PRIVILEGES;
-
-Then create the table with the following bit of SQL:
-
-CREATE TABLE pbx.ast\_hotdesk
-
-\(
-
- id serial NOT NULL,
-
- extension text,
-
- first\_name text,
-
- last\_name text,
-
- cid\_name text,
-
- cid\_number varchar\(10\),
-
- pin int,
-
- status bool DEFAULT false,
-
- endpoint text,
-
- CONSTRAINT ast\_hotdesk\_id\_pk PRIMARY KEY \(id\)
-
-\);
-
+MySQL> FLUSH PRIVILEGES;
+```
+Затем создайте таблицу со следующим битом SQL:
+```
+CREATE TABLE pbx.ast_hotdesk
+(
+  id serial NOT NULL,
+  extension text,
+  first_name text,
+  last_name text,
+  cid_name text,
+  cid_number varchar(10),
+  pin int,
+  status bool DEFAULT false,
+  endpoint text,
+  CONSTRAINT ast_hotdesk_id_pk PRIMARY KEY (id)
+);
+```
 After that, populate the database with the following information \(some of the values that you see actually will change only after the dialplan work is done, but we include it here by way of example\).
 
 At the MySQL console, run the following command:
