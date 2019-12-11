@@ -181,97 +181,75 @@ CREATE TABLE pbx.ast_hotdesk
   CONSTRAINT ast_hotdesk_id_pk PRIMARY KEY (id)
 );
 ```
-After that, populate the database with the following information \(some of the values that you see actually will change only after the dialplan work is done, but we include it here by way of example\).
+После этого заполните базу данных следующей информацией (некоторые значения, которые вы видите на самом деле, изменятся только после завершения работы диалплана, но мы включим их здесь в качестве примера).
 
-At the MySQL console, run the following command:
-
-MySQL&gt; INSERT INTO pbx.ast\_hotdesk
-
-\(extension, first\_name, last\_name, cid\_name, cid\_number, pin, status\)
+В консоли MySQL выполните следующую команду:
+```
+MySQL> INSERT INTO pbx.ast_hotdesk
+(extension, first_name, last_name, cid_name, cid_number, pin, status)
 
 VALUES
-
-\('1101','Herb','Tarlek','WKRP','1101','110111',0\)
-
-\('1102','Al','Bundy','Garys','1102','110222',0\),
-
-\('1103','Willy','Loman','','1103','110333',0\),
-
-\('1104','Jerry','Lundegaard','Gustafson','1104','110444',0\),
-
-\('1105','Moira','Brown','Craterside','1105','110555',0\);
-
-Repeat these commands, changing the VALUES as needed, for all entries you wish to have in the database.[4](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405232168) After you’ve input your sample data, you can view the data in the ast\_hotdesk table by running a simple SELECT statement from the database console:
-
-MySQL&gt; SELECT \* FROM pbx.ast\_hotdesk;
-
-Which might give you something like the following output:
-
+('1101','Herb','Tarlek','WKRP','1101','110111',0)
+('1102','Al','Bundy','Garys','1102','110222',0),
+('1103','Willy','Loman','','1103','110333',0),
+('1104','Jerry','Lundegaard','Gustafson','1104','110444',0),
+('1105','Moira','Brown','Craterside','1105','110555',0);
+```
+Повторите эти команды, изменяя `VALUES` по мере необходимости, для всех записей, которые вы хотите иметь в базе данных.[4](4) после ввода примера данных можно просмотреть данные в таблице `ast_hotdesk`, выполнив простую инструкцию `SELECT` из консоли базы данных:
+```
+MySQL> SELECT * FROM pbx.ast_hotdesk;
+```
+Что может дать вам что-то вроде следующего вывода:
+```
 +--+---------+----------+----------+----------+----------+------+------+--------+
-
-\|id\|extension\|first\_name\|last\_name \|cid\_name \|cid\_number\|pin \|status\|endpoint\|
-
+|id|extension|first_name|last_name |cid_name  |cid_number|pin   |status|endpoint|
 +--+---------+----------+----------+----------+----------+------+------+--------+
-
-\| 1\|1101 \|Herb \|Tarlek \|WKRP \|1101 \|110111\| 0\|NULL \|
-
-\| 2\|1102 \|Al \|Bundy \|Garys \|1102 \|110222\| 0\|NULL \|
-
-\| 3\|1103 \|Willy \|Loman \| \|1103 \|110333\| 0\|NULL \|
-
-\| 4\|1104 \|Jerry \|Lundegaard\|Gustafson \|1104 \|110444\| 0\|NULL \|
-
-\| 5\|1105 \|Moira \|Brown \|Craterside\|1105 \|110555\| 0\|NULL \|
-
+| 1|1101     |Herb      |Tarlek    |WKRP      |1101      |110111|     0|NULL    |
+| 2|1102     |Al        |Bundy     |Garys     |1102      |110222|     0|NULL    |
+| 3|1103     |Willy     |Loman     |          |1103      |110333|     0|NULL    |
+| 4|1104     |Jerry     |Lundegaard|Gustafson |1104      |110444|     0|NULL    |
+| 5|1105     |Moira     |Brown     |Craterside|1105      |110555|     0|NULL    |
 +--+---------+----------+----------+----------+----------+------+------+--------+
+```
+Теперь у нас есть приправы, так что давайте перейдем к нашему диалплану. Именно здесь произойдет волшебство.
 
-We’ve got the condiments now, so let’s get to our dialplan. This is where the magic is going to happen.
+Где-то в _extensions.conf_ мы собираемся создать контекст `[hotdesk]`. Для начала давайте определим расширение сопоставления с шаблоном, позволяющее пользователям входить в систему:
+```
+[hotdesk]
+include => sets
 
-Somewhere in extensions.conf we are going to create the \[hotdesk\] context. To start, let’s define a pattern-match extension that will allow the users to log in:
+exten => _*99110[1-5],1,Noop(Hotdesk login)
+  same => n,Set(HotExten=${EXTEN:3}) ; strip off the leading *99
+  same => n,Noop(Hotdesk Extension ${HotExten} is changing status) ; for the log
+  same => n,Set(${HotExten}_STATUS=${HOTDESK_INFO(status,${HotExten})})
+  same => n,Set(${HotExten}_PIN=${HOTDESK_INFO(pin,${HotExten})})
+  same => n,Noop(${HotExten}_PIN is now ${${HotExten}_PIN})
+  same => n,Noop(${HotExten}_STATUS is ${${HotExten}_STATUS})})
+```
+Мы еще не закончили написание этого расширения, но нам нужно отвлечься на несколько страниц, чтобы обсудить, где мы находимся на данном этапе.
 
-\[hotdesk\]
+Когда торговый агент садится за стол, он входит в систему, набирая *99 плюс свой добавочный номер. В этом случае мы разрешили входя в систему расширениям с 1101 по 1105 посредством нашего шаблона соответствия `_99110[1-5]`. Вы могли бы так же легко сделать его менее ограниченным, используя `_9911XX` (разрешая с 1100 до 1199). Это расширение использует функцию `func_odbc` для выполнения поиска с помощью функции диалплана `HOTDESK_INFO()`. Эта пользовательская функция (которую мы определим в файле _func_odbc.conf_) выполняет инструкцию SQL и возвращает все, что извлекается из базы данных.
 
-include =&gt; sets
+Итак, давайте создадим _/etc/asterisk/func_odbc.conf_, и в нем определим новую функцию HOTDESK_INFO():
+```
+$ sudo -u asterisk vim /etc/asterisk/func_odbc.conf
 
-exten =&gt; \_\*99110\[1-5\],1,Noop\(Hotdesk login\)
-
- same =&gt; n,Set\(HotExten=${EXTEN:3}\) ; strip off the leading \*99
-
- same =&gt; n,Noop\(Hotdesk Extension ${HotExten} is changing status\) ; for the log
-
- same =&gt; n,Set\(${HotExten}\_STATUS=${HOTDESK\_INFO\(status,${HotExten}\)}\)
-
- same =&gt; n,Set\(${HotExten}\_PIN=${HOTDESK\_INFO\(pin,${HotExten}\)}\)
-
- same =&gt; n,Noop\(${HotExten}\_PIN is now ${${HotExten}\_PIN}\)
-
- same =&gt; n,Noop\(${HotExten}\_STATUS is ${${HotExten}\_STATUS}\)}\)
-
-We’re not done writing this extension yet, but we need to digress for a few pages to discuss where we’re at so far.
-
-When a sales agent sits down at a desk, they log in by dialing \*99 plus their extension number. In this case we have allowed the 1101 through 1105 extensions to log in with our pattern match of \_99110\[1-5\]. You could just as easily make this less restrictive by using \_9911XX \(allowing 1100 through 1199\). This extension uses func\_odbc to perform a lookup with the HOTDESK\_INFO\(\) dialplan function. This custom function \(which we will define in the func\_odbc.conf file\) performs an SQL statement and returns whatever is retrieved from the database.
-
-So, let’s create the /etc/asterisk/func\_odbc.conf file, and within that define the new function HOTDESK\_INFO\(\):
-
-$ sudo -u asterisk vim /etc/asterisk/func\_odbc.conf
-
-\[INFO\]
-
+[INFO]
 prefix=HOTDESK
-
 dsn=asterisk
-
 synopsis=Select value of field in ARG1, where 'extension' matches ARG2
+description=Allow dialplan to extract data from any field in pbx.ast_hotdesk table.
+readsql=SELECT ${ARG1} FROM pbx.ast_hotdesk WHERE extension = '${ARG2}'
+```
+Это очень много всего в нескольких строчках. Давайте быстро прикроем их, прежде чем двинемся дальше.
 
-description=Allow dialplan to extract data from any field in pbx.ast\_hotdesk table.
+---
 
-readsql=SELECT ${ARG1} FROM pbx.ast\_hotdesk WHERE extension = '${ARG2}'
+**Примечание**
 
-That’s a lot of stuff in just a few lines. Let’s quickly cover them before we move on.
+Вы должны быть в состоянии перезагрузить свой диалплан (`dialplan reload`) и `func_odbc` (`module reload func_odbc.so`), и протестировать диалплан до этого момента (наберите 991101 с одного из устройств, которые вы назначили этому контексту). Убедитесь, что ваша детальность консоли установлена по крайней мере на 3 (`*CLI> core set verbose 3`), так вы сможете увидеть, что этот диалплан работает только в консоли (вызов этого диалплана быстро вернет "занято", даже если он работает успешно). Для остальной части этого раздела мы настоятельно рекомендуем вам тестировать все после каждого изменения. Если вы этого не сделаете, у вас будет много времени для поиска ошибок. Очень важно, чтобы вы кодировали с зарегистрированным телефоном и открытой консолью Asterisk, чтобы перезагрузить и протестировать изменения в течение нескольких секунд после их написания.
 
-**Note**
-
-You should be able to reload your dialplan \(dialplan reload\) and func\_odbc \(module reload func\_odbc.so\), and test the dialplan out thus far \(dial 991101 from one of the sets you’ve assigned to this context\). Make sure your console verbosity is set to at least 3 \(\*CLI&gt; core set verbose 3\), as you will only be able to see this dialplan working by the console \(a call to this dialplan will return a fast busy even if it runs successfully\). For the rest of this section, we strongly recommend you test everything after each change. If you don’t, you’ll have a whale of a time trying to find the bugs. It’s critical that you code with a phone registered and the Asterisk console open, so you can reload and test changes within seconds of writing them.
+---
 
 First of all, the prefix is optional \(default prefix is 'ODBC'\). This means that if you don’t define a prefix, Asterisk adds 'ODBC' to the function name \(in this case, INFO\), which means this function would become ODBC\_INFO\(\). This is not very descriptive of what the function is doing, so it can be helpful to assign a prefix that helps to relate your ODBC functions to the tasks they are performing. We chose 'HOTDESK', which means that this custom function will be named HOTDESK\_INFO\(\) in the dialplan.
 
