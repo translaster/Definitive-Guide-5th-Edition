@@ -49,15 +49,17 @@ Process-based AGI \(AGI на основе процесса\) является п
 AGI(command[,arg1[,arg2[,...]]])
 ```
 
-{% hint style="info" %}
+---
+
 **Подсказка**
 
 Убедитесь, что приложение имеет соответствующие разрешения, чтобы пользователь Asterisk имел разрешения на его выполнение. В противном случае функция `AGI()` завершится ошибкой.
-{% endhint %}
+
+---
 
 Once Asterisk executes your AGI application, communication between Asterisk and your application will take place over stdin and stdout. More details about this communication will be covered in [“AGI Communication Overview”](18.%20Asterisk%20Gateway%20Interface%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AGI-communication). For more details about invoking AGI\(\) from the dialplan, check the documentation built into Asterisk:
 
-\*CLI&gt; core show application AGI
+*CLI&gt; core show application AGI
 
 Pros of process-based AGI
 
