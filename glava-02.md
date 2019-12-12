@@ -149,20 +149,22 @@ Table 2-5. Популярные драйверы каналов
 
 Кодеки-это сложные алгоритмы, которые обрабатывают преобразование аналоговой информации \(в данном случае звука, но также может быть и видео\) в цифровой формат. Многие кодеки также обеспечивают сжатие и исправление ошибок, но это не является обязательным требованием.
 
-{% hint style="info" %}
+---
+
 **Примечание**
 
-Если кодек \(например G.729\) использует сложный алгоритм кодирования, интенсивное использование транскодинга может создать огромную нагрузку на процессор. Специализированное оборудование для декодирования/кодирования G.729 доступно от производителей оборудования, таких как Sangoma и Digium \(и, вероятно, других\).
-{% endhint %}
+Если кодек (например G.729) использует сложный алгоритм кодирования, интенсивное использование транскодинга может создать огромную нагрузку на процессор. Специализированное оборудование для декодирования/кодирования G.729 доступно от производителей оборудования, таких как Sangoma и Digium (и, вероятно, других).
 
-Asterisk делает довольно хорошую работу по поддержке кодеков, но в основном сосредоточен на кодеках, обычно используемых телефонными приложениями \(в отличие от кодеков, используемых, скажем, для музыки или видео, таких как MP3 или MP4\). Они перечислены в [Таблице 2-6](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/2.%20Asterisk%20Architecture%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Architecture_id292600).
+---
+
+Asterisk делает довольно хорошую работу по поддержке кодеков, но в основном сосредоточен на кодеках, обычно используемых телефонными приложениями (в отличие от кодеков, используемых, скажем, для музыки или видео, таких как MP3 или MP4). Они перечислены в [Таблице 2-6](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/2.%20Asterisk%20Architecture%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Architecture_id292600).
 
 Таблица 2-6. Общие трансляторы кодеков
 
 | Имя | Назначение |
 | :--- | :--- |
-| codec\_alaw | Кодек PCM A-law используется во всем мире на ТфОП \(кроме Канады/США\). Этот кодек \(вместе с ulaw\) должен быть включен на всех ваших каналах. |
-| codec\_g729 | До недавнего времени это был запатентованный кодек, но теперь он является бесплатным. На момент написания этой статьи он по-прежнему продается Digium в качестве дополнения, но его также можно найти в виде бесплатного пакета. Это очень популярный кодек, если требуется сжатие \(и использование процессора не является проблемой\), но он накладывает нагрузку на процессор, добавляет задержку к вызовам, немного снижает качество и никоим образом не уменьшает накладные расходы. |
+| codec_alaw | Кодек PCM A-law используется во всем мире на ТфОП (кроме Канады/США). Этот кодек (вместе с ulaw) должен быть включен на всех ваших каналах. |
+| codec_g729 | До недавнего времени это был запатентованный кодек, но теперь он является бесплатным. На момент написания этой статьи он по-прежнему продается Digium в качестве дополнения, но его также можно найти в виде бесплатного пакета. Это очень популярный кодек, если требуется сжатие \(и использование процессора не является проблемой\), но он накладывает нагрузку на процессор, добавляет задержку к вызовам, немного снижает качество и никоим образом не уменьшает накладные расходы. |
 | codec\_a\_mu | Прямой конвертер A-law в mu-law. |
 | codec\_g722 | Широкополосный аудиокодек. |
 | codec\_gsm | Кодек Global System for Mobile Communications \(GSM\). Очень низкое качество звука. |
@@ -174,15 +176,17 @@ Asterisk делает довольно хорошую работу по подд
 | codec\_ulaw | Кодек PCM Mu-law, используемый на ТфОП в Канаде/США. Это более формально написано как μ-закон, но не у многих людей есть греческая буква μ на клавиатуре, поэтому обычно пишется как ulaw.a Часто является кодеком по умолчанию, и должен быть включен на всех ваших каналах. |
 | [a](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch02.html%22%20/l%20%22idm46178403326376-marker) Произносится как  “мью-лоу,” но так же вы часто будете слышать как "ю-лоу". |  |
 
-{% hint style="info" %}
+---
+
 **Совет**
 
 Digium предоставляет некоторые дополнительные полезные модули кодеков: codec\_g729, codec\_silk, codec\_siren7 и codec\_siren14. Эти модули кодеков не являются open source по различным причинам. Вы должны приобрести лицензию на использование codec\_g729, но остальные являются бесплатными. Вы можете найти их на [сайте Digium](http://downloads.digium.com/pub/telephony/).
-{% endhint %}
+
+---
 
 ### Интерпретаторы формата
 
-Format interpreters \([Table 2-7](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/2.%20Asterisk%20Architecture%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Architecture_id292825)\) perform a similar function as codec translators, but they do their work on files rather than channels, and handle more than just audio. If you have a recording on a menu that has been stored as GSM, you would need to use a format interpreter to play that recording to any channels not using the GSM codec.[4](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch02.html%22%20/l%20%22idm46178403315272)
+Format interpreters ([Table 2-7](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/2.%20Asterisk%20Architecture%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Architecture_id292825)) perform a similar function as codec translators, but they do their work on files rather than channels, and handle more than just audio. If you have a recording on a menu that has been stored as GSM, you would need to use a format interpreter to play that recording to any channels not using the GSM codec.[4](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch02.html%22%20/l%20%22idm46178403315272)
 
 If you store a recording in several formats simultaneously \(such as WAV, GSM, etc.\), Asterisk will determine the least costly format[5](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch02.html%22%20/l%20%22idm46178403313864) to use when a channel needs to play that recording.
 
