@@ -98,25 +98,27 @@ Asterisk построен на модулях. Модуль - это загру�
 
 Модули CDR, перечисленные в Таблице 2-3, предназначены для обеспечения как можно большего числа методов хранения записей сведений о вызовах. CDR можно хранить в файле \(по умолчанию\), базе данных, RADIUS или _syslog_.
 
-{% hint style="info" %}
+---
+
 **Примечание**
 
-Записи деталей вызовов не предназначены для использования в сложных приложениях биллинга. Если вам требуется больше контроля над биллингом и отчетностью о вызовах - обратите внимание на журнал событий канала \(CEL\), обсуждаемый далее. Преимущество CDR заключается в том, что он просто работает.
-{% endhint %}
+Записи деталей вызовов не предназначены для использования в сложных приложениях биллинга. Если вам требуется больше контроля над биллингом и отчетностью о вызовах - обратите внимание на журнал событий канала (CEL), обсуждаемый далее. Преимущество CDR заключается в том, что он просто работает.
+
+---
 
 Таблица 2-3. Общие модули записи деталей вызова
 
 | Name | Purpose |
 | :--- | :--- |
-| cdr\_adaptive\_odbc | Allows writing of CDRs through ODBC framework with ability to add custom fields |
-| cdr\_csv | Writes CDRs to disk as a comma-separated values \(CSV\) file |
-| cdr\_custom | Writes CDRs to a CSV file, but allows addition of custom fields |
-| cdr\_odbc | Writes CDRs through ODBC framework |
-| cdr\_syslog | Writes CDRs to syslog |
+| cdr_adaptive_odbc | Allows writing of CDRs through ODBC framework with ability to add custom fields |
+| cdr_csv | Writes CDRs to disk as a comma-separated values (CSV) file |
+| cdr_custom | Writes CDRs to a CSV file, but allows addition of custom fields |
+| cdr_odbc | Writes CDRs through ODBC framework |
+| cdr_syslog | Writes CDRs to syslog |
 
 ### Модули логирования событий канала
 
-Channel event logging \(CEL\) provides much more powerful control over reporting of call activity. By the same token, it requires more careful planning of your dialplan, and by no means will it work automatically. Asterisk’s CEL modules are listed in [Table 2-4](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/2.%20Asterisk%20Architecture%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Architecture_id292113).
+Channel event logging (CEL) provides much more powerful control over reporting of call activity. By the same token, it requires more careful planning of your dialplan, and by no means will it work automatically. Asterisk’s CEL modules are listed in [Table 2-4](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/2.%20Asterisk%20Architecture%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Architecture_id292113).
 
 Table 2-4. Channel event logging modules
 
