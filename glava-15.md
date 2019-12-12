@@ -251,45 +251,63 @@ readsql=SELECT ${ARG1} FROM pbx.ast_hotdesk WHERE extension = '${ARG2}'
 
 ---
 
-First of all, the prefix is optional \(default prefix is 'ODBC'\). This means that if you don’t define a prefix, Asterisk adds 'ODBC' to the function name \(in this case, INFO\), which means this function would become ODBC\_INFO\(\). This is not very descriptive of what the function is doing, so it can be helpful to assign a prefix that helps to relate your ODBC functions to the tasks they are performing. We chose 'HOTDESK', which means that this custom function will be named HOTDESK\_INFO\(\) in the dialplan.
+Прежде всего, `prefix` является необязательным (префикс по умолчанию - `ODBC`). Это означает, что если вы не определяете `prefix`, Asterisk добавляет `ODBC` к имени функции (в данном случае `INFO`), означающее, что эта функция станет `ODBC_INFO()`. Это не очень удачно описывает то, что делает функция, поэтому может быть полезно назначить префикс, который помогает связать ваши функции ODBC с задачами, которые они выполняют. Мы выбрали '`HOTDESK`', означающее, что эта пользовательская функция в диалплане будет называться `HOTDESK_INFO()`.
 
-**Note**
+---
 
-The reason why prefix is separate is that the author of the module wanted to reduce possible collisions with existing dialplan functions. The intent of prefix was to allow multiple copies of the same function, connected to different databases, for multitenant Asterisk systems. We as authors have been a bit more liberal in our use of prefix than the developer originally intended.
+**Примечание**
 
-The dsn attribute tells Asterisk which connection to use from res\_odbc.conf. Since several database connections could be configured in res\_odbc.conf, we specify which one to use here. In [Figure 15-1](15.%20Relational%20Database%20Integration%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22asterisk-DB-FIG-1), we show the relationship between the various file configurations and how they reference down the chain to connect to the database.
+Причина, по которой `prefix` является отдельным, заключается в том, что автор модуля хотел уменьшить возможные коллизии с существующими функциями диалплана. Цель `prefix` состояла в том, чтобы разрешить несколько копий одной и той же функции, подключенной к разным базам данных, для систем Asterisk с несколькими арендаторами. Мы, как авторы, были немного более либеральны в нашем использовании `prefix`, чем первоначально предполагал разработчик.
 
-**Tip**
+---
 
-The func\_odbc.conf.sample file in the Asterisk source contains additional information about how to handle multiple databases and control the reading and writing of information to different DSN connections. Specifically, the readhandle, writehandle, readsql, and writesql arguments will provide you with great flexibility for database integration and control.
+Атрибут `dsn` сообщает Asterisk, какое соединение использовать из _res_odbc.conf_. Поскольку в _res_odbc.conf_ можно настроить несколько подключений к базам данных, мы указываем, какой из них использовать здесь. На Рисунке 15-1 показана взаимосвязь между различными конфигурациями файлов и тем, как они ссылаются на цепочку для подключения к базе данных.
 
-Finally, we define our SQL statement with the readsql attribute. Dialplan functions can be called with two different formats: one for retrieving information, and one for setting information. The readsql attribute is used when we call the HOTDESK\_INFO\(\) function with the retrieve format \(we could execute a separate SQL statement with the writesql attribute; we’ll discuss the format for that attribute a little bit later in this chapter\).
+---
 
-Reading values from this function would take this format in the dialplan:
+**Подсказка**
+Файл _func_odbc.conf.sample_ в каталоге исходников Asterisk содержит дополнительную информацию о том, как обрабатывать несколько баз данных и управлять чтением и записью информации в различные соединения DSN. В частности, аргументы `readhandle`, `writehandle`, `readsql` и `writesql` обеспечивают большую гибкость для интеграции и управления базами данных.
 
-exten =&gt; s,n,Set\(RETURNED\_VALUE=${HOTDESK\_INFO\(status,1101\)}\)
+---
 
-This would return the value located in the database within the status column where the extension column equals 1101. The status and 1101 we pass to the HOTDESK\_INFO\(\) function are then placed into the SQL statement we assigned to the readsql attribute, available as ${ARG1} and ${ARG2}, respectively. If we had passed a third option, this would have been available as ${ARG3}.
+Наконец, мы определяем наш оператор SQL с атрибутом `readsql`. Функции диалплана могут вызываться в двух различных форматах: один для получения информации, а другой для настройки. Атрибут `readsql` используется, когда мы вызываем функцию `HOTDESK_INFO()` с форматом поиска (мы могли бы выполнить отдельный оператор SQL с атрибутом `writesql`; мы обсудим формат для этого атрибута немного позже в этой главе).
 
-After the SQL statement is executed, the value returned \(if any\) is assigned to the RETURNED\_VALUE channel variable.
+Чтение значений из этой функции будет принимать этот формат в диалплане:
 
-#### Using the ARRAY\(\) Function
+```
+exten => s,n,Set(RETURNED_VALUE=${HOTDESK_INFO(status,1101)})
+```
 
-In our example, we are utilizing two separate database calls and assigning those values to a pair of channel variables: ${HotdeskExtension}\_STATUS and ${HotdeskExtension}\_PIN. This was done to simplify the example. We’re going to shorten the names of the variables here because the printed format can’t handle such long lines, so in the following examples, you’ll see “HE” in place of “HotdeskExtension.” If you’re going to code this example, please replace HE with HotdeskExtension:
+Это вернет значение, расположенное в базе данных в столбце `status`, где столбец `extension` равен `1101`. `status` и `1101`, которые мы передаем функции `HOTDESK_INFO()`, затем помещаются в инструкцию SQL, которую мы назначили атрибуту `readsql`, доступному как `${ARG1}` и `${ARG2}` соответственно. Если бы мы передавали третий параметр, то он был бы доступен как `${ARG3}`.
 
- same =&gt; n,Set\(${HE}\_STATUS=${HOTDESK\_INFO\(status,${HE}\)}\)
+После выполнения инструкции SQL возвращаемое значение (если оно есть) присваивается переменной канала `RETURNED_VALUE`.
 
- same =&gt; n,Set\(${HE}\_PIN=${HOTDESK\_INFO\(pin,${HE}\)}\)
+---
 
-As an alternative, we could have returned multiple columns and saved them to separate variables utilizing the ARRAY\(\) dialplan function. If we had defined our SQL statement in an func\_odbc.conf function like so:
+#### Использование функции ARRAY()
 
-readsql=SELECT pin,status FROM ast\_hotdesk WHERE extension = '${HE}'
+В нашем примере мы используем два отдельных вызова базы данных и присваиваем эти значения паре переменных канала: `${HotdeskExtension}_STATUS` и `${HotdeskExtension}_PIN`. Это было сделано для упрощения примера. Мы собираемся сократить имена переменных здесь, потому что печатный формат не может обрабатывать такие длинные строки, поэтому в следующих примерах вы увидите "HE" вместо "HotdeskExtension". Если вы собираетесь использовать этот пример, пожалуйста, замените `HE` расширением `HotdeskExtension`:
 
-we could have used the ARRAY\(\) function to save each column of information for the row to its own variable with a single call to the database \(note that we’re using an example function called HOTDESK\_INFO\(\), which we haven’t created\):
+```
+    same => n,Set(${HE}_STATUS=${HOTDESK_INFO(status,${HE})})
+    same => n,Set(${HE}_PIN=${HOTDESK_INFO(pin,${HE})})
+```
 
- same =&gt; n,Set\(ARRAY\(${HE}\_PIN,${HE}\_STATUS\)=${HOTDESK\_INFO\(${HE}\)}\)
+В качестве альтернативы мы могли бы вернуть несколько столбцов и сохранить их в отдельные переменные, используя функцию диалплана `Array()`. Если бы мы определили наш оператор SQL в функции `func_odbc.conf` следующим образом:
 
-Using ARRAY\(\) is handy any time you might get comma-separated values back and want to assign the values to separate variables, such as with CURL\(\). However, it can also make your code more complicated to read, debug, and maintain.
+```
+readsql=SELECT pin,status FROM ast_hotdesk WHERE extension = '${HE}'
+```
+
+мы могли бы использовать функцию `ARRAY()` для сохранения каждого столбца информации для строки в отдельной переменной с помощью одного вызова базы данных (обратите внимание, что мы используем пример функции с именем `HOTDESK_INFO()`, которую мы не создали):
+
+```
+     same => n,Set(ARRAY(${HE}_PIN,${HE}_STATUS)=${HOTDESK_INFO(${HE})})
+```
+
+Использование `ARRAY()` удобно в любое время, когда вы можете получить значения, разделенные запятыми, и хотите назначить значения отдельным переменным, например, с помощью `CURL()`. Однако это также может усложнить чтение, отладку и обслуживание кода.
+
+---
 
 So, in the first two lines of the following block of code, we are passing the value status and the value contained in the ${HotdeskExtension} variable \(e.g., 1101\) to the HOTDESK\_INFO\(\) function. The two values are then replaced in the SQL statement with ${ARG1} and ${ARG2}, respectively, and the SQL statement is executed. Finally, the value returned is assigned to the ${HotdeskExtension}\_STATUS channel variable.
 
