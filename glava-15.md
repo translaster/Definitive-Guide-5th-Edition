@@ -309,193 +309,160 @@ readsql=SELECT pin,status FROM ast_hotdesk WHERE extension = '${HE}'
 
 ---
 
-So, in the first two lines of the following block of code, we are passing the value status and the value contained in the ${HotdeskExtension} variable \(e.g., 1101\) to the HOTDESK\_INFO\(\) function. The two values are then replaced in the SQL statement with ${ARG1} and ${ARG2}, respectively, and the SQL statement is executed. Finally, the value returned is assigned to the ${HotdeskExtension}\_STATUS channel variable.
+Итак, в первых двух строках следующего блока кода мы передаем значение `status` и значение, содержащееся в переменной `${HotdeskExtension}` (например, `1101`) в функцию `HOTDESK_INFO()`. Затем эти два значения заменяются в инструкции SQL на `${ARG1}` и `${ARG2}` соответственно, и выполняется инструкция SQL. Наконец, возвращаемое значение присваивается переменной канала `${HotdeskExtension}_STATUS`.
 
-Let’s finish writing the pattern-match extension now:
+Давайте закончим писать расширение для сопоставления прямо сейчас:
 
-exten =&gt; \_\*99110\[1-5\],1,Noop\(Hotdesk login\)
+```
+exten => _*99110[1-5],1,Noop(Hotdesk login)
+  same => n,Set(HotdeskExtension=${EXTEN:3}) ; strip off the leading *99
+  same => n,Noop(Hotdesk Extension ${HotdeskExtension} is changing status) ; for the log
+  same => n,Set(${HotdeskExtension}_STATUS=${HOTDESK_INFO(status,${HotdeskExtension})})
+  same => n,Set(${HotdeskExtension}_PIN=${HOTDESK_INFO(pin,${HotdeskExtension})})
+  same => n,Noop(${HotdeskExtension}_PIN is now ${${HotdeskExtension}_PIN})
+  same => n,Noop(${HotdeskExtension}_STATUS is ${${HotdeskExtension}_STATUS})})
+  same => n,GotoIf($["${${HotdeskExtension}_PIN}" = ""]?invalid_user)
+  same => n,GotoIf($[${ODBCROWS} < 0]?invalid_user)
+  same => n,GotoIf($[${${HotdeskExtension}_STATUS} = 1]?logout:login,1)
+```
 
- same =&gt; n,Set\(HotdeskExtension=${EXTEN:3}\) ; strip off the leading \*99
+Мы напишем некоторые метки для обработки `invalid_user` и `logout` немного позже, поэтому не волнуйтесь, если вам кажется, что чего-то не хватает.
 
- same =&gt; n,Noop\(Hotdesk Extension ${HotdeskExtension} is changing status\) ; for the log
+---
 
- same =&gt; n,Set\(${HotdeskExtension}\_STATUS=${HOTDESK\_INFO\(status,${HotdeskExtension}\)}\)
+**Примечание**
 
- same =&gt; n,Set\(${HotdeskExtension}\_PIN=${HOTDESK\_INFO\(pin,${HotdeskExtension}\)}\)
+Возможно, вы заметили, что в некоторых примерах `Goto/GotoIf` в директиве может быть `1`. Это может показаться запутанным, если только вы не вспомните, что для цели нужна только разница между текущим `context,extension,priority/label`. Таким образом, если вы отправляете что-то на метку, например `logout`, которая находится в том же расширении, вам не нужно указывать контекст и расширение, тогда как если вы отправляете вызов на расширение с именем `login` (все еще в том же контексте), вам нужно указать, что вы хотите, чтобы вызов перешел на метку/приоритет `1`. В предыдущем примере мы могли бы записать нашу директиву следующим образом:
 
- same =&gt; n,Noop\(${HotdeskExtension}\_PIN is now ${${HotdeskExtension}\_PIN}\)
+```
+... = 1] ? hotdesk,${EXTEN},logout : hotdesk,login,1
+           ^same    ^same   ^diff    ^same   ^diff ^diff
+```
 
- same =&gt; n,Noop\(${HotdeskExtension}\_STATUS is ${${HotdeskExtension}\_STATUS}\)}\)
+Другими словами, `true` переводит к контексту `[hotdesk]`, расширению `99110[1-5]`, метке `logout`; а `false` - к контексту `[hotdesk]`, расширению `login` и метке/приоритету `1`.
 
- same =&gt; n,GotoIf\($\["${${HotdeskExtension}\_PIN}" = ""\]?invalid\_user\)
+Мы написали только то, что отличается.
 
- same =&gt; n,GotoIf\($\[${ODBCROWS} &lt; 0\]?invalid\_user\)
+Если хотите, для ясности вы всегда можете указывать `context,extension,priority` для всех ваших директив. Это Ваш выбор.
 
- same =&gt; n,GotoIf\($\[${${HotdeskExtension}\_STATUS} = 1\]?logout:login,1\)
+---
 
-We’ll be writing some labels to handle invalid\_user and logout a bit later, so don’t worry if it seems something is missing.
+После присвоения значения столбца `status` переменной `${HotdeskExtension}_STATUS` (если пользователь идентифицирует себя как расширение `1101`, имя переменной будет `1101_STATUS`), мы проверяем, получили ли значение обратно из базы данных, используя переменную канала `${ODBCROWS}`.
 
-**Note**
+Последняя строка блока проверяет состояние телефона и, если агент в данный момент вошел в систему, выводит его оттуда. Если агент еще не вошел в систему, он перейдет к расширению входа.
 
-You may have noticed that in some of the Goto/GotoIf examples, there might be a ,1 in the directive. This might seem confusing unless you recall that the target only needs the difference between the current context,extension,priority/label. So, if you send something to a label, such as logout, that is in the same extension, you don’t need to specify the context and extension, whereas if you are sending the call to the extension named login \(still in the same context\), you need to specify that you wish the call to go to label/priority 1. In the previous example, we could write our directive as follows:
+При расширении входа в систему диалплан выполняет некоторые начальные проверки для подтверждения PIN-кода, введенного агентом. (Кроме того, мы использовали функцию `FILTER()`, чтобы убедиться, что были введены только числа для избежания некоторых проблем с SQL-инъекцией.) Мы разрешаем три попытки введения правильного PIN-кода, и если все попытки недействительны - разрываем связь:
 
-... = 1\] ? hotdesk,${EXTEN},logout : hotdesk,login,1
+```
+exten => login,1,NoOp() ; set initial counter values
+   same => n,Set(PIN_TRIES=1)     ; pin tries counter
+   same => n,Set(MAX_PIN_TRIES=3) ; set max number of login attempts
+   same => n,Playback(silence/1)  ; play back some silence so first prompt is
+                                  ; not cut off
+   same => n(get_pin),NoOp()
+   same => n,Set(PIN_TRIES=$[${PIN_TRIES} + 1])   ; increase pin try counter
+   same => n,Read(PIN_ENTERED,enter-password,${LEN(${${HotdeskExtension}_PIN})})
+   same => n,Set(PIN_ENTERED=${FILTER(0-9,${PIN_ENTERED})})
+   same => n,GotoIf($["${PIN_ENTERED}" = "${${HotdeskExtension}_PIN}"]?valid:invalid)
+   same => n,Hangup()
 
- ^same ^same ^diff ^same ^diff ^diff
+   same => n(invalid),Playback(vm-invalidpassword)
+   same => n,GotoIf($[${PIN_TRIES} <= ${MAX_PIN_TRIES}]?get_pin)
+   same => n,Playback(goodbye)
+   same => n,Hangup()
 
-In other words, true goes to context \[hotdesk\], extension 99110\[1-5\], label logout; and false goes to context \[hotdesk\], extension login, and label/priority 1.
+   same => n(valid),Noop(Valid PIN)
+```
 
-We only wrote what’s different.
+Если введенный PIN-код совпадает, мы продолжаем процесс входа в систему через метку (`valid`). Сначала используем переменную `CHANNEL`, чтобы выяснить, с какого телефонного устройства звонит агент. Переменная `CHANNEL` обычно заполняется чем-то похожим на `PJSIP/HOTDESK_1-ab4034c`, поэтому мы используем функцию `CUT()` сперва для удаления части строки строки `PJSIP/`. Затем удаляем часть строки `-ab4034c`, и то, что остается, - это то, что мы хотим (`HOTDESK_1`): [5](5)
 
-If you want, for clarity, you can always write context,extension,priority for all your directives. It’s your call.
-
-After assigning the value of the status column to the ${HotdeskExtension}\_STATUS variable \(if the user identifies themself as extension 1101, the variable name will be 1101\_STATUS\), we check if we’ve received a value back from the database using the ${ODBCROWS} channel variable.
-
-The last row in the block checks the status of the phone and, if the agent is currently logged in, logs them off. If the agent is not already logged in, it will go to the login extension.
-
-At the login extension the dialplan runs some initial checks to verify the PIN code entered by the agent. \(Additionally, we’ve used the FILTER\(\) function to make sure only numbers were entered to help avoid some SQL injection issues.\) We allow them three tries to enter the correct PIN, and if all tries are invalid we’ll hang up:
-
-exten =&gt; login,1,NoOp\(\) ; set initial counter values
-
- same =&gt; n,Set\(PIN\_TRIES=1\) ; pin tries counter
-
- same =&gt; n,Set\(MAX\_PIN\_TRIES=3\) ; set max number of login attempts
-
- same =&gt; n,Playback\(silence/1\) ; play back some silence so first prompt is
-
- ; not cut off
-
- same =&gt; n\(get\_pin\),NoOp\(\)
-
- same =&gt; n,Set\(PIN\_TRIES=$\[${PIN\_TRIES} + 1\]\) ; increase pin try counter
-
- same =&gt; n,Read\(PIN\_ENTERED,enter-password,${LEN\(${${HotdeskExtension}\_PIN}\)}\)
-
- same =&gt; n,Set\(PIN\_ENTERED=${FILTER\(0-9,${PIN\_ENTERED}\)}\)
-
- same =&gt; n,GotoIf\($\["${PIN\_ENTERED}" = "${${HotdeskExtension}\_PIN}"\]?valid:invalid\)
-
- same =&gt; n,Hangup\(\)
-
- same =&gt; n\(invalid\),Playback\(vm-invalidpassword\)
-
- same =&gt; n,GotoIf\($\[${PIN\_TRIES} &lt;= ${MAX\_PIN\_TRIES}\]?get\_pin\)
-
- same =&gt; n,Playback\(goodbye\)
-
- same =&gt; n,Hangup\(\)
-
- same =&gt; n\(valid\),Noop\(Valid PIN\)
-
-If the PIN entered matches, we continue with the login process through the \(valid\) label. First we utilize the CHANNEL variable to figure out which phone device the agent is calling from. The CHANNEL variable is usually populated with something similar to PJSIP/HOTDESK\_1-ab4034c, so we make use of the CUT\(\) function to first strip off the PJSIP/ component of the string. We then strip off the -ab4034c part of the string, and what remains is what we want \(HOTDESK\_1\):[5](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405135064)
-
- same =&gt; n\(valid\),Noop\(Valid PIN\)
-
+```
+same => n(valid),Noop(Valid PIN)
 ; CUT off the channel technology and assign it to the LOCATION variable
-
- same =&gt; n,Set\(LOCATION=${CUT\(CHANNEL,/,2\)}\)
-
+same => n,Set(LOCATION=${CUT(CHANNEL,/,2)})
 ; CUT off the unique identifier and save the remainder to the LOCATION variable
-
- same =&gt; n,Set\(LOCATION=${CUT\(LOCATION,-,1\)}\)
-
+same => n,Set(LOCATION=${CUT(LOCATION,-,1)})
 ; we'll come back to this shortly
+```
 
-We’re going to create and use some more functions in the func\_odbc.conf file: HOTDESK\_CHECK\_SET\(\), which will determine if other users are already assigned to this phone; HOTDESK\_STATUS\(\), which will assign the phone to this agent; and HOTDESK\_CLEAR\_SET\(\), which will clear any other users currently assigned to this phone \(who perhaps forgot to log out\).
+Мы собираемся создать и использовать еще несколько функций в файле _func_odbc.conf_: `HOTDESK_CHECK_SET()`, которая определит, назначены ли уже другие пользователи этому телефону; `HOTDESK_STATUS()`, которая назначит телефон этому агенту; и `HOTDESK_CLEAR_SET()`, которая очистит всех других пользователей, назначенных в данный момент этому телефону (которые, возможно, забыли выйти из системы).
 
-In our func\_odbc.conf file we’ll need to create the following functions:
+В файле _func_odbc.conf_ нам нужно будет создать следующие функции:
 
-; func\_odbc.conf
-
-\[CHECK\_SET\]
-
+```
+; func_odbc.conf
+[CHECK_SET]
 prefix=HOTDESK
-
 dsn=asterisk
-
 synopsis=Check if this set is already assigned to somebody.
-
-readsql=SELECT COUNT\(status\) FROM pbx.ast\_hotdesk WHERE status = '1'
-
+readsql=SELECT COUNT(status) FROM pbx.ast_hotdesk WHERE status = '1'
 readsql+= AND endpoint = '${ARG1}'
 
-\[STATUS\]
-
+[STATUS]
 prefix=HOTDESK
-
 dsn=asterisk
-
 synopsis=Assign hotdesk extension to this endpoint/set.
+writesql=UPDATE pbx.ast_hotdesk SET status = '${SQL_ESC(${VAL1})}',
+writesql+= endpoint = '${SQL_ESC(${VAL2})}'
+writesql+= WHERE extension = '${SQL_ESC(${ARG1})}'
 
-writesql=UPDATE pbx.ast\_hotdesk SET status = '${SQL\_ESC\(${VAL1}\)}',
-
-writesql+= endpoint = '${SQL\_ESC\(${VAL2}\)}'
-
-writesql+= WHERE extension = '${SQL\_ESC\(${ARG1}\)}'
-
-\[CLEAR\_SET\]
-
+[CLEAR_SET]
 prefix=HOTDESK
-
 dsn=asterisk
-
 synopsis=Clear all instances of this endpoint
+writesql=  UPDATE pbx.ast_hotdesk SET status=0,endpoint=NULL
+writesql+= WHERE endpoint='${SQL_ESC(${VAL1})}'
+```
+---
 
-writesql= UPDATE pbx.ast\_hotdesk SET status=0,endpoint=NULL
+**Подсказка**
 
-writesql+= WHERE endpoint='${SQL\_ESC\(${VAL1}\)}'
+Из-за ограничений длины строк в книге мы разбили команды `readsql` и `writesql` на несколько строк, используя синтаксис `+=`, который говорит Asterisk добавлять содержимое после `readsql+=` к самому последнему определенному значению `readsql=` (или `writesql` и `writesql+`). Использование `+=` применимо не только к опции `readsql`, но и может использоваться в других местах в других файлах _.conf_ внутри Asterisk.
 
-**Tip**
+---
 
-Due to line-length limitations in the book, we’ve broken the readsql and writesql commands into multiple lines using the += syntax, which tells Asterisk to append the contents after readsql+= to the most recently defined readsql= value \(or writesql and writesql+\). The usage of += is applicable not only to the readsql option, but can be used in other places in other .conf files within Asterisk.
+В нашем диалплане нам нужно будет вызвать функцию, которую мы только что создали, и передать поток вызовов метке `forcelogout`, если кто-то уже вошел в это устройство:
 
-In our dialplan, we’ll need to call the function we just created, and pass call flow to the forcelogout label if somebody is already logged into this set:
-
- same =&gt; n\(valid\),Noop\(Valid PIN\)
-
- same =&gt; n,Set\(LOCATION=${CUT\(CHANNEL,/,2\)}\)
-
- same =&gt; n,Set\(LOCATION=${CUT\(LOCATION,-,1\)}\)
-
+```
+    same => n(valid),Noop(Valid PIN)
+    same => n,Set(LOCATION=${CUT(CHANNEL,/,2)})
+    same => n,Set(LOCATION=${CUT(LOCATION,-,1)})
 ; We'll come back to this shortly ; you can remove this comment/line
+    same => n(checkset),Set(SET_USED=${HOTDESK_CHECK_SET(${LOCATION})})
+    same => n,GotoIf($[${SET_USED} > 0]?forcelogout)
 
- same =&gt; n\(checkset\),Set\(SET\_USED=${HOTDESK\_CHECK\_SET\(${LOCATION}\)}\)
+; Set status for agent  to '1' and update the location/endpoint
+    same => n(set_login_status),Set(HOTDESK_STATUS(${HotdeskExtension})=1,${LOCATION})
+    same => n,Noop(ODBCROWS is ${ODBCROWS})
+    same => n,GotoIf($[${ODBCROWS} < 1]?error,1)
+    same => n,Playback(agent-loginok)
+    same => n,Hangup()
 
- same =&gt; n,GotoIf\($\[${SET\_USED} &gt; 0\]?forcelogout\)
-
-; Set status for agent to '1' and update the location/endpoint
-
- same =&gt; n\(set\_login\_status\),Set\(HOTDESK\_STATUS\(${HotdeskExtension}\)=1,${LOCATION}\)
-
- same =&gt; n,Noop\(ODBCROWS is ${ODBCROWS}\)
-
- same =&gt; n,GotoIf\($\[${ODBCROWS} &lt; 1\]?error,1\)
-
- same =&gt; n,Playback\(agent-loginok\)
-
- same =&gt; n,Hangup\(\)
-
- same =&gt; n\(forcelogout\),NoOp\(\)
-
+    same => n(forcelogout),NoOp()
 ; set all currently logged-in users on this device to logged-out status
+    same => n,Set(HOTDESK_CLEAR_SET()=${LOCATION})
+    same => n,Goto(checkset)      ; return to logging in
+```
 
- same =&gt; n,Set\(HOTDESK\_CLEAR\_SET\(\)=${LOCATION}\)
+Есть некоторые потенциально новые концепции, которые мы только что представили в примерах. В частности, синтаксис функции `HOTDESK_STATUS()` содержит несколько новых трюков, которые вы могли заметить. Теперь у нас есть переменные `${Valx}` и `${ARGx}` в нашем операторе SQL.
 
- same =&gt; n,Goto\(checkset\) ; return to logging in
+---
 
-There are some potentially new concepts we’ve just introduced in the examples. Specifically, the syntax in the HOTDESK\_STATUS\(\) function has a few new tricks you might have noticed. We now have both ${VALx} and ${ARGx} variables in our SQL statement.
+**Примечание**
 
-**Note**
+Мы также завернули значения `${Valx}` и `${ARGx}` в функцию `SQL_ESC()`, которая будет экранировать символы, такие как обратные кавычки, которые могут быть использованы в атаке SQL-инъекцией.
 
-We’ve wrapped the ${VALx} and ${ARGx} values in the SQL\_ESC\(\) function as well, which will escape characters such as backticks that could be used in an SQL injection attack.
+---
 
-These contain the information we pass to the function from the dialplan. In this case, we have two VAL variables and a single ARG variable that were set from the dialplan via this statement:
+Они содержат информацию, которую мы передаем функции из диалплана. В этом случае у нас есть две переменные `VAL` и одна переменная `ARG`, которые были установлены из диалплана с помощью этого оператора:
 
-same =&gt; n\(set\_login\_status\),Set\(HOTDESK\_STATUS\(${HotdeskExtension}\)=1,${LOCATION}\)
+```
+same => n(set_login_status),Set(HOTDESK_STATUS(${HotdeskExtension})=1,${LOCATION})
+```
 
-Notice the syntax is slightly different from that of the read-style function. This signals to Asterisk that you want to perform a write \(this is the same structural syntax as that used for other dialplan functions\).
+Обратите внимание, что синтаксис немного отличается от синтаксиса функции чтения. Это сигнализирует Asterisk, что вы хотите выполнить запись (это тот же структурный синтаксис, что и для других функций диалплана).
 
-We are including the value of the ${HotdeskExtension} variable in our call to the HOTDESK\_STATUS\(\) function \(which then becomes the ${ARG1} variable for that function in func\_odbc.conf\). However, we are also passing two values, '1' and ${LOCATION}. These will be associated in the function by the ${VAL1} and ${VAL2} variables, respectively.
+Мы включаем значение переменной `${HotdeskExtension}` в наш вызов функции `HOTDESK_STATUS()` (которая затем становится переменной `${ARG1}` для этой функции в _func_odbc.conf_). Однако мы также передаем два значения, '`1`' и `${LOCATION}`. Они будут связаны в функции переменными `${VAL1}` и `${VAL2}` соответственно.
 
 #### Using SQL Directly in Your Dialplan
 
