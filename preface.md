@@ -24,7 +24,7 @@ Asterisk может показаться довольно пугающим и с
 
 ## Условные обозначения используемые в книге
 
-В этой книге используются следующие типографские условные обозначения: 
+В этой книге используются следующие типографские условные обозначения:
 
 _Курсив_
 
@@ -50,23 +50,29 @@ _`{ вариант-1 | вариант-2 }`_
 
 Означает _`вариант-1`_ или _`вариант-2`_.
 
-{% hint style="info" %}
+---
+
 **Подсказка**
 
 Этот элемент означает подсказку или предложение.
-{% endhint %}
 
-{% hint style="success" %}
+---
+
+---
+
 **Примечания**
 
 Этот элемент обозначает общую заметку.
-{% endhint %}
 
-{% hint style="warning" %}
+---
+
+---
+
 **Предупреждение**
 
 Этот элемент указывает на предупреждение или предостережение.
-{% endhint %}
+
+---
 
 ## O’Reilly Online Learning
 
@@ -83,11 +89,11 @@ Please address comments and questions concerning this book to the publisher:
 * O’Reilly Media, Inc.
 * 1005 Gravenstein Highway North
 * Sebastopol, CA 95472
-* 800-998-9938 \(in the United States or Canada\)
-* 707-829-0515 \(international or local\)
-* 707-829-0104 \(fax\)
+* 800-998-9938 (in the United States or Canada)
+* 707-829-0515 (international or local)
+* 707-829-0104 (fax)
 
-We have a web page for this book, where we list errata, examples, and any additional information. You can access this page at [_https://oreil.ly/asterisk\_tdg\_5E_](https://oreil.ly/asterisk_tdg_5E).
+We have a web page for this book, where we list errata, examples, and any additional information. You can access this page at [_https://oreil.ly/asterisk_tdg_5E_](https://oreil.ly/asterisk_tdg_5E).
 
 To comment or ask technical questions about this book, send email to [_bookquestions@oreilly.com_](mailto:bookquestions@oreilly.com).
 
@@ -118,4 +124,3 @@ Thomas Cameron of RedHat generously shared his knowledge of Selinux with me, and
 Everyone in the Asterisk community also needs to thank the late Jim Dixon for creating the first open source telephony hardware interfaces, starting the revolution, and giving his creations to the community at large.
 
 Finally, and most importantly, thanks go to Mark Spencer, the original author of Asterisk and founder of Digium, for Asterisk, for [Pidgin](http://www.pidgin.im/), and for contributing his creations to the open source community. Asterisk is your legacy!
-
