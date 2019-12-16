@@ -65,7 +65,7 @@ Asterisk также предлагает собственные коннекто
 
 ---
 
-![](.gitbook/assets/pic15-1.png)
+![](/pics/pic15-1.png)
 
 _Рисунок 15-1. Отношения между func_odbc.conf, res_odbc.conf, /etc/odbc.ini (unixODBC) и подключением к базе данных_
 
@@ -470,13 +470,13 @@ Some people would prefer to write their SQL statements in the dialplan directly,
 
 In theory, you could create just one function in func\_odbc.conf like this:
 
-\[SQL\]
+[SQL]
 
 prefix=GENERIC
 
 dsn=asterisk
 
-readsql=${SQL\_ESC\(${ARG1}\)}
+readsql=${SQL_ESC\(${ARG1})}
 
 writesql=${SQL\_ESC\(${VALUE}\)} ; Whole value, un-parsed
 
