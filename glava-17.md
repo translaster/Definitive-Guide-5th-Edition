@@ -24,7 +24,7 @@ Create the following file in your home directory:
 
 $ vim ~/call-file
 
-Channel: PJSIP/SOFTPHONE\_A
+Channel: PJSIP/SOFTPHONE_A
 
 Extension: 103
 
@@ -135,7 +135,7 @@ Trying 127.0.0.1...
 
 Connected to localhost.
 
-Escape character is '^\]'.
+Escape character is '^]'.
 
 Asterisk Call Manager/4.0.3
 
@@ -243,19 +243,19 @@ There are two main types of messages on the Asterisk Manager Interface: manager 
 
 Manager events are one-way messages sent from Asterisk to AMI clients to report something that has occurred on the system \([Figure 17-1](17.%20Asterisk%20Manager%20Interface%20and%20Call%20Files%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AMI-fig-events)\).
 
-![](.gitbook/assets/0.png)
+![](/pics/pic17-1.png)
 
 **Figure 17-1. Manager events**
 
 Manager actions are requests from a client to Asterisk to perform some action and return the result \([Figure 17-2](17.%20Asterisk%20Manager%20Interface%20and%20Call%20Files%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AMI-fig-actions)\). For example, the AMI action Originate requests that Asterisk create a new call, and naturally the client application will need responses from Asterisk to indicate the progress of that activity.
 
-![](.gitbook/assets/1%20%284%29.png)
+![](/pics/pic17-2.png)
 
 **Figure 17-2. Manager actions**
 
 Other manager actions are requests for data. For example, there is a manager action to get a list of all active channels on the system: the details about each channel are delivered as a manager event. When the list of results is complete, a final message will be sent to indicate that the end has been reached. See [Figure 17-3](17.%20Asterisk%20Manager%20Interface%20and%20Call%20Files%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AMI-fig-actions2) for a graphical representation of a client sending this type of manager action and receiving a list of responses.
 
-![](.gitbook/assets/2%20%281%29.png)
+![](/pics/pic17-3.png)
 
 **Figure 17-3. Manager actions that return a list of data**
 
