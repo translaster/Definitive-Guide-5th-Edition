@@ -464,37 +464,38 @@ same => n(set_login_status),Set(HOTDESK_STATUS(${HotdeskExtension})=1,${LOCATION
 
 Мы включаем значение переменной `${HotdeskExtension}` в наш вызов функции `HOTDESK_STATUS()` (которая затем становится переменной `${ARG1}` для этой функции в _func_odbc.conf_). Однако мы также передаем два значения, '`1`' и `${LOCATION}`. Они будут связаны в функции переменными `${VAL1}` и `${VAL2}` соответственно.
 
-#### Using SQL Directly in Your Dialplan
+---
 
-Some people would prefer to write their SQL statements in the dialplan directly, as opposed to crafting a custom function for each type of database transaction they might want to perform.
+**Использование SQL непосредственно в диалплане**
 
-In theory, you could create just one function in func\_odbc.conf like this:
+Некоторые предпочитают писать свои SQL-операторы непосредственно в диалплане, а не создавать пользовательскую функцию для каждого типа транзакции базы данных, которую они могут захотеть выполнить.
 
+Теоретически, вы можете создать только одну функцию в _func_odbc.conf_ как эта:
+
+```
 [SQL]
-
 prefix=GENERIC
-
 dsn=asterisk
+readsql=${SQL_ESC(${ARG1})}
+writesql=${SQL_ESC(${VALUE})} ; Целое значение, необработанное
+```
+Затем в диалплане вы можете написать практически любой тип SQL, который захотите (при условии, что ODBC-коннектор может обрабатывать его, что не имеет никакого отношения к Asterisk). Эта функция выше затем отправит любую строку, которую вы указали непосредственно в соединение ODBC с вашей базой данных.[^6](6)
 
-readsql=${SQL_ESC\(${ARG1})}
+Некоторые утверждают, что это приводит к большей путанице в вашем диалплане; другие будут настаивать на том, что преимущество наличия гораздо более простого _func_odbc.conf_ стоит того:
+```
+ same => n,Set(result=${GENERIC_SQL(SELECT col FROM table WHERE ...)})
+ same => n,Verbose(1,${result})
 
-writesql=${SQL\_ESC\(${VALUE}\)} ; Whole value, un-parsed
+ same => n,Set(GENERIC_SQL()=UPDATE table SET field="VAL" WHERE ...)
+ same => n,Verbose(1,ODBC_RESULT is ${OBDBC_RESULT})
+```
+Мы считаем, что в целом лучше создавать конкретные функции в _func_odbc.conf_ для обработки запросов из вашего диалплана; тем не менее, нет никакого соблазна использовать одну функцию для обработки всех запросов SQL.
 
-Then, in your dialplan you could write pretty much any sort of SQL you wanted \(provided the ODBC connector could handle it, which has nothing to do with Asterisk\). That one function above would then submit whatever string you specified directly to the ODBC connection to your database.[6](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405097368)
+---
 
-Some would argue this makes for more confusion in your dialplan; others will insist that the benefit of having a much simpler func\_odbc.conf file is worth it:
+---
 
- same =&gt; n,Set\(result=${GENERIC\_SQL\(SELECT col FROM table WHERE ...\)}\)
-
- same =&gt; n,Verbose\(1,${result}\)
-
- same =&gt; n,Set\(GENERIC\_SQL\(\)=UPDATE table SET field="VAL" WHERE ...\)
-
- same =&gt; n,Verbose\(1,ODBC\_RESULT is ${OBDBC\_RESULT}\)
-
-We believe it’s generally better to build specific functions in func\_odbc.conf to handle queries from your dialplan; however, there’s no denying the temptation to use one function to handle all SQL queries.
-
-#### Multirow Functionality with func\_odbc
+#### Multirow Functionality with func_odbc
 
 Asterisk has a multirow mode that allows it to handle multiple rows of data returned from the database. For example, if we were to create a dialplan function in func\_odbc.conf that returned all available extensions, we would need to enable multirow mode for the function. This would cause the function to work a little differently, returning an ID number that could then be passed to the ODBC\_FETCH\(\) function to return each row in turn.
 
@@ -1179,3 +1180,5 @@ In this chapter, you learned about several areas where Asterisk can integrate wi
 [10](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178404930968-marker) You may see different backends registered, depending on what configuration you have done with other components of the various CDR modules.
 
 [11](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178404879016-marker) Note that we’re creating this table in our pbx schema, rather than the asterisk schema, and that is because this is not a table that comes with Asterisk, but instead one we’re creating ourselves. We recommend letting Asterisk and Alembic have exclusive control over the asterisk schema, and using a custom schema \(such as pbx\) for anything custom we might create.
+
+[Глава 14. Автосекретарь](glava-14.md)      [Глава 16. Введение в интерактивное голосовое меню](glava-16.md)
