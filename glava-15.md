@@ -1181,4 +1181,4 @@ In this chapter, you learned about several areas where Asterisk can integrate wi
 
 [11](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178404879016-marker) Note that we’re creating this table in our pbx schema, rather than the asterisk schema, and that is because this is not a table that comes with Asterisk, but instead one we’re creating ourselves. We recommend letting Asterisk and Alembic have exclusive control over the asterisk schema, and using a custom schema \(such as pbx\) for anything custom we might create.
 
-[Глава 14. Автосекретарь](glava-14.md)      [Глава 16. Введение в интерактивное голосовое меню](glava-16.md)
+[Глава 14. Автосекретарь](glava-14.md)    |   [Глава 16. Введение в интерактивное голосовое меню](glava-16.md)
