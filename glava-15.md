@@ -495,248 +495,178 @@ writesql=${SQL_ESC(${VALUE})} ; Целое значение, необработ�
 
 ---
 
-#### Multirow Functionality with func_odbc
+#### Многорядная функциональность с func_odbc
 
-Asterisk has a multirow mode that allows it to handle multiple rows of data returned from the database. For example, if we were to create a dialplan function in func\_odbc.conf that returned all available extensions, we would need to enable multirow mode for the function. This would cause the function to work a little differently, returning an ID number that could then be passed to the ODBC\_FETCH\(\) function to return each row in turn.
+Asterisk имеет многорядный режим, который позволяет ему обрабатывать несколько строк данных, возвращаемых из базы данных. Например, если бы мы создали функцию диалплана в _func_odbc.conf_, которая возвращает все доступные расширения, нам нужно было бы включить режим мультистрочности для функции. Это заставило бы функцию работать немного по-другому, возвращая идентификационный номер, который затем можно было бы передать функции `ODBC_FETCH()` для возврата каждой строки по очереди.
 
-A simple example follows. Suppose we have the following func\_odbc.conf:
-
-\[AVAILABLE\_EXTENS\]
-
+Далее следует простой пример. Предположим, что у нас есть следующий _func_odbc.conf_:
+```
+[AVAILABLE_EXTENS]
 prefix=HOTDESK
-
 dsn=asterisk
-
 mode=multirow
-
-readsql=SELECT extension FROM ast\_hotdesk WHERE status = '${ARG1}'
-
-and a dialplan in extensions.conf that looks something like this:
-
-exten =&gt; \*9997,1,Noop\(multirow\)
-
- same =&gt; n,Set\(ODBC\_ID=${HOTDESK\_AVAILABLE\_EXTENS\(\)}\)
-
- same =&gt; n,GotoIf\($\[${ODBCROWS} &lt; 1\]?no\_rows\)
-
- same =&gt; n,Answer\(\)
-
- same =&gt; n,Set\(COUNTER=1\)
-
- same =&gt; n,While\($\[${COUNTER} &lt;= ${ODBCROWS}\]\)
-
- same =&gt; n,Set\(AVAIL\_EXTEN\_${COUNTER}=${ODBC\_FETCH\(${ODBC\_ID}\)}\)
-
- same =&gt; n,SayDigits\(${AVAIL\_EXTEN\_${COUNTER}}\)
-
- same =&gt; n,Wait\(0.2\) ; Pause between speaking
-
- same =&gt; n,Set\(COUNTER=$\[${COUNTER} + 1\]\)
-
- same =&gt; n,EndWhile\(\)
-
- same =&gt; n\(norows\),ODBCFinish\(\)
-
- same =&gt; n,Hangup\(\)
-
-Note that unless you have multiple endpoints to log in, this will never return more than one extension in your lab because only one device will be logged in at any time. You can add some dummy data to the table just to see how this works:
-
-MySQL&gt; UPDATE pbx.ast\_hotdesk
-
- SET status='1',endpoint='HOTDESK\_2'
-
- WHERE id='3'
-
- ;
-
-MySQL&gt; UPDATE pbx.ast\_hotdesk
-
- SET status='1',endpoint='HOTDESK\_3'
-
- WHERE id='5'
-
- ;
-
-The ODBC\_FETCH\(\) function will essentially treat the information as a stack, and each call to it with the passed ODBC\_ID will pop the next row of information off the stack. We also have the option of using the ODBC\_FETCH\_STATUS channel variable, which is set once the ODBC\_FETCH\(\) function \(which returns SUCCESS if additional rows are available or FAILURE if no additional rows are available\) is called. This permits us to write a dialplan like the following, which does not use a counter, but still loops through the data. This may be useful if we’re looking for something specific and don’t need to look at all the data. Once we’re done, the ODBCFinish\(\) dialplan application should be called to clean up any remaining data.
-
-Here’s another extensions.conf example:
-
-\[multirow\_example\_2\]
-
-exten =&gt; start,1,Verbose\(1,Looping example with break\)
-
- same =&gt; n,Set\(ODBC\_ID=${GET\_ALL\_AVAIL\_EXTENS\(1\)}\)
-
- same =&gt; n\(loop\_start\),NoOp\(\)
-
- same =&gt; n,Set\(ROW\_RESULT=${ODBC\_FETCH\(${ODBC\_ID}\)}\)
-
- same =&gt; n,GotoIf\($\["${ODBC\_FETCH\_STATUS}" = "FAILURE"\]?cleanup,1\)
-
- same =&gt; n,GotoIf\($\["${ROW\_RESULT}" = "1104"\]?good\_exten,1\)
-
- same =&gt; n,Goto\(loop\_start\)
-
-exten =&gt; cleanup,1,Verbose\(1,Cleaning up after all iterations\)
-
- same =&gt; n,Verbose\(1,We did not find the extension we wanted\)
-
- same =&gt; n,ODBCFinish\(${ODBC\_ID}\)
-
- same =&gt; n,Hangup\(\)
-
-exten =&gt; good\_exten,1,Verbose\(1,Extension we want is available\)
-
- same =&gt; n,ODBCFinish\(${ODBC\_ID}\)
-
- same =&gt; n,Verbose\(1,Perform some action we wanted\)
-
- same =&gt; n,Hangup\(\)
-
-OK, we’ve digressed a bit. Let’s wrap up a few parts of the agent components that we haven’t handled yet.
-
-In the \_\*99110\[1-5\] extension, we need the following labels:
-
- same =&gt; n,GotoIf\($\[${${HotdeskExtension}\_STATUS} = 1\]?logout:login,1\)
-
- same =&gt; n\(invalid\_user\),Noop\(Hot Desk extension ${HotdeskExtension} does not exist\)
-
- same =&gt; n,Playback\(silence/2&login-fail\)
-
- same =&gt; n,Hangup\(\)
-
- same =&gt; n\(logout\),Noop\(\)
-
- same =&gt; n,Set\(HOTDESK\_STATUS\(${HotdeskExtension}\)=0,\) ; Note VAL2 is empty
-
- same =&gt; n,GotoIf\($\[${ODBCROWS} &lt; 1\]?error,1\)
-
- same =&gt; n,Playback\(silence/1&agent-loggedoff\)
-
- same =&gt; n,Hangup\(\)
-
-We also include the hotdesk\_outbound context, which will handle our outgoing calls after we have logged the agent into the system:
-
-include =&gt; hotdesk\_outbound ; this line can go anywhere in the \[hotdesk\] context
-
-The \[hotdesk\_outbound\] context utilizes many of the same principles already discussed. This context uses a pattern match to catch any numbers dialed from the hot-desk phones. We first set our LOCATION variable using the CHANNEL variable, then determine which extension \(agent\) is logged into the system and assign that value to the WHO variable. If this variable is NULL, we reject the outgoing call. If it is not NULL, then we get the agent information using the HOTDESK\_INFO\(\) function and assign it to several CHANNEL variables.
-
-include =&gt; hotdesk\_outbound
-
-; put this code right below your \[hotdesk\] context
-
-\[hotdesk\_outbound\]
-
-exten =&gt; \_NXXXXXX.,1,NoOp\(\)
-
- same =&gt; n,Set\(LOCATION=${CUT\(CHANNEL,/,2\)}\)
-
- same =&gt; n,Set\(LOCATION=${CUT\(LOCATION,-,1\)}\)
-
- same =&gt; n\(checkset\),Set\(VALID\_AGENT=${HOTDESK\_CHECK\_SET\(${LOCATION}\)}\)
-
- same =&gt; n,Noop\(VALID\_AGENT is ${VALID\_AGENT}\)
-
- same =&gt; n,Set\(${CALLERID\(name\)}=${HOTDESK\_INFO\(cid\_name,${VALID\_AGENT}\)}\)
-
- same =&gt; n,Set\(${CALLERID\(num\)}=${HOTDESK\_INFO\(cid\_number,${VALID\_AGENT}\)}\)
-
- same =&gt; n,GotoIf\($\[${VALID\_AGENT} = 0\]?notallowed\) ; Nobody logged in--calls not allowed
-
- same =&gt; n,Dial\(${LOCAL}/${EXTEN}\) ; See the Outside Connectivity chapter
-
- same =&gt; n,Hangup\(\)
-
- same =&gt; n\(notallowed\),Playback\(sorry-cant-let-you-do-that2\)
-
- same =&gt; n,Hangup\(\)
-
-If you are not logged in, the call will fail with a message. If you are logged in, the call will be passed to the Dial\(\) application \(which might also fail if you don’t have a carrier configured, but that’s something covered in earlier chapters, so we’re going to leave it as this for this section\).
-
-There’s one last bit of dialplan required. We have built this complex environment that lets our agents log in and out, but there isn’t actually any way of calling them!
-
-We’re going to fix that now, by doing four things:
-
-1. We’re going to include the \[sets\] context in the \[hotdesk\] context, so that our agents can use the other parts of our dialplan.
-2. We’re going to give our agents mailboxes.
-3. We’re going to create a new subroutine that will check the hotdesk for an agent, and a\) ring them if they’re there, or b\) fire the call off to voicemail if they’re not.
-4. We’re going to build dialplan in the \[sets\] context so that everyone can call our agents.
-
-Let’s get the mailboxes out of the way first:
-
-MySQL&gt; insert into \`asterisk\`.\`voicemail\`
-
-\(mailbox,fullname,context,password\)
-
+readsql=SELECT extension FROM ast_hotdesk WHERE status = '${ARG1}'
+```
+и диалплан в _extensions.conf_, выглядящий примерно так:
+```
+exten => *9997,1,Noop(multirow)
+ same => n,Set(ODBC_ID=${HOTDESK_AVAILABLE_EXTENS()})
+ same => n,GotoIf($[${ODBCROWS} < 1]?no_rows)
+ same => n,Answer()
+ same => n,Set(COUNTER=1)
+ same => n,While($[${COUNTER} <= ${ODBCROWS}])
+   same => n,Set(AVAIL_EXTEN_${COUNTER}=${ODBC_FETCH(${ODBC_ID})})
+   same => n,SayDigits(${AVAIL_EXTEN_${COUNTER}})
+   same => n,Wait(0.2) ; Pause between speaking
+   same => n,Set(COUNTER=$[${COUNTER} + 1])
+ same => n,EndWhile()
+ same => n(norows),ODBCFinish()
+ same => n,Hangup()
+```
+Обратите внимание, что если у вас нет нескольких конечных точек для входа в систему, это никогда не вернет более одного расширения в вашей лаборатории, потому что только одно устройство будет входить в систему в любое время. Вы можете добавить некоторые фиктивные данные в таблицу, чтобы просто посмотреть, как это работает:
+```
+MySQL> UPDATE pbx.ast_hotdesk
+       SET status='1',endpoint='HOTDESK_2'
+       WHERE id='3'
+       ;
+MySQL> UPDATE pbx.ast_hotdesk
+       SET status='1',endpoint='HOTDESK_3'
+       WHERE id='5'
+       ;
+```
+Функция `ODBC_FETCH()` по существу будет обрабатывать информацию как стек, и каждый вызов к ней с переданным `ODBC_ID` будет выводить следующую строку информации из стека. У нас также есть возможность использовать переменную канала `ODBC_FETCH_STATUS`, которая устанавливается после вызова функции `ODBC_FETCH()` (которая возвращает `SUCCESS` - если доступны дополнительные строки, или `FAILURE` - если нет дополнительных строк). Это позволяет нам написать диалплан, подобный приведенному ниже, использующий счетчик, но все же циклически перебирающий данные. Это может быть полезно, если мы ищем что-то конкретное и не нужно просматривать все данные. Как только мы закончим, приложение диалплана `ODBCFinish()` должно быть вызвано для очистки всех оставшихся данных.
+
+Вот еще один пример _extensions.conf_:
+```
+[multirow_example_2]
+exten => start,1,Verbose(1,Looping example with break)
+   same => n,Set(ODBC_ID=${GET_ALL_AVAIL_EXTENS(1)})
+   same => n(loop_start),NoOp()
+   same => n,Set(ROW_RESULT=${ODBC_FETCH(${ODBC_ID})})
+   same => n,GotoIf($["${ODBC_FETCH_STATUS}" = "FAILURE"]?cleanup,1)
+   same => n,GotoIf($["${ROW_RESULT}" = "1104"]?good_exten,1)
+   same => n,Goto(loop_start)
+
+exten => cleanup,1,Verbose(1,Cleaning up after all iterations)
+   same => n,Verbose(1,We did not find the extension we wanted)
+   same => n,ODBCFinish(${ODBC_ID})
+   same => n,Hangup()
+
+exten => good_exten,1,Verbose(1,Extension we want is available)
+   same => n,ODBCFinish(${ODBC_ID})
+   same => n,Verbose(1,Perform some action we wanted)
+   same => n,Hangup()
+```
+
+---
+
+Ладно, мы немного отклонились от темы. Давайте завершим несколько частей компонентов агента, которые еще не обработали.
+
+В расширении `_*99110[1-5]` нам нужны следующие метки:
+```
+  same => n,GotoIf($[${${HotdeskExtension}_STATUS} = 1]?logout:login,1)
+
+  same => n(invalid_user),Noop(Hot Desk extension ${HotdeskExtension} does not exist)
+  same => n,Playback(silence/2&login-fail)
+  same => n,Hangup()
+
+  same => n(logout),Noop()
+  same => n,Set(HOTDESK_STATUS(${HotdeskExtension})=0,) ; Note VAL2 is empty
+  same => n,GotoIf($[${ODBCROWS} < 1]?error,1)
+  same => n,Playback(silence/1&agent-loggedoff)
+  same => n,Hangup()
+```
+Мы также включаем контекст `hotdesk_outbound`, который будет обрабатывать исходящие вызовы после того, как мы зарегистрируем агента в системе:
+```
+include => hotdesk_outbound ; эта строка может быть в любом месте контекста [hotdesk]
+```
+Контекст `[hot desk_outbound]` использует многие из тех же принципов, которые уже обсуждались. Он использует совпадение шаблонов для перехвата любых номеров, набранных с телефонов горячей линии. Сначала мы устанавливаем нашу переменную  `LOCATION` с помощью переменной `CHANNEL`, затем определяем какое расширение (агент) зарегистрировано в системе и присваиваем это значение переменной `WHO`. Если эта переменная имеет значение `NULL`, мы отклоняем исходящий вызов. Если оно не равно `NULL`, то мы получаем информацию об агенте с помощью функции `HOTDECK_INFO()` и присваиваем ее нескольким переменным `CHANNEL`.
+```
+include => hotdesk_outbound
+
+; put this code right below your [hotdesk] context
+[hotdesk_outbound]
+exten => _NXXXXXX.,1,NoOp()
+ same => n,Set(LOCATION=${CUT(CHANNEL,/,2)})
+ same => n,Set(LOCATION=${CUT(LOCATION,-,1)})
+ same => n(checkset),Set(VALID_AGENT=${HOTDESK_CHECK_SET(${LOCATION})})
+ same => n,Noop(VALID_AGENT is ${VALID_AGENT})
+ same => n,Set(${CALLERID(name)}=${HOTDESK_INFO(cid_name,${VALID_AGENT})})
+ same => n,Set(${CALLERID(num)}=${HOTDESK_INFO(cid_number,${VALID_AGENT})})
+ same => n,GotoIf($[${VALID_AGENT} = 0]?notallowed) ; Nobody logged in--calls not allowed
+ same => n,Dial(${LOCAL}/${EXTEN}) ; See the Outside Connectivity chapter
+ same => n,Hangup()
+
+ same => n(notallowed),Playback(sorry-cant-let-you-do-that2)
+ same => n,Hangup()
+```
+Если вы не вошли в систему, вызов завершится ошибкой с сообщением. Если вы вошли в систему, вызов будет передан приложению `Dial()` (которое также может завершиться неудачей, если у вас нет настроенного оператора связи, но это описывается в предыдущих главах, поэтому мы оставим это в том разделе).
+
+Нам требуется еще один последний бит диалплана. Мы создали эту сложную среду, которая позволяет нашим агентам входить и выходить, но на самом деле нет никакого способа вызвать их!
+
+Мы собираемся исправить это сейчас, сделав четыре вещи:
+
+1. Мы собираемся включить контекст `[sets]` в контекст `[hotdesk]`, чтобы наши агенты могли использовать другие части нашего диалплана.
+2. Мы собираемся дать нашим агентам почтовые ящики.
+3. Мы создадим новую подпрограмму, которая будет проверять службу поддержки на наличие агента и a) звонить им, если они там есть, или b) отправлять вызов на голосовую почту, если их нет.
+4. Мы собираемся построить диалплан в контексте `[sets]`, чтобы каждый мог позвонить нашим агентам.
+
+Давайте сначала уберем почтовые ящики:
+```
+MySQL> insert into `asterisk`.`voicemail`
+(mailbox,fullname,context,password)
 VALUES
+('1101','Herb Tarlek','default','110111'),
+('1102','Al Bundy','default','110222'),
+('1103','Willy Loman','default','110333'),
+('1104','Jerry Lundegaard','default','110444'),
+('1105','Moira Brown','default','110555');
+```
+Вся остальная работа заключается в _extensions.conf_:
 
-\('1101','Herb Tarlek','default','110111'\),
+Далеко внизу, в самом низу, давайте создадим подпрограмму, которая будет обрабатывать все для нас:
+```
+[subDialHotdeskUser]
+exten => _[a-zA-Z0-9].,1,Noop(Call Hotdesk)
+ same => n,Set(HOTDESK_ENDPOINT=${HOTDESK_INFO(endpoint,${EXTEN})}) ; Get assigned device
+ same => n,GotoIf($["${HOTDESK_ENDPOINT}" = ""]?voicemail) ; if blank, send to voicemail
+ same => n(ringhotdesk),Dial(PJSIP/${HOTDESK_ENDPOINT},${ARG1})
+ same => n(voicemail),Voicemail(${EXTEN})
+ same => n,Hangup()
+```
+И где-то гораздо ближе к началу, мы добавим наших пользователей горячего стола в раздел диалплана, где живут наши другие пользователи:
+```
+exten => 110,1,Dial(${UserA_DeskPhone}&${UserA_SoftPhone}&${UserB_SoftPhone})
 
-\('1102','Al Bundy','default','110222'\),
+exten => 1101,1,GoSub(subDialHotdeskUser,${EXTEN},1(12))
+exten => 1102,1,GoSub(subDialHotdeskUser,${EXTEN},1(12))
+exten => 1103,1,GoSub(subDialHotdeskUser,${EXTEN},1(12))
+exten => 1104,1,GoSub(subDialHotdeskUser,${EXTEN},1(12))
+exten => 1105,1,GoSub(subDialHotdeskUser,${EXTEN},1(12))
 
-\('1103','Willy Loman','default','110333'\),
+exten => 200,1,Answer()
+     same => n,Playback(hello-world)
+     same => n,Hangup()
+```
+И наконец, вернувшись в наш контекст `[hotdesk]`, мы позволим нашим агентам использовать остальную часть телефонной системы:
+```
+[hotdesk]
 
-\('1104','Jerry Lundegaard','default','110444'\),
+include => sets
 
-\('1105','Moira Brown','default','110555'\);
+exten => _*99110[1-5],1,Noop(Hotdesk login)
+```
+Попробуйте несколько сценариев:
 
-All the rest of the work is in extensions.conf:
+1. Вызов от внутреннего агента.
+2. Вызов от обычного пользователя к зарегистрированному агенту.
+3. Вызов от обычного пользователя к недоступному агенту.
 
-Way down at the bottom, let’s craft a subroutine that’ll handle things for us:
+Поразитесь этому технологическому террору, который вы создали.
 
-\[subDialHotdeskUser\]
+Теперь, когда мы реализовали довольно сложную функцию в диалплане, используя `func_odbc` для извлечения и хранения данных в удаленной реляционной базе данных, вы можете увидеть как с помощью нескольких довольно простых функций в файле _func_odbc.conf_ и нескольких таблиц в базе данных можно создать несколько мощных приложений телефонии.
 
-exten =&gt; \_\[a-zA-Z0-9\].,1,Noop\(Call Hotdesk\)
-
- same =&gt; n,Set\(HOTDESK\_ENDPOINT=${HOTDESK\_INFO\(endpoint,${EXTEN}\)}\) ; Get assigned device
-
- same =&gt; n,GotoIf\($\["${HOTDESK\_ENDPOINT}" = ""\]?voicemail\) ; if blank, send to voicemail
-
- same =&gt; n\(ringhotdesk\),Dial\(PJSIP/${HOTDESK\_ENDPOINT},${ARG1}\)
-
- same =&gt; n\(voicemail\),Voicemail\(${EXTEN}\)
-
- same =&gt; n,Hangup\(\)
-
-And somewhere far closer to the top, we’ll add our hotdesk users to the section of dialplan where our other users live:
-
-exten =&gt; 110,1,Dial\(${UserA\_DeskPhone}&${UserA\_SoftPhone}&${UserB\_SoftPhone}\)
-
-exten =&gt; 1101,1,GoSub\(subDialHotdeskUser,${EXTEN},1\(12\)\)
-
-exten =&gt; 1102,1,GoSub\(subDialHotdeskUser,${EXTEN},1\(12\)\)
-
-exten =&gt; 1103,1,GoSub\(subDialHotdeskUser,${EXTEN},1\(12\)\)
-
-exten =&gt; 1104,1,GoSub\(subDialHotdeskUser,${EXTEN},1\(12\)\)
-
-exten =&gt; 1105,1,GoSub\(subDialHotdeskUser,${EXTEN},1\(12\)\)
-
-exten =&gt; 200,1,Answer\(\)
-
- same =&gt; n,Playback\(hello-world\)
-
- same =&gt; n,Hangup\(\)
-
-And finally, back in our \[hotdesk\] context, we’re going to allow our agents to use the rest of the phone system:
-
-\[hotdesk\]
-
-include =&gt; sets
-
-exten =&gt; \_\*99110\[1-5\],1,Noop\(Hotdesk login\)
-
-Try a few scenarios:
-
-1. Call from an agent internally.
-2. Call from a normal user to a logged-in agent.
-3. Call from a normal user to an unavailable agent.
-
-Marvel at this technological terror you’ve constructed.
-
-Now that we’ve implemented a fairly complex feature in the dialplan, using func\_odbc to retrieve and store data in a remote relational database, you can see that with a handful of fairly simple functions in the func\_odbc.conf file and a couple of tables in a database, you can create some powerful telephony applications.
-
-OK, let’s move on to the Asterisk Realtime Architecture, which has in many cases been made obsolete by ODBC, but can still be useful.
+Хорошо, давайте перейдем к архитектуре Asterisk Realtime, которая во многих случаях была устаревшей из-за ODBC, но все еще может быть полезной.
 
 ## Using Realtime
 
@@ -748,6 +678,8 @@ The Dynamic Realtime method, which loads and updates the information as it is us
 
 Making changes to static information requires a reload, just as if you had changed a text file on the system, but dynamic information is polled by Asterisk as needed, so no reload is required when changes are made to this data. Realtime is configured in the extconfig.conf file located in the /etc/asterisk directory. This file tells Asterisk what to load from the database and where to load it from, allowing certain files to be loaded from the database and other files to be loaded from the standard configuration files.
 
+---
+
 **Tip**
 
 Another \(arguably older\) way to store Asterisk configuration was through an external script, which would interact with a database and generate the appropriate flat files \(or .conf files\), and then reload the appropriate module once the new file was written. There is an advantage to this \(if the database goes down, your system will continue to function; the script will simply not update any files until connectivity to the database is restored\), but it also has disadvantages. One major disadvantage is that any changes you make to a user will not be available until you run the update script. This is probably not a big issue on small systems, but on large systems, waiting for changes to take effect can cause issues, such as pausing a live call while a large file is loaded and parsed.
@@ -756,6 +688,8 @@ You can relieve some of this by utilizing a replicated database system. Asterisk
 
 Our informal survey of such things suggests that using scripts to write flat files from databases is not as popular as querying a database in real time \(and ensuring the database has a proper amount of fault tolerance to handle the fact that a live telecom system is dependent on it\).
 
+---
+
 ### Static Realtime
 
 Static Realtime was one of the earliest ways that Asterisk configuration could be stored in a database. It is still somewhat useful for storing simple configuration files in a database \(which you might normally place in /etc/asterisk\). We don’t tend to use it much anymore because Dynamic Realtime is far better for larger sets of data, and the file-based configuration files are more than adequate for smaller configuration settings.
@@ -763,20 +697,23 @@ Static Realtime was one of the earliest ways that Asterisk configuration could b
 The same rules that apply to flat files on your system still apply when you’re using Static Realtime. For example, after making changes to the configuration you still have to run the module reload command for the relevant technology \(e.g., \*CLI&gt; module reload res\_musiconhold.so\).
 
 When using Static Realtime, we tell Asterisk which files we want to load from the database using the following syntax in the extconfig.conf file:
-
+```
 ; /etc/asterisk/extconfig.conf
+[settings]
+filename.conf => driver,database[,table]
+```
 
-\[settings\]
-
-filename.conf =&gt; driver,database\[,table\]
+---
 
 **Note**
 
 There is no configuration file called filename.conf. Instead, use the actual name of the configuration file you are storing in the database. If the table name is not specified, Asterisk will use the name of the file as the table name instead \(less the .conf part\). Also, all settings inside the extconfig.conf file should fall under the \[settings\] header. Be aware that you can’t load certain files from realtime at all, including asterisk.conf, extconfig.conf, and logger.conf.
 
+---
+
 The Static Realtime module uses a very specifically formatted table to allow Asterisk to read the various static files from the database. [Table 15-1](15.%20Relational%20Database%20Integration%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Database_id243292) illustrates the columns as they must be defined in your database.
 
-Table 15-1. Table layout and description of ast\_config
+Table 15-1. Table layout and description of ast_config
 
 | Column name | Column type | Description |
 | :--- | :--- | :--- |
@@ -802,13 +739,11 @@ The Dynamic Realtime system is used to load objects that may change often, such 
 You have already worked extensively with Dynamic Realtime, since that is how we’ve been working for this entire book, both during installation, and in most of the examples we have worked through.
 
 All of realtime is configured in the /etc/asterisk/extconfig.conf file; however, Dynamic Realtime has explicitly defined configuration names. All the predefined names should be configured under the \[settings\] header. For example, defining SIP peers is done using the following format:
-
+```
 ; extconfig.conf
-
-\[settings\]
-
-sippeers =&gt; driver,database\[,table\]
-
+[settings]
+sippeers => driver,database[,table]
+```
 The table name is optional. If it is omitted, Asterisk will use the predefined name \(i.e., sippeers\) to identify the table in which to look up the data.
 
 The sample file ~/src/asterisk-15.&lt;TAB&gt;/configs/samples/extconfig.conf.sample contains excellent information about Dynamic Realtime.
