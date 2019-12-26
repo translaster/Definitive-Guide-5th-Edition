@@ -668,15 +668,15 @@ exten => _*99110[1-5],1,Noop(Hotdesk login)
 
 Хорошо, давайте перейдем к архитектуре Asterisk Realtime, которая во многих случаях была устаревшей из-за ODBC, но все еще может быть полезной.
 
-## Using Realtime
+## Использование Realtime
 
-The Asterisk Realtime Architecture \(ARA\) allows you to store all the parameters normally stored in your Asterisk configuration files \(commonly located in /etc/asterisk\) in a database. There are two types of realtime: static and dynamic.
+Архитектура Asterisk Realtime (ARA) позволяет хранить все параметры, обычно хранящиеся в конфигурационных файлах Asterisk (обычно располагающихся в  _/etc/asterisk_), в базе данных. Существует два типа realtime: статический и динамический.
 
-The static version is similar to the traditional method of reading a configuration file \(information is only loaded when triggered from the CLI\), except that the data is read from the database instead.[7](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405034424)
+Статическая версия аналогична традиционному способу чтения конфигурационного файла (информация загружается только при запуске из CLI), за исключением того, что вместо этого данные считываются из базы данных.[7](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405034424)
 
-The Dynamic Realtime method, which loads and updates the information as it is used by the live system, is commonly used for things such as SIP \(or IAX2, etc.\) user and peer objects, as well as voicemail boxes.
+Динамический realtime загружает и обновляет информацию по мере ее использования живой системой, обычно используется для таких вещей, как SIP (или IAX2 и т.д.) пользователи и пиры, а также ящики голосовой почты.
 
-Making changes to static information requires a reload, just as if you had changed a text file on the system, but dynamic information is polled by Asterisk as needed, so no reload is required when changes are made to this data. Realtime is configured in the extconfig.conf file located in the /etc/asterisk directory. This file tells Asterisk what to load from the database and where to load it from, allowing certain files to be loaded from the database and other files to be loaded from the standard configuration files.
+Внесение изменений в статическую информацию требует перезагрузки, как если бы вы изменили текстовый файл в системе, но динамическая информация опрашивается Asterisk по мере необходимости, поэтому при внесении изменений в эти данные перезагрузка не требуется. Realtime настраивается в файле _extconfig.conf_ находящемся в каталоге _/etc/asterisk_. Этот файл сообщает Asterisk, что и откуда нужно грузить из базы данных, позволяя загружать определенные данные из базы данных, а другие - из стандартных файлов конфигурации.
 
 ---
 
