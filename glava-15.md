@@ -680,23 +680,23 @@ exten => _*99110[1-5],1,Noop(Hotdesk login)
 
 ---
 
-**Tip**
+**Подсказка**
 
-Another \(arguably older\) way to store Asterisk configuration was through an external script, which would interact with a database and generate the appropriate flat files \(or .conf files\), and then reload the appropriate module once the new file was written. There is an advantage to this \(if the database goes down, your system will continue to function; the script will simply not update any files until connectivity to the database is restored\), but it also has disadvantages. One major disadvantage is that any changes you make to a user will not be available until you run the update script. This is probably not a big issue on small systems, but on large systems, waiting for changes to take effect can cause issues, such as pausing a live call while a large file is loaded and parsed.
+Другим (возможно, более старым) способом хранения конфигурации Asterisk был внешний скрипт, который взаимодействовал бы с базой данных и генерировал соответствующие плоские файлы (или _.conf_ файлы), а затем перезагружал соответствующий модуль после того, как новый файл был записан. В этом есть преимущество (если база данных выйдет из строя, ваша система будет продолжать функционировать; скрипт просто не будет обновлять файлы до тех пор, пока не будет восстановлено подключение к базе), но у него также есть недостатки. Одним из основных недостатков является то, что любые изменения, внесенные пользователем, будут недоступны до запуска скрипта обновления. Это, вероятно, не является большой проблемой для небольших систем, но на нагруженных системах ожидание применения изменений может вызвать проблемы, такие как приостановка вызова во время загрузки и анализа большого файла.
 
-You can relieve some of this by utilizing a replicated database system. Asterisk provides the ability to fail over to another database system. This way, you can cluster the database backend utilizing a master-master relationship \(for PostgreSQL, [pgcluster](http://pgfoundry.org/projects/pgcluster/), or Postgre-R;[8](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405023496) for MySQL it’s native[9](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405022184)\), or a master-slave \(for PostgreSQL or [Slony-I](http://www.slony.info/); for MySQL it’s native\) replication system.
+Вы можете частично избавиться от этого, используя реплицированную систему баз данных. Asterisk предоставляет возможность аварийного переключения на другую систему баз данных. Таким образом, вы можете кластеризировать бэкэнд базы данных, используя отношения master-master (для PostgreSQL, pgcluster или Postgre-R;[8](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html#idm46178405023496) для MySQL это встроено [9](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html#idm46178405022184)) или master-slave (для PostgreSQL или [Slony-I](http://www.slony.info/); для MySQL это встроено) системы репликации.
 
-Our informal survey of such things suggests that using scripts to write flat files from databases is not as popular as querying a database in real time \(and ensuring the database has a proper amount of fault tolerance to handle the fact that a live telecom system is dependent on it\).
+Наш неофициальный обзор таких вещей показывает, что использование скриптов для записи плоских файлов из баз данных не так популярно, как запрос базы данных в реальном времени (и обеспечение базы данных с достаточной степенью отказоустойчивости для обработки того факта, что живая телекоммуникационная система зависит от нее).
 
 ---
 
-### Static Realtime
+### Статический Realtime
 
-Static Realtime was one of the earliest ways that Asterisk configuration could be stored in a database. It is still somewhat useful for storing simple configuration files in a database \(which you might normally place in /etc/asterisk\). We don’t tend to use it much anymore because Dynamic Realtime is far better for larger sets of data, and the file-based configuration files are more than adequate for smaller configuration settings.
+Статический realtime был одним из самых ранних способов хранения конфигурации Asterisk в базе данных. Он все еще несколько полезен для хранения простых конфигурационных файлов в базе данных (которые обычно можно поместить в _/etc/asterisk_). Мы больше не склонны использовать его, потому что динамический realtime намного лучше для больших наборов данных, а файлы конфигурации на основе файлов более чем адекватны для небольших параметров конфигурации.
 
-The same rules that apply to flat files on your system still apply when you’re using Static Realtime. For example, after making changes to the configuration you still have to run the module reload command for the relevant technology \(e.g., \*CLI&gt; module reload res\_musiconhold.so\).
+Те же правила, которые применяются к плоским файлам в вашей системе, по-прежнему применяются при использовании статического realtime. Например, после внесения изменений в конфигурацию вам все равно придется выполнить команду `module reload` для соответствующей технологии (например, `*CLI> module reload res_musiconhold.so`).
 
-When using Static Realtime, we tell Asterisk which files we want to load from the database using the following syntax in the extconfig.conf file:
+При использовании статического realtime мы сообщаем Asterisk, какие файлы хотим загрузить из базы данных, используя следующий синтаксис в файле _extconfig.conf_:
 ```
 ; /etc/asterisk/extconfig.conf
 [settings]
@@ -705,26 +705,26 @@ filename.conf => driver,database[,table]
 
 ---
 
-**Note**
+**Примечание**
 
-There is no configuration file called filename.conf. Instead, use the actual name of the configuration file you are storing in the database. If the table name is not specified, Asterisk will use the name of the file as the table name instead \(less the .conf part\). Also, all settings inside the extconfig.conf file should fall under the \[settings\] header. Be aware that you can’t load certain files from realtime at all, including asterisk.conf, extconfig.conf, and logger.conf.
+Нет никакого конфигурационного файла с именем _filename.conf_. Вместо этого используйте фактическое имя файла конфигурации, который вы храните в базе данных. Если имя таблицы не указано, Asterisk будет использовать имя файла в качестве имени таблицы вместо этого (за вычетом части _.conf_). Кроме того, все настройки внутри _extconfig.conf_ должны находиться под заголовком [settings]. Имейте в виду, что вы не можете загружать определенные файлы из realtime в принципе, включая _asterisk.conf_, _extconfig.conf_ и _logger.conf_.
 
 ---
 
-The Static Realtime module uses a very specifically formatted table to allow Asterisk to read the various static files from the database. [Table 15-1](15.%20Relational%20Database%20Integration%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Database_id243292) illustrates the columns as they must be defined in your database.
+Модуль статического realtime использует очень специфично отформатированную таблицу, позволяющую Asterisk считывать различные статические файлы из базы данных. Таблица 15-1 иллюстрирует столбцы, как они должны быть определены в вашей базе данных.
 
-Table 15-1. Table layout and description of ast_config
+Таблица 15-1. Макет таблицы и описание ast_config
 
-| Column name | Column type | Description |
+| Имя столбца | Тип столбца | Описание |
 | :--- | :--- | :--- |
-| id | Serial, autoincrementing | An autoincrementing unique value for each row in the table. |
-| cat\_metric | Integer | The weight of the category within the file. A lower metric means it appears higher in the file \(see the sidebar \). |
-| var\_metric | Integer | The weight of an item within a category. A lower metric means it appears higher in the list \(see the sidebar \). This is useful for things like codec order in sip.conf, or iax.conf where you want disallow=all to appear first \(metric of 0\), followed by allow=ulaw \(metric of 1\), then allow=gsm \(metric of 2\). |
-| filename | Varchar 128 | The filename the module would normally read from the hard drive of your system \(e.g., musiconhold.conf, sip.conf, iax.conf\). |
-| category | Varchar 128 | The section name within the file, such as \[general\]. Do not include the square brackets around the name when saving to the database. |
-| var\_name | Varchar 128 | The option on the left side of the equals sign \(e.g., disallow is the var\_name in disallow=all\). |
-| var\_val | Varchar 128 | The value of an option on the right side of the equals sign \(e.g., all is the var\_val in disallow=all\). |
-| commented | Integer | Any value other than 0 will evaluate as if it were prefixed with a semicolon in the flat file \(commented out\). |
+| `id` | Serial, автоувеличивающийся | Автоувеличивающееся уникального значения для каждой строки таблицы. |
+| `cat_metric` | Integer | Вес категории внутри файла. Более низкая метрика означает, что она отображается выше в файле (см. врезку). |
+| `var_metric` | Integer | The weight of an item within a category. A lower metric means it appears higher in the list \(see the sidebar \). This is useful for things like codec order in sip.conf, or iax.conf where you want disallow=all to appear first \(metric of 0\), followed by allow=ulaw \(metric of 1\), then allow=gsm \(metric of 2\). |
+| `filename` | Varchar 128 | The filename the module would normally read from the hard drive of your system \(e.g., musiconhold.conf, sip.conf, iax.conf\). |
+| `category` | Varchar 128 | The section name within the file, such as \[general\]. Do not include the square brackets around the name when saving to the database. |
+| `var_name` | Varchar 128 | The option on the left side of the equals sign \(e.g., disallow is the var\_name in disallow=all\). |
+| `var_val` | Varchar 128 | The value of an option on the right side of the equals sign \(e.g., all is the var\_val in disallow=all\). |
+| `commented` | Integer | Any value other than 0 will evaluate as if it were prefixed with a semicolon in the flat file \(commented out\). |
 
 #### A Word About Metrics
 
