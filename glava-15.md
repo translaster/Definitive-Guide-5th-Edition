@@ -717,22 +717,26 @@ filename.conf => driver,database[,table]
 
 | Имя столбца | Тип столбца | Описание |
 | :--- | :--- | :--- |
-| `id` | Serial, автоувеличивающийся | Автоувеличивающееся уникального значения для каждой строки таблицы. |
-| `cat_metric` | Integer | Вес категории внутри файла. Более низкая метрика означает, что она отображается выше в файле (см. врезку). |
-| `var_metric` | Integer | The weight of an item within a category. A lower metric means it appears higher in the list \(see the sidebar \). This is useful for things like codec order in sip.conf, or iax.conf where you want disallow=all to appear first \(metric of 0\), followed by allow=ulaw \(metric of 1\), then allow=gsm \(metric of 2\). |
-| `filename` | Varchar 128 | The filename the module would normally read from the hard drive of your system \(e.g., musiconhold.conf, sip.conf, iax.conf\). |
-| `category` | Varchar 128 | The section name within the file, such as \[general\]. Do not include the square brackets around the name when saving to the database. |
-| `var_name` | Varchar 128 | The option on the left side of the equals sign \(e.g., disallow is the var\_name in disallow=all\). |
-| `var_val` | Varchar 128 | The value of an option on the right side of the equals sign \(e.g., all is the var\_val in disallow=all\). |
-| `commented` | Integer | Any value other than 0 will evaluate as if it were prefixed with a semicolon in the flat file \(commented out\). |
+| `id` | Serial, автоувеличивающийся | Автоувеличивающееся уникальное значение для каждой строки таблицы. |
+| `cat_metric` | Integer | Вес категории внутри файла. Более низкая метрика означает что она отображается выше в файле (см. врезку). |
+| `var_metric` | Integer | Вес в пределах категории. Более низкая метрика означает, что она отображается выше в списке (см. врезку). Это полезно для таких вещей, как порядок кодеков в _sip.conf_, или _iax.conf_, в котором `disallow=all` должно быть первым (показатель `0`), затем `allow=ulaw` (метрика `1`), а затем `allow=gsm` (метрика `2`). |
+| `filename` | Varchar 128 | Имя файла, которое модуль обычно считывает с жесткого диска вашей системы (например _musiconhold.conf_, _sip.conf_, _iax.conf_). |
+| `category` | Varchar 128 | Имя раздела в файле, например `[general]`. Не заключайте имя в квадратные скобки при сохранении в базу данных. |
+| `var_name` | Varchar 128 | Параметр слева от знака равенства (например, `disallow` - это `var_name` в `disallow=all`). |
+| `var_val` | Varchar 128 | Параметр справа от знака равенства(например `all` - это `var_val` в `disallow=all`). |
+| `commented` | Integer | Любое значение, отличное от 0, будет читаться так, как если бы оно было префиксировано точкой с запятой в файле конфигурации (закомментировано). |
 
-#### A Word About Metrics
+---
 
-The metrics in Static Realtime are used to control the order in which objects are read into memory. Think of the cat\_metric and var\_metric as the original line numbers in the flat file. A higher cat\_metric is processed first, because Asterisk matches categories from bottom to top. Within a category, though, a lower var\_metric is processed first, because Asterisk processes the options top-down \(e.g., disallow=all should be set to a value lower than the allow’s value within a category to make sure it is processed first\).
+#### Несколько слов о метриках
 
-There’s not much more to say about Static Realtime. It was very useful in the past, but has now been mostly superseded by Dynamic Realtime. If you want to read more about it, older versions of this book discuss it in more detail.
+Метрики в статическом realtime используются для управления порядком считывания объектов в память. Представьте себе `cat_metric` и `var_metric` как исходные номера строк в файле конфигурации. Сначала обрабатывается более высокое значение `cat_metric`, поскольку Asterisk сопоставляет категории снизу вверх. В пределах одной категории, хотя, нижний `var_metric` обрабатывается первым, потому что Asterisk обрабатывает варианты "сверху-вниз" (например для `disallow=all` должно быть установлено значение ниже, чем значение `allow` в категории, чтобы убедиться, что оно обрабатывается в первую очередь).
 
-### Dynamic Realtime
+---
+
+О статическом realtime сказать больше нечего. Он был очень полезен в прошлом, но теперь в основном вытеснен динамическим realtime. Если вы хотите прочитать о нём подробнее, то это рассматривается в более старых версиях этой книги.
+
+### Динамический Realtime
 
 The Dynamic Realtime system is used to load objects that may change often, such as PJSIP entities, queues and their members, and voicemail. Likewise, when new records are likely to be added on a regular basis, we can utilize the power of the database to let us load this information on an as-needed basis.
 
