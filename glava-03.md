@@ -364,16 +364,16 @@ mkdir -p ~/ansible/playbooks
   - name: Install other dependencies
     dnf:
       name:
-      - unixODBC
-      - unixODBC-devel
-      - mysql-connector-odbc
-      - MySQL-python
-      - tcpdump
-      - ntp
-      - ntpdate
-      - jansson
-      - bind-utils
-    state: present
+        - unixODBC
+        - unixODBC-devel
+        - mysql-connector-odbc
+        - MySQL-python
+        - tcpdump
+        - ntp
+        - ntpdate
+        - jansson
+        - bind-utils
+      state: present
 
 #   Tweak the firewall for UDP/SIP
   - firewalld:
