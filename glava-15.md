@@ -738,168 +738,146 @@ filename.conf => driver,database[,table]
 
 ### Динамический Realtime
 
-The Dynamic Realtime system is used to load objects that may change often, such as PJSIP entities, queues and their members, and voicemail. Likewise, when new records are likely to be added on a regular basis, we can utilize the power of the database to let us load this information on an as-needed basis.
+Система динамического realtime используется для загрузки объектов, которые могут часто изменяться, как например объекты PJSIP, очереди и их участники, а также голосовая почта. По мере того как будут добавляться новые записи на регулярной основе, мы можем использовать возможности базы данных, чтобы позволить нам загружать эту информацию по мере необходимости.
 
-You have already worked extensively with Dynamic Realtime, since that is how we’ve been working for this entire book, both during installation, and in most of the examples we have worked through.
+Вы уже много работали с динамическим realtime, поскольку именно так мы работали над всей этой книгой, как во время установки, так и в большинстве примеров, которые проработали.
 
-All of realtime is configured in the /etc/asterisk/extconfig.conf file; however, Dynamic Realtime has explicitly defined configuration names. All the predefined names should be configured under the \[settings\] header. For example, defining SIP peers is done using the following format:
+Весь realtime настраивается в файле _/etc/asterisk/extconfig.conf_; однако динамический режим realtime имеет четко определенные имена конфигурации. Все предопределенные имена должны быть настроены под заголовком `[settings]`. Например, определение одноранговых узлов (пиров) SIP выполняется с использованием следующего формата:
 ```
 ; extconfig.conf
 [settings]
 sippeers => driver,database[,table]
 ```
-The table name is optional. If it is omitted, Asterisk will use the predefined name \(i.e., sippeers\) to identify the table in which to look up the data.
+Имя таблицы является необязательным. Если оно опущено, Asterisk будет использовать предопределенное имя (т.е. `sippeers`) для определения таблицы, в которой будут искаться данные.
 
-The sample file ~/src/asterisk-15.&lt;TAB&gt;/configs/samples/extconfig.conf.sample contains excellent information about Dynamic Realtime.
+Пример файла _~/src/asterisk-15.<TAB>/configs/samples/extconfig.conf.sample_ содержит отличную информацию о динамическом realtime.
 
-## Storing Call Detail Records
+## Хранение записей деталей вызовов (CDR)
 
-Call detail records \(CDR\) contain information about calls that have passed through your Asterisk system. They are discussed further in [Chapter 21](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch21.html%22%20/l%20%22asterisk-Monitoring). Storing CDR is a popular use of databases in Asterisk, because it makes them easier to work with. Also, by placing records into a database you open up many possibilities, including building your own web interface for tracking statistics such as call usage and most-called locations, billing, or phone company invoice verification.
+Записи деталей вызовов (CDRS) содержат информацию о вызовах, прошедших через вашу систему Asterisk. Они рассматриваются далее в [Главе 21](glava-21#Записи-деталей-вызовов-(CDR)). Хранение CDR - это популярное использование баз данных в Asterisk, потому что оно облегчает работу с ними. Кроме того, помещая записи в базу данных, вы открываете множество возможностей, включая создание собственного веб-интерфейса для отслеживания статистики, такой как использование вызовов и наиболее часто вызываемых назначений, биллинга счетов или проверка счетов телефонной компании.
 
-You should always implement CDR storage to a database on any production system \(you can always store CDR to a file as well, so there’s nothing lost\).
+Вы всегда должны реализовывать хранение CDR в базе данных на любой производственной системе (вы всегда можете хранить CDR в файле, так что ничего не потеряно).
 
-#### Setting the systemname for Globally Unique IDs
+---
 
-A CDR consists of a unique identifier and several fields of information about the call \(including the source and destination channel, length of call, last application executed, and so forth\). In a clustered set of Asterisk boxes, it is theoretically possible to have duplication among unique identifiers, since each Asterisk system considers only itself. To address this, we can automatically append a system identifier to the front of the unique IDs by adding an option to /etc/asterisk/asterisk.conf. For each of your boxes, set an identifier by adding something like:
+#### Настройка системного имени для глобальных Unique ID
 
-\[options\]
-
+CDR состоит из уникального идентификатора и нескольких полей информации о вызове (включая исходный и целевой каналы, длину вызова, последнее выполненное приложение и т.д.). В кластеризованном наборе блоков Asterisk теоретически возможно дублирование уникальных идентификаторов, поскольку каждая система Asterisk учитывает только себя. Чтобы решить эту проблему, мы можем автоматически добавить системный идентификатор к передней части уникальных идентификаторов, добавив опцию в _/etc/asterisk/asterisk.conf_. Для каждого из ваших блоков задайте идентификатор, добавив что-то вроде:
+```
+[options]
 systemname=toronto
+```
 
-The best way to store your call detail records is via the cdr\_adaptive\_odbc module. This module allows you to choose which columns of data built into Asterisk are stored in your table, and it permits you to add additional columns that can be populated with the CDR\(\) dialplan function. You can even store different parts of CDR data to different tables and databases, if that is required.
+---
 
-To create the table, we have Alembic. The process is almost identical to the one you performed during the system installation, except of course the .ini file is different.
+Лучший способ хранения записей подробных вызовов - это модуль `cdr_adaptive_odbc`. Он позволяет вам выбрать, какие столбцы данных, встроенных в Asterisk, хранятся в вашей таблице и позволяет добавлять дополнительные столбцы, которые могут быть заполнены функцией диалплана `CDR()`. Вы даже можете хранить разные части данных CDR в разных таблицах и базах данных, если это необходимо.
 
-$ cd ~/src/asterisk-15.&lt;TAB&gt;/contrib/ast-db-manage
+Чтобы создать таблицу, у нас есть Alembic. Этот процесс практически идентичен тому, который вы выполняли во время установки системы, за исключением, конечно, самого процесса отличается так же и .ini-файл.
+```
+$ cd ~/src/asterisk-15.<TAB>/contrib/ast-db-manage
 
 $ cp cdr.ini.sample cdr.ini
 
 $ egrep ^sqlalchemy config.ini
 
 sqlalchemy.url = mysql://asterisk:YouNeedAReallyGoodPasswordHereToo@localhost/asterisk
-
-The same credentials we used before will also work for CDR.
-
+```
+Учетные данные, которые мы использовали ранее, также будут работать для CDR.
+```
 $ sudo vim cdr.ini
-
-Add the line you just got back from grep to this file, and save.
-
+```
+Добавьте строку, которую вы только что получили от grep, в этот файл и сохраните.
+```
 $ alembic -c ./cdr.ini upgrade head
 
-INFO \[alembic.runtime.setup\] Creating new alembic\_version\_cdr table.
-
-INFO \[alembic.runtime.migration\] Running upgrade -&gt; 210693f3123d, Create CDR table.
-
-INFO \[alembic.runtime.migration\] Running upgrade 210693f3123d -&gt; 54cde9847798
-
-Alembic doesn’t do too much bragging, so the output is terse, but it appears to have completed successfully. Let’s check.
-
+INFO  [alembic.runtime.setup] Creating new alembic_version_cdr table.
+INFO  [alembic.runtime.migration] Running upgrade  -> 210693f3123d, Create CDR table.
+INFO  [alembic.runtime.migration] Running upgrade 210693f3123d -> 54cde9847798
+```
+Alembic не слишком много хвалится, поэтому результат будет скупой, но, похоже, он успешно завершен. Давайте проверим.
+```
 $ mysql -u asterisk -p
 
 MySQL&gt; describe asterisk.cdr
-
+```
 You should get a list of all the fields in the table \(which means Alembic was successful\). If you get a message like Table 'asterisk.cdr' doesn't exist, that indicates Alembic didn’t complete the configuration, and you need to review the messages from the Alembic output to see what went wrong \(credentials is usually what causes grief here\).
 
 Well, that wasn’t too hard, eh? The next step is to tell Asterisk to use this new table for CDR going forward.
+```
+$ sudo -u asterisk touch /etc/asterisk/cdr_adaptive_odbc.conf
 
-$ sudo -u asterisk touch /etc/asterisk/cdr\_adaptive\_odbc.conf
-
-$ sudo -u asterisk vim /etc/asterisk/cdr\_adaptive\_odbc.conf
-
+$ sudo -u asterisk vim /etc/asterisk/cdr_adaptive_odbc.conf
+```
 Into this new file, paste the following:
-
-\[adaptive\_connection\]
-
+```
+[adaptive_connection]
 connection=asterisk
-
 table=cdr
-
+```
 This is almost too easy, wouldn’t you say? Alrighty, now we just have to reload the ccdr\_adaptive\_odbc.so module in Asterisk:
-
+```
 $ sudo asterisk -rvvvvvvv
 
-\*CLI&gt; module reload cdr\_adaptive\_odbc.so
-
+*CLI> module reload cdr_adaptive_odbc.so
+```
 You can verify that the Adaptive ODBC backend has been loaded by running the following:[10](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178404930968)
+```
+*CLI> cdr show status
 
-\*CLI&gt; cdr show status
-
-Call Detail Record \(CDR\) settings
-
+Call Detail Record (CDR) settings
 ----------------------------------
+  Logging:                    Enabled
+  Mode:                       Simple
+  Log unanswered calls:       No
+  Log congestion:             No
 
- Logging: Enabled
-
- Mode: Simple
-
- Log unanswered calls: No
-
- Log congestion: No
-
-\* Registered Backends
-
- -------------------
-
- cdr-syslog
-
- Adaptive ODBC
-
- cdr-custom
-
- csv
-
- cdr\_manager
-
+* Registered Backends
+  -------------------
+    cdr-syslog
+    Adaptive ODBC
+    cdr-custom
+    csv
+    cdr_manager
+```
 Now place a call that gets answered \(e.g., using Playback\(\), or Dial\(\)ing another channel and answering it\). You should get some CDRs stored into your database. You can check by running SELECT \* FROM CDR; from your database console.
 
 With the basic CDR information stored in the database, you might want to add some additional information to the cdr table, such as the route rate. You can use the ALTER TABLE directive to add a column called route\_rate to the table:
-
-sql&gt; ALTER TABLE cdr ADD COLUMN route\_rate varchar\(10\);
-
+```
+sql> ALTER TABLE cdr ADD COLUMN route_rate varchar(10);
+```
 Now reload the cdr\_adaptive\_odbc.so module from the Asterisk console:
-
-\*CLI&gt; module reload cdr\_adaptive\_odbc.so
-
+```
+*CLI> module reload cdr_adaptive_odbc.so
+```
 and populate the new column from the Asterisk dialplan using the CDR\(\) function, like so:
-
-exten =&gt; \_NXXNXXXXXX,1,Verbose\(1,Example of adaptive ODBC usage\)
-
- same =&gt; n,Set\(CDR\(route\_rate\)=0.01\)
-
- same =&gt; n,Dial\(SIP/my\_itsp/${EXTEN}\)
-
- same =&gt; n,Hangup\(\)
-
+```
+exten => _NXXNXXXXXX,1,Verbose(1,Example of adaptive ODBC usage)
+   same => n,Set(CDR(route_rate)=0.01)
+   same => n,Dial(SIP/my_itsp/${EXTEN})
+   same => n,Hangup()
+```
 After the alteration to your database and dialplan, you can place a call and then look at your CDRs. You should see something like the following:
-
+```
 +--------------+----------+---------+------------+
-
-\| src \| duration \| billsec \| route\_rate \|
-
+| src          | duration | billsec | route_rate |
 +--------------+----------+---------+------------+
-
-\| 0000FFFF0008 \| 37 \| 30 \| 0.01 \|
-
+| 0000FFFF0008 | 37       | 30      | 0.01       |
 +--------------+----------+---------+------------+
-
+```
 In reality, storing rating in the call record might not be ideal \(CDR is typically used as a raw resource, and things such as rates are added downstream by billing software\). The ability to add custom fields to CDR is very useful, but be careful not to use your call records to replace a proper billing platform. Best to keep your CDR clean and do further processing downstream.
 
 #### Additional Configuration Options for cdr\_adaptive\_odbc.conf
 
 Some extra configuration options exist in the cdr\_adaptive\_odbc.conf file that may be useful. The first is that you can define multiple databases or tables to store information into, so if you have multiple databases that need the same information, you can simply define them in res\_odbc.conf, create tables in the databases, and then refer to them in separate sections of the configuration:
-
-\[mysql\_connection\]
-
-connection=asterisk\_mysql
-
+```
+[mysql_connection]
+connection=asterisk_mysql
 table=cdr
 
-\[mssql\_connection\]
-
-connection=production\_mssql
-
-table=call\_records
-
+[mssql_connection]
+connection=production_mssql
+table=call_records
+```
 **Note**
 
 If you specify multiple sections using the same connection and table, you will get duplicate records.
@@ -907,48 +885,34 @@ If you specify multiple sections using the same connection and table, you will g
 Beyond just configuring multiple connections and tables \(which of course may or may not contain the same information; the CDR module we’re using is adaptive to situations like that\), we can define aliases for the built-in variables, such as accountcode, src, dst, and billsec.
 
 If we were to add aliases for column names for our MS SQL connection, we might alter our connection definition like so:
-
-\[mssql\_connection\]
-
-connection=production\_mssql
-
-table=call\_records
-
-alias src =&gt; Source
-
-alias dst =&gt; Destination
-
-alias accountcode =&gt; AccountCode
-
-alias billsec =&gt; BillableTime
-
+```
+[mssql_connection]
+connection=production_mssql
+table=call_records
+alias src => Source
+alias dst => Destination
+alias accountcode => AccountCode
+alias billsec => BillableTime
+```
 In some situations you may specify a connection where you only want to log calls from a specific source, or to a specific destination. We can do this with filters:
-
-\[logging\_for\_device\_0000FFFF0008\]
-
-connection=asterisk\_mysql
-
-table=cdr\_for\_0000FFFF0008
-
-filter src =&gt; 0000FFFF0008
-
+```
+[logging_for_device_0000FFFF0008]
+connection=asterisk_mysql
+table=cdr_for_0000FFFF0008
+filter src => 0000FFFF0008
+```
 If you need to populate a certain column with information based on a section name, you can set it statically with the static option, which you may utilize with the filter option:
-
-\[mysql\_connection\]
-
-connection=asterisk\_mysql
-
+```
+[mysql_connection]
+connection=asterisk_mysql
 table=cdr
 
-\[filtered\_mysql\_connection\]
-
-connection=asterisk\_mysql
-
+[filtered_mysql_connection]
+connection=asterisk_mysql
 table=cdr
-
-filter src =&gt; 0000FFFF0008
-
-static "DoNotCharge" =&gt; accountcode
+filter src => 0000FFFF0008
+static "DoNotCharge" => accountcode
+```
 
 **Note**
 
@@ -963,135 +927,88 @@ The queues themselves we’ve already placed in the database in [Chapter 12](htt
 ### Storing Dialplan Parameters for a Queue in a Database
 
 The dialplan application Queue\(\) allows for several parameters to be passed to it. The CLI command core show application Queue defines the following syntax:
-
-\[Syntax\]
-
-Queue\(queuename\[,options\[,URL\[,announceoverride\[,timeout\[,AGI\[,macro\[,gosub\[,
-
- rule\[,position\]\]\]\]\]\]\]\]\]\)
-
+```
+[Syntax]
+Queue(queuename[,options[,URL[,announceoverride[,timeout[,AGI[,macro[,gosub[,
+  rule[,position]]]]]]]]])
+```
 Since we’re storing our queue in a database, why not also store the parameters you wish to pass to the queue in a similar manner?[11](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178404879016)
-
-MySQL&gt; CREATE TABLE \`pbx\`.\`QueueDialplanParameters\` \(
-
- \`QueueDialplanParametersID\` mediumint\(8\) NOT NULL auto\_increment,
-
- \`Description\` varchar\(128\) NOT NULL,
-
- \`QueueID\` mediumint\(8\) unsigned NOT NULL COMMENT 'Pointer to asterisk.queues table',
-
- \`options\` varchar\(45\) default 'n',
-
- \`URL\` varchar\(256\) default NULL,
-
- \`announceoverride\` bit\(1\) default NULL,
-
- \`timeout\` varchar\(8\) default NULL,
-
- \`AGI\` varchar\(128\) default NULL,
-
- \`macro\` varchar\(128\) default NULL,
-
- \`gosub\` varchar\(128\) default NULL,
-
- \`rule\` varchar\(128\) default NULL,
-
- \`position\` tinyint\(4\) default NULL,
-
- \`queue\_tableName\` varchar\(128\) NOT NULL,
-
- PRIMARY KEY \(\`QueueDialplanParametersID\`\)
-
-\);
-
-Using func\_odbc, you can write a function that will return the dialplan parameters relevant to that queue:
-
-\[QUEUE\_DETAILS\]
-
+```
+MySQL> CREATE TABLE `pbx`.`QueueDialplanParameters` (
+  `QueueDialplanParametersID` mediumint(8) NOT NULL auto_increment,
+  `Description` varchar(128) NOT NULL,
+  `QueueID` mediumint(8) unsigned NOT NULL COMMENT 'Pointer to asterisk.queues table',
+  `options` varchar(45) default 'n',
+  `URL` varchar(256) default NULL,
+  `announceoverride` bit(1) default NULL,
+  `timeout` varchar(8) default NULL,
+  `AGI` varchar(128) default NULL,
+  `macro` varchar(128) default NULL,
+  `gosub` varchar(128) default NULL,
+  `rule` varchar(128) default NULL,
+  `position` tinyint(4) default NULL,
+  `queue_tableName` varchar(128) NOT NULL,
+  PRIMARY KEY  (`QueueDialplanParametersID`)
+);
+```
+Using func_odbc, you can write a function that will return the dialplan parameters relevant to that queue:
+```
+[QUEUE_DETAILS]
 prefix=GET
-
 dsn=asterisk
-
-readsql=SELECT \* FROM pbx.QueueDialplanParameters
-
+readsql=SELECT * FROM pbx.QueueDialplanParameters
 readsql+= WHERE QueueDialplanParametersID='${ARG1}'
-
-Then pass those parameters to the Queue\(\) application as calls arrive:
-
-exten =&gt; s,1,Verbose\(1,Call entering queue named ${SomeValidID\)
-
- same =&gt; n,Set\(QueueParameters=${GET\_QUEUE\_DETAILS\(SomeValidID\)}\)
-
- same =&gt; n,Queue\(${QueueParameters}\)
-
+```
+Then pass those parameters to the Queue() application as calls arrive:
+```
+exten => s,1,Verbose(1,Call entering queue named ${SomeValidID)
+  same => n,Set(QueueParameters=${GET_QUEUE_DETAILS(SomeValidID)})
+  same => n,Queue(${QueueParameters})
+```
 While somewhat more complicated to develop than just writing an appropriate dialplan, the advantage is that you will be able to manage a larger number of queues, with a wider variety of parameters, using dialplan that is flexible enough to handle any sort of parameters the queueing application in Asterisk accepts. For anything more than a very simple queue, we think you will find the use of a database for all this is well worth the effort.
 
-### Writing queue\_log to Database
+### Writing queue_log to Database
 
-Finally, we can store our queue\_log to a database, which can make it easier for external applications to extract queue performance details from the system:
-
-CREATE TABLE queue\_log \(
-
- id int\(10\) UNSIGNED NOT NULL AUTO\_INCREMENT,
-
- time char\(26\) default NULL,
-
- callid varchar\(32\) NOT NULL default '',
-
- queuename varchar\(32\) NOT NULL default '',
-
- agent varchar\(32\) NOT NULL default '',
-
- event varchar\(32\) NOT NULL default '',
-
- data1 varchar\(100\) NOT NULL default '',
-
- data2 varchar\(100\) NOT NULL default '',
-
- data3 varchar\(100\) NOT NULL default '',
-
- data4 varchar\(100\) NOT NULL default '',
-
- data5 varchar\(100\) NOT NULL default '',
-
- PRIMARY KEY \(\`id\`\)
-
-\);
-
-Edit your extconfig.conf file to refer to the queue\_log table:
-
-\[settings\]
-
-queue\_log =&gt; odbc,asterisk,queue\_log
-
+Finally, we can store our queue_log to a database, which can make it easier for external applications to extract queue performance details from the system:
+```
+CREATE TABLE queue_log (
+  id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  time char(26) default NULL,
+  callid varchar(32) NOT NULL default '',
+  queuename varchar(32) NOT NULL default '',
+  agent varchar(32) NOT NULL default '',
+  event varchar(32) NOT NULL default '',
+  data1 varchar(100) NOT NULL default '',
+  data2 varchar(100) NOT NULL default '',
+  data3 varchar(100) NOT NULL default '',
+  data4 varchar(100) NOT NULL default '',
+  data5 varchar(100) NOT NULL default '',
+  PRIMARY KEY (`id`)
+);
+```
+Edit your extconfig.conf file to refer to the queue_log table:
+```
+[settings]
+queue_log => odbc,asterisk,queue_log
+```
 A restart of Asterisk, and your queue will now log information to the database. As an example, logging an agent into the sales queue should produce something like this:
-
-mysql&gt; select \* from queue\_log;
-
+```
+mysql> select * from queue_log;
++----+----------------------------+----------------------+-----------+
+| id | time                       | callid               | queuename |
++----+----------------------------+----------------------+-----------+
+|  1 | 2013-01-22 15:07:49.772263 | NONE                 | NONE      |
+|  2 | 2013-01-22 15:07:49.809028 | toronto-1358885269.1 | support   |
 +----+----------------------------+----------------------+-----------+
 
-\| id \| time \| callid \| queuename \|
-
-+----+----------------------------+----------------------+-----------+
-
-\| 1 \| 2013-01-22 15:07:49.772263 \| NONE \| NONE \|
-
-\| 2 \| 2013-01-22 15:07:49.809028 \| toronto-1358885269.1 \| support \|
-
-+----+----------------------------+----------------------+-----------+
 
 +------------------+------------+-------+-------+-------+-------+-------+
-
-\| agent \| event \| data1 \| data2 \| data3 \| data4 \| data5 \|
-
+| agent            | event      | data1 | data2 | data3 | data4 | data5 |
 +------------------+------------+-------+-------+-------+-------+-------+
-
-\| NONE \| QUEUESTART \| \| \| \| \| \|
-
-\| SIP/0000FFFF0001 \| ADDMEMBER \| \| \| \| \| \|
-
+| NONE             | QUEUESTART |       |       |       |       |       |
+| SIP/0000FFFF0001 | ADDMEMBER  |       |       |       |       |       |
 +------------------+------------+-------+-------+-------+-------+-------+
-
+```
 If you’re developing any sort of external application that needs access to queue statistics, having the data stored in this manner will prove far superior to using the /var/log/asterisk/queue\_log file.
 
 ## Conclusion
