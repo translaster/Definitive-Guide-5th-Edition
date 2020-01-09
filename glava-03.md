@@ -230,17 +230,17 @@ mkdir -p ~/ansible/playbooks
 - hosts: starfish
   become: yes
   vars:
-# Use these on the first run of this playbook
+# Используйте эти строки при первом запуске
     current_mysql_root_password: ""
-    updated_mysql_root_password: "YouNeedAReallyGoodPassword"
+    updated_mysql_root_password: "ЗдесьНуженОченьХорошийПароль"
     current_mysql_asterisk_password: ""
-    updated_mysql_asterisk_password: "YouNeedAReallyGoodPasswordHereToo"
-# Comment the above out after the first run
+    updated_mysql_asterisk_password: "ЗдесьНуженОченьХорошийПарольТоже"
+# Закомментируйте вышеизложенные строки после первого запуска
 
-# Uncomment these for subsequent runs
-#    current_mysql_root_password: "YouNeedAReallyGoodPassword"
+# Раскомментируйте строки для последующих запусков
+#    current_mysql_root_password: "ЗдесьНуженОченьХорошийПароль"
 #    updated_mysql_root_password: "{{ current_mysql_root_password }}"
-#    current_mysql_asterisk_password: "YouNeedAReallyGoodPasswordHereToo"
+#    current_mysql_asterisk_password: "ЗдесьНуженОченьХорошийПарольТоже"
 #    updated_mysql_asterisk_password: "{{ current_mysql_asterisk_password }}"
 
   tasks:
