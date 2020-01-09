@@ -237,9 +237,9 @@ There is some log rotation support built into Asterisk. Log rotation will be don
 * During a configuration reload if any existing logfiles are greater than 1 GB in size
 * If Asterisk receives the SIGXFSZ signal, indicating that a file it was writing to is too large
 
-## Call Detail Records
+## Записи деталей вызовов (CDR)
 
-The CDR system in Asterisk is used to log the history of calls in the system. In some deployments, these records are used for billing purposes. In others, call records are used for analyzing call volumes over time. They can also be used as a debugging tool by Asterisk administrators.
+Система CDR в Asterisk используется для регистрации истории вызовов в системе. В некоторых развертываниях эти записи используются для биллинга (выставления счетов). В других случаях записи деталей вызовов используются для анализа объемов вызовов с течением времени. Они также могут использоваться администраторами Asterisk в качестве средства отладки.
 
 ### CDR Contents
 
