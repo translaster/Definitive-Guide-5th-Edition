@@ -1081,7 +1081,7 @@ In this chapter, you learned about several areas where Asterisk can integrate wi
 
 <li id="sn10"> You may see different backends registered, depending on what configuration you have done with other components of the various CDR modules.
 
-<li id="sn11"> Note that we’re creating this table in our pbx schema, rather than the asterisk schema, and that is because this is not a table that comes with Asterisk, but instead one we’re creating ourselves. We recommend letting Asterisk and Alembic have exclusive control over the asterisk schema, and using a custom schema \(such as pbx\) for anything custom we might create.
+<li id="sn11"> Note that we’re creating this table in our pbx schema, rather than the asterisk schema, and that is because this is not a table that comes with Asterisk, but instead one we’re creating ourselves. We recommend letting Asterisk and Alembic have exclusive control over the asterisk schema, and using a custom schema (such as pbx) for anything custom we might create.
 </ol>
 
 
