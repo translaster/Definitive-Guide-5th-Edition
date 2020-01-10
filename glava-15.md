@@ -909,7 +909,7 @@ table=cdr<br>
 <br>
 [mssql_connection]<br>
 connection=production_mssql<br>
-table=call_records<br>
+table=call_records
 </code></pre>
 
 <hr>
@@ -921,28 +921,28 @@ table=call_records<br>
 <p>Помимо простой настройки нескольких соединений и таблиц (которые, конечно, могут содержать или не содержать одну и ту же информацию; модуль CDR, который мы используем, адаптирован к подобным ситуациям), мы можем определить псевдонимы для встроенных переменных, таких как <code>accountcode</code>, <code>src</code>, <code>dst</code> и <code>billsec</code>.</p>
 <p>Если бы мы добавили псевдонимы для имен столбцов для нашего соединения MS SQL, мы могли бы изменить наше определение соединения следующим образом:</p>
 
-<code>
+<pre><code>
 [mssql_connection]<br>
 connection=production_mssql<br>
 table=call_records<br>
 alias src => Source<br>
 alias dst => Destination<br>
 alias accountcode => AccountCode<br>
-alias billsec => BillableTime<br>
-</code>
+alias billsec => BillableTime
+</code></pre>
 
 <p>В некоторых ситуациях можно указать соединение, в котором требуется регистрировать вызовы только из определенного источника или в определенное место назначения. Мы можем сделать это с помощью фильтров:</p>
 
-<code>
-[logging_for_device_0000FFFF0008]<br>
-connection=asterisk_mysql<br>
-table=cdr_for_0000FFFF0008<br>
-filter src => 0000FFFF0008<br>
-</code>
+<pre><code>
+[logging_for_device_0000FFFF0008]
+connection=asterisk_mysql
+table=cdr_for_0000FFFF0008
+filter src => 0000FFFF0008
+</code></pre>
 
 <p>Если вам нужно заполнить определенный столбец информацией, основанной на имени раздела, вы можете установить его статически с помощью параметра `static`, который вы можете использовать с параметром <code>filter</code>:</p>
 
-<code>
+<pre><code>
 [mysql_connection]<br>
 connection=asterisk_mysql<br>
 table=cdr<br>
@@ -951,8 +951,8 @@ table=cdr<br>
 connection=asterisk_mysql<br>
 table=cdr<br>
 filter src => 0000FFFF0008<br>
-static "DoNotCharge" => accountcode<br>
-</code>
+static "DoNotCharge" => accountcode
+</code></pre>
 
 <hr>
 <b>Примечание</b>
