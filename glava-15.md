@@ -830,7 +830,7 @@ $ sudo asterisk -rvvvvvvv
 *CLI> module reload cdr_adaptive_odbc.so
 ```
 
-Вы можете проверить, что адаптивный сервер ODBC был загружен, выполнив следующие действия:<a href="glava-15.md#sn10">[10]</a>
+Вы можете проверить, что адаптивный сервер ODBC был загружен, выполнив следующие действия:<sup><a href="glava-15.md#sn10">[10]</a></sup>
 
 ```
 *CLI> cdr show status
@@ -1061,25 +1061,25 @@ If you’re developing any sort of external application that needs access to que
 In this chapter, you learned about several areas where Asterisk can integrate with a relational database. This is useful for systems where you need to start scaling by clustering multiple Asterisk boxes working with the same centralized information, or when you want to start building external applications to modify information without requiring a reload of the system (i.e., not requiring the modification of flat files).
 
 <ol>
-[1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405309816-marker) This was actually an issue one of the authors had while working on this book, and he found the flag column by looking at the statement logging during testing.
+<li id="sn1">This was actually an issue one of the authors had while working on this book, and he found the flag column by looking at the statement logging during testing.
 
-[2](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405291112-marker) And if you don’t know what a Dagwood is, that’s what Wikipedia is for. I am not that old.
+<li id="sn2">And if you don’t know what a Dagwood is, that’s what Wikipedia is for. I am not that old.
 
-[3](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405269208-marker) We’re using the IF\(\) SQL function to make sure we return a value of 0 or 1. This works on MySQL 5.1 or later. If it does not work on your SQL installation, you could also check the returned result in the dialplan using the IF\(\) function there.
+<li id="sn3">We’re using the `IF()` SQL function to make sure we return a value of 0 or 1. This works on MySQL 5.1 or later. If it does not work on your SQL installation, you could also check the returned result in the dialplan using the `IF()` function there.
 
-[4](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405232168-marker) Note that in the first example user, we are assigning a status of 1 and a location, whereas for the second example user, we are not defining a value for these fields.
+<li id="sn4">Note that in the first example user, we are assigning a status of 1 and a location, whereas for the second example user, we are not defining a value for these fields.
 
-[5](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405135064-marker) Yes, you can nest functions within functions, and so do this all on one line. We didn’t do so as it’s more difficult to debug, and doesn’t affect performance.
+<li id="sn5">Yes, you can nest functions within functions, and so do this all on one line. We didn’t do so as it’s more difficult to debug, and doesn’t affect performance.
 
-[6](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405097368-marker) It could also pose a needless security risk.
+<li id="sn6">It could also pose a needless security risk.
 
-[7](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405034424-marker) Yes, calling this “realtime” is somewhat misleading, as updates to the data will not affect anything happening in real time \(until a reload of the relevant module is performed\).
+<li id="sn7">Yes, calling this “realtime” is somewhat misleading, as updates to the data will not affect anything happening in real time (until a reload of the relevant module is performed).
 
-[8](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405023496-marker) pgcluster appears to be a dead project, and Postgres-R appears to be in its infancy, so there may currently be no good solution for master-master replication using PostgreSQL.
+<li id="sn8">pgcluster appears to be a dead project, and Postgres-R appears to be in its infancy, so there may currently be no good solution for master-master replication using PostgreSQL.
 
-[9](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405022184-marker) There are several tutorials on the web describing how to set up replication with MySQL.
+<li id="sn9">There are several tutorials on the web describing how to set up replication with MySQL.
 
-<a name="sn10">[10]</a> You may see different backends registered, depending on what configuration you have done with other components of the various CDR modules.
+<li id="sn10"> You may see different backends registered, depending on what configuration you have done with other components of the various CDR modules.
 
 <li id="sn11"> Note that we’re creating this table in our pbx schema, rather than the asterisk schema, and that is because this is not a table that comes with Asterisk, but instead one we’re creating ourselves. We recommend letting Asterisk and Alembic have exclusive control over the asterisk schema, and using a custom schema \(such as pbx\) for anything custom we might create.
 </ol>
