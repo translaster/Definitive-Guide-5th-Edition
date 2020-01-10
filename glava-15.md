@@ -760,15 +760,18 @@ sippeers => driver,database[,table]
 
 ---
 
-#### Настройка системного имени для глобальных Unique ID
-
-CDR состоит из уникального идентификатора и нескольких полей информации о вызове (включая исходный и целевой каналы, длину вызова, последнее выполненное приложение и т.д.). В кластеризованном наборе блоков Asterisk теоретически возможно дублирование уникальных идентификаторов, поскольку каждая система Asterisk учитывает только себя. Чтобы решить эту проблему, мы можем автоматически добавить системный идентификатор к передней части уникальных идентификаторов, добавив опцию в _/etc/asterisk/asterisk.conf_. Для каждого из ваших блоков задайте идентификатор, добавив что-то вроде:
-```
-[options]
-systemname=toronto
-```
-
----
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <b>Настройка системного имени для глобальных Unique ID</b><br>
+      <p>CDR состоит из уникального идентификатора и нескольких полей информации о вызове (включая исходный и целевой каналы, длину вызова, последнее выполненное приложение и т.д.). В кластеризованном наборе блоков Asterisk теоретически возможно дублирование уникальных идентификаторов, поскольку каждая система Asterisk учитывает только себя. Чтобы решить эту проблему, мы можем автоматически добавить системный идентификатор к передней части уникальных идентификаторов, добавив опцию в <i>etc/asterisk/asterisk.conf</i>. Для каждого из ваших блоков задайте идентификатор, добавив что-то вроде:</p>
+      <p><code>
+        [options] <br>
+        systemname=toronto
+      </code></p>
+    </td>
+  </tr>
+</table>
 
 Лучший способ хранения записей подробных вызовов - это модуль `cdr_adaptive_odbc`. Он позволяет вам выбрать, какие столбцы данных, встроенных в Asterisk, хранятся в вашей таблице и позволяет добавлять дополнительные столбцы, которые могут быть заполнены функцией диалплана `CDR()`. Вы даже можете хранить разные части данных CDR в разных таблицах и базах данных, если это необходимо.
 
@@ -800,27 +803,35 @@ $ mysql -u asterisk -p
 
 MySQL&gt; describe asterisk.cdr
 ```
-You should get a list of all the fields in the table \(which means Alembic was successful\). If you get a message like Table 'asterisk.cdr' doesn't exist, that indicates Alembic didn’t complete the configuration, and you need to review the messages from the Alembic output to see what went wrong \(credentials is usually what causes grief here\).
 
-Well, that wasn’t too hard, eh? The next step is to tell Asterisk to use this new table for CDR going forward.
+Вы должны получить список всех полей в таблице (что означает, что Alembic выполнился успешно). Если вы получите сообщение типа `Table 'asterisk.cdr' doesn't exist` - это указывает на что Alembic не завершил настройку, и вам нужно просмотреть сообщения с вывода Alembic'а, чтобы увидеть, что пошло не так (обычно ошибка в учетных данных).
+
+Ну, это было не так уж и трудно, правда? Следующий шаг - указать Asterisk, чтобы он использовал эту новую таблицу для CDR в будущем.
+
 ```
 $ sudo -u asterisk touch /etc/asterisk/cdr_adaptive_odbc.conf
 
 $ sudo -u asterisk vim /etc/asterisk/cdr_adaptive_odbc.conf
 ```
-Into this new file, paste the following:
+
+В этот новый файл вставьте следующее:
+
 ```
 [adaptive_connection]
 connection=asterisk
 table=cdr
 ```
-This is almost too easy, wouldn’t you say? Alrighty, now we just have to reload the ccdr\_adaptive\_odbc.so module in Asterisk:
+
+Это довольно просто, неправда ли? Отлично, теперь нам просто нужно перезагрузить модуль `cdr_adaptive_odbc.so` в Asterisk:
+
 ```
 $ sudo asterisk -rvvvvvvv
 
 *CLI> module reload cdr_adaptive_odbc.so
 ```
-You can verify that the Adaptive ODBC backend has been loaded by running the following:[10](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178404930968)
+
+Вы можете проверить, что адаптивный сервер ODBC был загружен, выполнив следующие действия:<a href="glava-15.md#sn10">[10]</a>
+
 ```
 *CLI> cdr show status
 
@@ -839,24 +850,32 @@ Call Detail Record (CDR) settings
     csv
     cdr_manager
 ```
-Now place a call that gets answered \(e.g., using Playback\(\), or Dial\(\)ing another channel and answering it\). You should get some CDRs stored into your database. You can check by running SELECT \* FROM CDR; from your database console.
 
-With the basic CDR information stored in the database, you might want to add some additional information to the cdr table, such as the route rate. You can use the ALTER TABLE directive to add a column called route\_rate to the table:
+Теперь сделайте вызов, на который будет получен ответ (например используя функции `Playback()` или `Dial()` в другом канале и ответив на него). Вы должны получить некоторые CDR, сохранившиеся в вашей базе данных. Вы можете проверить это, запустив команду `SELECT * FROM CDR;` из консоли базы данных.
+
+При наличии основной информации CDR, хранящейся в базе данных, вам может потребоваться добавить в таблицу `cdr` дополнительную информацию, такую как стоимость маршрута. Вы можете использовать директиву `ALTER TABLE` для добавления столбца называемого `route_rate` к таблице:
+
 ```
 sql> ALTER TABLE cdr ADD COLUMN route_rate varchar(10);
 ```
-Now reload the cdr\_adaptive\_odbc.so module from the Asterisk console:
+
+Теперь перезагрузите модуль `cdr_adaptive_odbc.so` из консоли Asterisk:
+
 ```
 *CLI> module reload cdr_adaptive_odbc.so
 ```
-and populate the new column from the Asterisk dialplan using the CDR\(\) function, like so:
+
+и заполните новый столбец из диалплана Asterisk с помощью функции `CDR()`, например:
+
 ```
 exten => _NXXNXXXXXX,1,Verbose(1,Example of adaptive ODBC usage)
    same => n,Set(CDR(route_rate)=0.01)
    same => n,Dial(SIP/my_itsp/${EXTEN})
    same => n,Hangup()
 ```
-After the alteration to your database and dialplan, you can place a call and then look at your CDRs. You should see something like the following:
+
+После внесения изменений в базу данных и абонентскую группу вы можете сделать звонок, а затем посмотреть свои CDR. Вы должны увидеть что-то вроде следующего:
+
 ```
 +--------------+----------+---------+------------+
 | src          | duration | billsec | route_rate |
@@ -864,11 +883,13 @@ After the alteration to your database and dialplan, you can place a call and the
 | 0000FFFF0008 | 37       | 30      | 0.01       |
 +--------------+----------+---------+------------+
 ```
-In reality, storing rating in the call record might not be ideal \(CDR is typically used as a raw resource, and things such as rates are added downstream by billing software\). The ability to add custom fields to CDR is very useful, but be careful not to use your call records to replace a proper billing platform. Best to keep your CDR clean and do further processing downstream.
 
-#### Additional Configuration Options for cdr\_adaptive\_odbc.conf
+На самом деле сохранение стоимости в записи вызовов может быть неидеальным (CDR обычно используется в качестве исходного ресурса, а такие вещи, как тарифы, добавляются ниже по потоку с помощью программного обеспечения для биллинга). Возможность добавления настраиваемых полей в CDR очень полезна, но будьте осторожны, чтобы не использовать записи вызовов для замены надлежащей платформы биллинга. Лучше всего сохранить ваш CDR чистым и сделать дальнейшую обработку ниже.
 
-Some extra configuration options exist in the cdr\_adaptive\_odbc.conf file that may be useful. The first is that you can define multiple databases or tables to store information into, so if you have multiple databases that need the same information, you can simply define them in res\_odbc.conf, create tables in the databases, and then refer to them in separate sections of the configuration:
+#### Additional Configuration Options for cdr_adaptive_odbc.conf
+
+Some extra configuration options exist in the cdr_adaptive_odbc.conf file that may be useful. The first is that you can define multiple databases or tables to store information into, so if you have multiple databases that need the same information, you can simply define them in res\_odbc.conf, create tables in the databases, and then refer to them in separate sections of the configuration:
+
 ```
 [mysql_connection]
 connection=asterisk_mysql
@@ -878,13 +899,15 @@ table=cdr
 connection=production_mssql
 table=call_records
 ```
+
 **Note**
 
 If you specify multiple sections using the same connection and table, you will get duplicate records.
 
-Beyond just configuring multiple connections and tables \(which of course may or may not contain the same information; the CDR module we’re using is adaptive to situations like that\), we can define aliases for the built-in variables, such as accountcode, src, dst, and billsec.
+Beyond just configuring multiple connections and tables (which of course may or may not contain the same information; the CDR module we’re using is adaptive to situations like that), we can define aliases for the built-in variables, such as accountcode, src, dst, and billsec.
 
 If we were to add aliases for column names for our MS SQL connection, we might alter our connection definition like so:
+
 ```
 [mssql_connection]
 connection=production_mssql
@@ -894,14 +917,18 @@ alias dst => Destination
 alias accountcode => AccountCode
 alias billsec => BillableTime
 ```
-In some situations you may specify a connection where you only want to log calls from a specific source, or to a specific destination. We can do this with filters:
+
+В некоторых ситуациях можно указать соединение, в котором требуется регистрировать вызовы только из определенного источника или в определенное место назначения. Мы можем сделать это с помощью фильтров:
+
 ```
 [logging_for_device_0000FFFF0008]
 connection=asterisk_mysql
 table=cdr_for_0000FFFF0008
 filter src => 0000FFFF0008
 ```
-If you need to populate a certain column with information based on a section name, you can set it statically with the static option, which you may utilize with the filter option:
+
+Если вам нужно заполнить определенный столбец информацией, основанной на имени раздела, вы можете установить его статически с помощью параметра `static`, который вы можете использовать с параметром `filter`:
+
 ```
 [mysql_connection]
 connection=asterisk_mysql
@@ -914,25 +941,28 @@ filter src => 0000FFFF0008
 static "DoNotCharge" => accountcode
 ```
 
-**Note**
+**Примечание**
 
-In the preceding example, you will get duplicate records in the same table, but all the information will be the same except for the populated accountcode column, so you should be able to filter it out using SQL.
+В предыдущем примере вы получите повторяющиеся записи в той же таблице, но вся информация будет одинаковой, за исключением заполненного столбца `accountcode`, поэтому вы должны иметь возможность отфильтровать его с помощью SQL.
 
 ## Database Integration of ACD Queues
 
-With a Call Center \(often referred to as ACD queues\), it can be very useful to be able to allow adjustment of queue parameters without having to edit and reload configuration files. Management of a call center can be a complex task, and allowing for simpler adjustment of parameters can make everyone’s life a whole lot easier.
+With a Call Center (often referred to as ACD queues), it can be very useful to be able to allow adjustment of queue parameters without having to edit and reload configuration files. Management of a call center can be a complex task, and allowing for simpler adjustment of parameters can make everyone’s life a whole lot easier.
 
-The queues themselves we’ve already placed in the database in [Chapter 12](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22asterisk-ACD). If, however, you also want to store dialplan parameters relating to your queues, the database can do that too.
+The queues themselves we’ve already placed in the database in [Глава 12](glava-12.md). If, however, you also want to store dialplan parameters relating to your queues, the database can do that too.
 
 ### Storing Dialplan Parameters for a Queue in a Database
 
-The dialplan application Queue\(\) allows for several parameters to be passed to it. The CLI command core show application Queue defines the following syntax:
+Приложение диалплана Queue() позволяет передавать в нее несколько параметров. Команда CLI `core show Application Queue` определяет следующий синтаксис:
+
 ```
 [Syntax]
 Queue(queuename[,options[,URL[,announceoverride[,timeout[,AGI[,macro[,gosub[,
   rule[,position]]]]]]]]])
 ```
-Since we’re storing our queue in a database, why not also store the parameters you wish to pass to the queue in a similar manner?[11](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178404879016)
+
+Поскольку мы храним нашу очередь в базе данных, почему бы также не сохранить параметры, которые вы хотите передать в очередь аналогичным образом?
+<sup><a href="#sn11">[11]</a></sup>
 ```
 MySQL> CREATE TABLE `pbx`.`QueueDialplanParameters` (
   `QueueDialplanParametersID` mediumint(8) NOT NULL auto_increment,
@@ -951,7 +981,9 @@ MySQL> CREATE TABLE `pbx`.`QueueDialplanParameters` (
   PRIMARY KEY  (`QueueDialplanParametersID`)
 );
 ```
-Using func_odbc, you can write a function that will return the dialplan parameters relevant to that queue:
+
+Используя `func_odbc`, вы можете написать функцию, которая будет возвращать параметры диалплана, относящиеся к этой очереди:
+
 ```
 [QUEUE_DETAILS]
 prefix=GET
@@ -959,17 +991,23 @@ dsn=asterisk
 readsql=SELECT * FROM pbx.QueueDialplanParameters
 readsql+= WHERE QueueDialplanParametersID='${ARG1}'
 ```
-Then pass those parameters to the Queue() application as calls arrive:
+
+Затем передайте эти параметры приложению `Queue()` по мере поступления вызовов:
+
 ```
 exten => s,1,Verbose(1,Call entering queue named ${SomeValidID)
   same => n,Set(QueueParameters=${GET_QUEUE_DETAILS(SomeValidID)})
   same => n,Queue(${QueueParameters})
 ```
+
+Хотя разработка диалплана несколько сложнее, чем просто написание соответствующего диалплана, преимущество заключается в том, что вы сможете управлять большим количеством очередей с более широким набором параметров, используя диалплан, который достаточно гибок, чтобы обрабатывать любые параметры, которые принимает приложение массового обслуживания в Asterisk. Для чего-то большего, чем очень простая очередь, мы думаем, что вы найдете использование базы данных для всего этого вполне стоит усилий.
+
 While somewhat more complicated to develop than just writing an appropriate dialplan, the advantage is that you will be able to manage a larger number of queues, with a wider variety of parameters, using dialplan that is flexible enough to handle any sort of parameters the queueing application in Asterisk accepts. For anything more than a very simple queue, we think you will find the use of a database for all this is well worth the effort.
 
-### Writing queue_log to Database
+### Запись queue_log в базу данных
 
-Finally, we can store our queue_log to a database, which can make it easier for external applications to extract queue performance details from the system:
+Наконец, мы можем хранить наш журнал `queue_log` в базе данных, что может упростить внешними приложениями извлечение сведений из системы о производительности очереди:
+
 ```
 CREATE TABLE queue_log (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -986,12 +1024,18 @@ CREATE TABLE queue_log (
   PRIMARY KEY (`id`)
 );
 ```
-Edit your extconfig.conf file to refer to the queue_log table:
+
+Отредактируйте свой файл _extconfig.conf_ для ссылки на таблицу `queue_log`:
+
 ```
 [settings]
 queue_log => odbc,asterisk,queue_log
 ```
+
+Перезагрузите Asterisk, и ваша очередь теперь будет записывать информацию в базу данных. Например, вход агента в очередь sales должна производить что-то вроде этого:
+
 A restart of Asterisk, and your queue will now log information to the database. As an example, logging an agent into the sales queue should produce something like this:
+
 ```
 mysql> select * from queue_log;
 +----+----------------------------+----------------------+-----------+
@@ -1009,12 +1053,14 @@ mysql> select * from queue_log;
 | SIP/0000FFFF0001 | ADDMEMBER  |       |       |       |       |       |
 +------------------+------------+-------+-------+-------+-------+-------+
 ```
-If you’re developing any sort of external application that needs access to queue statistics, having the data stored in this manner will prove far superior to using the /var/log/asterisk/queue\_log file.
 
-## Conclusion
+If you’re developing any sort of external application that needs access to queue statistics, having the data stored in this manner will prove far superior to using the /var/log/asterisk/queue_log file.
 
-In this chapter, you learned about several areas where Asterisk can integrate with a relational database. This is useful for systems where you need to start scaling by clustering multiple Asterisk boxes working with the same centralized information, or when you want to start building external applications to modify information without requiring a reload of the system \(i.e., not requiring the modification of flat files\).
+## Вывод
 
+In this chapter, you learned about several areas where Asterisk can integrate with a relational database. This is useful for systems where you need to start scaling by clustering multiple Asterisk boxes working with the same centralized information, or when you want to start building external applications to modify information without requiring a reload of the system (i.e., not requiring the modification of flat files).
+
+<ol>
 [1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405309816-marker) This was actually an issue one of the authors had while working on this book, and he found the flag column by looking at the statement logging during testing.
 
 [2](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405291112-marker) And if you don’t know what a Dagwood is, that’s what Wikipedia is for. I am not that old.
@@ -1033,8 +1079,9 @@ In this chapter, you learned about several areas where Asterisk can integrate wi
 
 [9](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178405022184-marker) There are several tutorials on the web describing how to set up replication with MySQL.
 
-[10](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178404930968-marker) You may see different backends registered, depending on what configuration you have done with other components of the various CDR modules.
+<a name="sn10">[10]</a> You may see different backends registered, depending on what configuration you have done with other components of the various CDR modules.
 
-[11](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22idm46178404879016-marker) Note that we’re creating this table in our pbx schema, rather than the asterisk schema, and that is because this is not a table that comes with Asterisk, but instead one we’re creating ourselves. We recommend letting Asterisk and Alembic have exclusive control over the asterisk schema, and using a custom schema \(such as pbx\) for anything custom we might create.
+<li id="sn11"> Note that we’re creating this table in our pbx schema, rather than the asterisk schema, and that is because this is not a table that comes with Asterisk, but instead one we’re creating ourselves. We recommend letting Asterisk and Alembic have exclusive control over the asterisk schema, and using a custom schema \(such as pbx\) for anything custom we might create.
+</ol>
 
 [Глава 14. Автосекретарь](glava-14.md)    | [Содержание](SUMMARY.md)  |   [Глава 16. Введение в интерактивное голосовое меню](glava-16.md)
