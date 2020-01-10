@@ -1058,7 +1058,7 @@ If you’re developing any sort of external application that needs access to que
 
 ## Вывод
 
-In this chapter, you learned about several areas where Asterisk can integrate with a relational database. This is useful for systems where you need to start scaling by clustering multiple Asterisk boxes working with the same centralized information, or when you want to start building external applications to modify information without requiring a reload of the system (i.e., not requiring the modification of flat files).
+В этой главе вы узнали о нескольких областях, где Asterisk может интегрироваться с реляционной базой данных. Это полезно для систем, где необходимо начать масштабирование путем кластеризации нескольких блоков Asterisk, работающих с одной и той же централизованной информацией, или когда вы хотите начать создавать внешние приложения для изменения информации, не требующие перезагрузки системы (т.е. без изменения плоских файлов).
 
 <ol>
 <li id="sn1">This was actually an issue one of the authors had while working on this book, and he found the flag column by looking at the statement logging during testing.
@@ -1084,5 +1084,6 @@ In this chapter, you learned about several areas where Asterisk can integrate wi
 <li id="sn11"> Note that we’re creating this table in our pbx schema, rather than the asterisk schema, and that is because this is not a table that comes with Asterisk, but instead one we’re creating ourselves. We recommend letting Asterisk and Alembic have exclusive control over the asterisk schema, and using a custom schema (such as pbx) for anything custom we might create.
 </ol>
 
+<hr>
 
-[Глава 14. Автосекретарь](glava-14.md)    | [Содержание](SUMMARY.md)  |   [Глава 16. Введение в интерактивное голосовое меню](glava-16.md)
+[Глава 14. Автосекретарь](glava-14.md) | [Содержание](SUMMARY.md) | [Глава 16. Введение в интерактивное голосовое меню](glava-16.md)
