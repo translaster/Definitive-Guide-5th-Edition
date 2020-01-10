@@ -900,18 +900,20 @@ exten => _NXXNXXXXXX,1,Verbose(1,Example of adaptive ODBC usage)
 <table border="1" width="100%" cellpadding="5">
   <tr>
     <td><b>Дополнительные параметры конфигурации для cdr_adaptive_odbc.conf</b><br>
-    <p>Некоторые дополнительные параметры конфигурации существуют в файле `cdr_adaptive_odbc.conf`, которые можгут быть полезны. Во-первых, вы можете определить несколько баз данных или таблиц для хранения информации, поэтому, если у вас есть несколько баз данных, которым нужна одна и та же информация, вы можете просто определить их в _res_odbc.conf_, создать таблицы в базах данных, а затем обращаться к ним в отдельных разделах конфигурации:</p>
+    <p>Некоторые дополнительные параметры конфигурации существуют в файле <i>cdr_adaptive_odbc.conf</i>, которые можгут быть полезны. Во-первых, вы можете определить несколько баз данных или таблиц для хранения информации, поэтому, если у вас есть несколько баз данных, которым нужна одна и та же информация, вы можете просто определить их в <i>res_odbc.conf</i>, создать таблицы в базах данных, а затем обращаться к ним в отдельных разделах конфигурации:</p>
 
-```
-[mysql_connection]
-connection=asterisk_mysql
-table=cdr
+<code>
+[mysql_connection]<br>
+connection=asterisk_mysql<br>
+table=cdr<br>
+<br>
+[mssql_connection]<br>
+connection=production_mssql<br>
+table=call_records<br>
+</code>
 
-[mssql_connection]
-connection=production_mssql
-table=call_records
-```
 <hr>
+
 <p><b>Примечание</b></p>
 
 <p>Если вы зададите несколько разделов, используя одно и то же соединение и таблицу, то получите дублирующиеся записи.</p>
@@ -919,42 +921,43 @@ table=call_records
 <p>Помимо простой настройки нескольких соединений и таблиц (которые, конечно, могут содержать или не содержать одну и ту же информацию; модуль CDR, который мы используем, адаптирован к подобным ситуациям), мы можем определить псевдонимы для встроенных переменных, таких как <code>accountcode</code>, <code>src</code>, <code>dst</code> и <code>billsec</code>.</p>
 <p>Если бы мы добавили псевдонимы для имен столбцов для нашего соединения MS SQL, мы могли бы изменить наше определение соединения следующим образом:</p>
 
-```
-[mssql_connection]
-connection=production_mssql
-table=call_records
-alias src => Source
-alias dst => Destination
-alias accountcode => AccountCode
-alias billsec => BillableTime
-```
+<code>
+[mssql_connection]<br>
+connection=production_mssql<br>
+table=call_records<br>
+alias src => Source<br>
+alias dst => Destination<br>
+alias accountcode => AccountCode<br>
+alias billsec => BillableTime<br>
+</code>
 
 В некоторых ситуациях можно указать соединение, в котором требуется регистрировать вызовы только из определенного источника или в определенное место назначения. Мы можем сделать это с помощью фильтров:
 
-```
-[logging_for_device_0000FFFF0008]
-connection=asterisk_mysql
-table=cdr_for_0000FFFF0008
-filter src => 0000FFFF0008
-```
+<code>
+[logging_for_device_0000FFFF0008]<br>
+connection=asterisk_mysql<br>
+table=cdr_for_0000FFFF0008<br>
+filter src => 0000FFFF0008<br>
+</code>
 
 Если вам нужно заполнить определенный столбец информацией, основанной на имени раздела, вы можете установить его статически с помощью параметра `static`, который вы можете использовать с параметром `filter`:
 
-```
-[mysql_connection]
-connection=asterisk_mysql
-table=cdr
+<code>
+[mysql_connection]<br>
+connection=asterisk_mysql<br>
+table=cdr<br>
+<br>
+[filtered_mysql_connection]<br>
+connection=asterisk_mysql<br>
+table=cdr<br>
+filter src => 0000FFFF0008<br>
+static "DoNotCharge" => accountcode<br>
+</code>
 
-[filtered_mysql_connection]
-connection=asterisk_mysql
-table=cdr
-filter src => 0000FFFF0008
-static "DoNotCharge" => accountcode
-```
 <hr>
-**Примечание**
+<b>Примечание</b>
 
-В предыдущем примере вы получите повторяющиеся записи в той же таблице, но вся информация будет одинаковой, за исключением заполненного столбца `accountcode`, поэтому вы должны иметь возможность отфильтровать его с помощью SQL.
+<p>В предыдущем примере вы получите повторяющиеся записи в той же таблице, но вся информация будет одинаковой, за исключением заполненного столбца `accountcode`, поэтому вы должны иметь возможность отфильтровать его с помощью SQL.</p>
 <hr>
     </td>
   </tr>
