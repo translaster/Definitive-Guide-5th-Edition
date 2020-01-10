@@ -903,12 +903,12 @@ exten => _NXXNXXXXXX,1,Verbose(1,Example of adaptive ODBC usage)
     <p>Некоторые дополнительные параметры конфигурации существуют в файле <i>cdr_adaptive_odbc.conf</i>, которые можгут быть полезны. Во-первых, вы можете определить несколько баз данных или таблиц для хранения информации, поэтому, если у вас есть несколько баз данных, которым нужна одна и та же информация, вы можете просто определить их в <i>res_odbc.conf</i>, создать таблицы в базах данных, а затем обращаться к ним в отдельных разделах конфигурации:</p>
 
 <pre><code>
-[mysql_connection]<br>
-connection=asterisk_mysql<br>
-table=cdr<br>
-<br>
-[mssql_connection]<br>
-connection=production_mssql<br>
+[mysql_connection]
+connection=asterisk_mysql
+table=cdr
+
+[mssql_connection]
+connection=production_mssql
 table=call_records
 </code></pre>
 
@@ -922,12 +922,12 @@ table=call_records
 <p>Если бы мы добавили псевдонимы для имен столбцов для нашего соединения MS SQL, мы могли бы изменить наше определение соединения следующим образом:</p>
 
 <pre><code>
-[mssql_connection]<br>
-connection=production_mssql<br>
-table=call_records<br>
-alias src => Source<br>
-alias dst => Destination<br>
-alias accountcode => AccountCode<br>
+[mssql_connection]
+connection=production_mssql
+table=call_records
+alias src => Source
+alias dst => Destination
+alias accountcode => AccountCode
 alias billsec => BillableTime
 </code></pre>
 
@@ -940,24 +940,24 @@ table=cdr_for_0000FFFF0008
 filter src => 0000FFFF0008
 </code></pre>
 
-<p>Если вам нужно заполнить определенный столбец информацией, основанной на имени раздела, вы можете установить его статически с помощью параметра `static`, который вы можете использовать с параметром <code>filter</code>:</p>
+<p>Если вам нужно заполнить определенный столбец информацией, основанной на имени раздела, вы можете установить его статически с помощью параметра <code>static</code>, который вы можете использовать с параметром <code>filter</code>:</p>
 
 <pre><code>
-[mysql_connection]<br>
-connection=asterisk_mysql<br>
-table=cdr<br>
-<br>
-[filtered_mysql_connection]<br>
-connection=asterisk_mysql<br>
-table=cdr<br>
-filter src => 0000FFFF0008<br>
+[mysql_connection]
+connection=asterisk_mysql
+table=cdr
+
+[filtered_mysql_connection]
+connection=asterisk_mysql
+table=cdr
+filter src => 0000FFFF0008
 static "DoNotCharge" => accountcode
 </code></pre>
 
 <hr>
 <b>Примечание</b>
 
-<p>В предыдущем примере вы получите повторяющиеся записи в той же таблице, но вся информация будет одинаковой, за исключением заполненного столбца `accountcode`, поэтому вы должны иметь возможность отфильтровать его с помощью SQL.</p>
+<p>В предыдущем примере вы получите повторяющиеся записи в той же таблице, но вся информация будет одинаковой, за исключением заполненного столбца <code>accountcode</code>, поэтому вы должны иметь возможность отфильтровать его с помощью SQL.</p>
 <hr>
     </td>
   </tr>
