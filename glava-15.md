@@ -483,8 +483,7 @@ same => n(set_login_status),Set(HOTDESK_STATUS(${HotdeskExtension})=1,${LOCATION
       <p>Некоторые утверждают, что это приводит к большей путанице в вашем диалплане; другие будут настаивать на том, что преимущество наличия гораздо более простого <i>func_odbc.conf</i> стоит того:</p>
       <pre><code>
         same => n,Set(result=${GENERIC_SQL(SELECT col FROM table WHERE ...)})
-        same => n,Verbose(1,${result})
-
+        same => n,Verbose(1,${result})<br>
         same => n,Set(GENERIC_SQL()=UPDATE table SET field="VAL" WHERE ...)
         same => n,Verbose(1,ODBC_RESULT is ${OBDBC_RESULT})
       </code></pre>
