@@ -108,7 +108,7 @@ Asterisk построен на модулях. Модуль - это загру�
 
 ---
 
-Таблица 2-3. Общие модули записи деталей вызова
+Таблица 2-3. _Общие модули записи деталей вызова_
 
 | Name | Purpose |
 | :--- | :--- |
@@ -120,9 +120,9 @@ Asterisk построен на модулях. Модуль - это загру�
 
 ### Модули логирования событий канала
 
-Регистрация событий канала (CEL) обеспечивает гораздо более мощный контроль над отчетами об активности вызовов. Кроме того, он требует более тщательного планирования вашего плана набора и ни в коем случае не будет работать автоматически. Модули Asterisk CEL перечислены в [Table 2-4](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/2.%20Asterisk%20Architecture%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Architecture_id292113).
+Регистрация событий канала (CEL) обеспечивает гораздо более мощный контроль над отчетами об активности вызовов. Кроме того, он требует более тщательного планирования вашего плана набора и ни в коем случае не будет работать автоматически. Модули Asterisk CEL перечислены в Таблице 2-4.
 
-Table 2-4. Модули логирования событий канала
+Таблица 2-4. _Модули логирования событий канала_
 
 | Name | Purpose |
 | :--- | :--- |
@@ -132,9 +132,9 @@ Table 2-4. Модули логирования событий канала
 
 ### Драйверы каналов
 
-Без драйверов каналов у Asterisk не было бы возможности совершать или принимать вызовы. Каждый драйвер канала специфичен для протокола или типа канала, который он поддерживает \(SIP, ISDN и т.д.\). Модуль канала действует как шлюз к ядру Asterisk. Некоторые из наиболее популярных драйверов каналов Asterisk перечислены в Таблице 2-5.
+Без драйверов каналов у Asterisk не было бы возможности совершать или принимать вызовы. Каждый драйвер канала специфичен для протокола или типа канала, который он поддерживает (SIP, ISDN и т.д.). Модуль канала действует как шлюз к ядру Asterisk. Некоторые из наиболее популярных драйверов каналов Asterisk перечислены в Таблице 2-5.
 
-Table 2-5. Популярные драйверы каналов
+Таблица 2-5. _Популярные драйверы каналов_
 
 | Имя | Назначение |
 | :--- | :--- |
@@ -142,12 +142,12 @@ Table 2-5. Популярные драйверы каналов
 | chan\_dahdi | Обеспечивает подключение к картам ТфОП, использующим драйверы каналов DAHDI |
 | chan\_local | Предоставляет механизм для обработки части диалплана как канала |
 | chan\_motif | Реализует протокол Jingle, включая возможность подключения к Google Talk и Google Voice; представлен в Asterisk 11 |
-| chan\_multicast\_rtp | Обеспечивает подключение к потокам многоадресного Realtime Transport Protocol \(RTP\) |
+| chan\_multicast\_rtp | Обеспечивает подключение к потокам многоадресного Realtime Transport Protocol (RTP) |
 | chan\_pjsip | Драйвер канала Session Initiation Protocol (SIP) |
 
 ### Трансляторы кодеков
 
-Трансляторы кодеков[3](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch02.html%22%20/l%20%22idm46178409283960) \часто называемые транскодерами) позволяют Asterisk конвертировать форматы аудиопотоков между вызовами. Поэтому, если вызов поступает по каналу PRI (используя G.711) и должен быть передан в сжатый канал SIP (например, используя G.729, один из многих кодеков, которые может обрабатывать SIP), соответствующий транслятор кодека выполнит преобразование.
+Трансляторы кодеков[3](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch02.html%22%20/l%20%22idm46178409283960) (часто называемые _транскодерами_) позволяют Asterisk конвертировать форматы аудиопотоков между вызовами. Поэтому, если вызов поступает по каналу PRI (используя G.711) и должен быть передан в сжатый канал SIP (например, используя G.729, один из многих кодеков, которые может обрабатывать SIP), соответствующий транслятор кодека выполнит преобразование.
 
 Кодеки-это сложные алгоритмы, которые обрабатывают преобразование аналоговой информации \(в данном случае звука, но также может быть и видео) в цифровой формат. Многие кодеки также обеспечивают сжатие и исправление ошибок, но это не является обязательным требованием.
 
@@ -159,7 +159,7 @@ Table 2-5. Популярные драйверы каналов
 
 ---
 
-Asterisk делает довольно хорошую работу по поддержке кодеков, но в основном сосредоточен на кодеках, обычно используемых телефонными приложениями (в отличие от кодеков, используемых, скажем, для музыки или видео, таких как MP3 или MP4). Они перечислены в [Таблице 2-6](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/2.%20Asterisk%20Architecture%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Architecture_id292600).
+Asterisk делает довольно хорошую работу по поддержке кодеков, но в основном сосредоточен на кодеках, обычно используемых телефонными приложениями (в отличие от кодеков, используемых, скажем, для музыки или видео, таких как MP3 или MP4). Они перечислены в Таблице 2-6.
 
 Таблица 2-6. _Общие трансляторы кодеков_
 
@@ -188,7 +188,7 @@ Digium предоставляет некоторые дополнительны�
 
 ### Интерпретаторы формата
 
-Интерпретаторы форматов ([Table 2-7](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/2.%20Asterisk%20Architecture%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Architecture_id292825)) выполняют ту же функцию, что и переводчики кодеков, но они работают с файлами, а не с каналами, и обрабатывают не только аудио. Если у вас есть запись в меню, которое было сохранено как GSM, вам нужно будет использовать интерпретатор формата для воспроизведения этой записи на любые каналы, не использующие кодек GSM.[4](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch02.html%22%20/l%20%22idm46178403315272)
+Интерпретаторы форматов в Таблице 2-7 выполняют ту же функцию, что и переводчики кодеков, но они работают с файлами, а не с каналами, и обрабатывают не только аудио. Если у вас есть запись в меню, которое было сохранено как GSM, вам нужно будет использовать интерпретатор формата для воспроизведения этой записи на любые каналы, не использующие кодек GSM.[4](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch02.html%22%20/l%20%22idm46178403315272)
 
 Если вы храните запись в нескольких форматах одновременно (например, WAV, GSM и т. д.), Asterisk определит наименее затратный формат[5](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch02.html%22%20/l%20%22idm46178403313864) для использования, когда каналу необходимо воспроизвести эту запись.
 
@@ -197,12 +197,12 @@ Digium предоставляет некоторые дополнительны�
 | Name | Plays files stored in |
 | :--- | :--- |
 | format\_g729 | G.729: ._g729_ |
-| format\_gsm | RPE-LTP \ (оригинальный кодек GSM \): ._gsm_ |
+| format\_gsm | RPE-LTP  (оригинальный кодек GSM \): ._gsm_ |
 | format\_h264 | H.264 video: ._h264_ |
 | format\_ilbc | Интернет кодек с низким битрейтом: ._ilbc_|
 | format\_jpeg | Графический файл: ._jpeg_, ._jpg_ |
-| format \_ogg\_ vorbis | Ogg контейнер: ._ogg_ |
-| format\_pcm | Различные форматы импульсно-кодированной модуляции: ._alaw_, ._al_, ._alw_, ._pcm_, ._ulaw_, ._ul_, ._mu_, ._ulw_, ._g722_, ._au_ |
+| format_ogg_vorbis | Ogg контейнер: ._ogg_ |
+| format_pcm | Различные форматы импульсно-кодированной модуляции: ._alaw_, ._al_, ._alw_, ._pcm_, ._ulaw_, ._ul_, ._mu_, ._ulw_, ._g722_, ._au_ |
 | format\_siren14 | G.722.1 Annex C \(14 kHz\): ._siren14_ |
 | format\_siren7 | G.722.1 \(7 kHz\): ._siren7_ |
 | format\_sln | 8-bit signed linear: ._sln_, ._raw_ |
@@ -212,9 +212,9 @@ Digium предоставляет некоторые дополнительны�
 
 ### Функции Диалплана
 
-Функции диалплана, перечисленные в [Таблице 2-8](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/2.%20Asterisk%20Architecture%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Architecture_id293094), дополняют приложения диалплана \(смотри [“Приложения”](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/2.%20Asterisk%20Architecture%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Architecture_id241422)\). Они предоставляют множество полезных улучшений для таких вещей, как обработка строк, смещение времени и даты и подключение ODBC.
+Функции диалплана, перечисленные в Таблице 2-8, дополняют приложения диалплана \(смотри [“Приложения”](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/2.%20Asterisk%20Architecture%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Architecture_id241422)\). Они предоставляют множество полезных улучшений для таких вещей, как обработка строк, смещение времени и даты и подключение ODBC.
 
-Таблица 2-8. _Утверждённый список полезных функций диалплана_
+Таблица 2-8. _Cписок полезных функций диалплана_
 
 | Name | Purpose |
 | :--- | :--- |
@@ -251,7 +251,7 @@ Digium предоставляет некоторые дополнительны�
 
 ### PBX Модули
 
-Модули PBX это периферийные модули, которые обеспечивают улучшенные механизмы управления и настройки. Например, `pbx_config` это модуль, который загружает традиционный диалплан Asterisk. Доступные в настоящее время модули PBX перечислены в [Таблице 2-9](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/2.%20Asterisk%20Architecture%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Architecture_id293725).
+Модули PBX это периферийные модули, которые обеспечивают улучшенные механизмы управления и настройки. Например, `pbx_config` это модуль, который загружает традиционный диалплан Asterisk. Доступные в настоящее время модули PBX перечислены в Таблице 2-9.
 
 Таблица 2-9. _PBX модули_
 
@@ -268,34 +268,33 @@ Digium предоставляет некоторые дополнительны�
 
 #### Configuration backends
 
-Asterisk is configured using text files in /etc/asterisk by default. These modules, listed in [Table 2-10](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/2.%20Asterisk%20Architecture%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Architecture_id2938860), offer alternative configuration methods. See [Chapter 15](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22asterisk-DB) for detailed documentation on setting up database-backed configuration.
+Asterisk по умолчанию настроен с использованием текстовых файлов в _/etc/asterisk_. Модули, перечисленные в Таблице 2-10, предоставлют альтернативные методы настройки. Смотри [Глава 15](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22asterisk-DB) для получения подробной документации по настройке конфигурации на основе базы данных.
 
-Table 2-10. Configuration backend modules
-
-| Name | Purpose |
-| :--- | :--- |
-| res\_config\_curl | Pulls configuration information using cURL |
-| res\_config\_ldap | Pulls configuration information using LDAP |
-| res\_config\_odbc | Pulls configuration information using ODBC |
-
-#### Calendar integration
-
-Asterisk includes some integration with calendar systems. You can read and write calendar information from the dialplan. You can also have calls originated based on calendar entries. The core calendar integration is provided by the res\_calendar module. The rest of the modules provide the ability to connect to specific types of calendar servers. [Table 2-11](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/2.%20Asterisk%20Architecture%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Architecture_id2938862) lists the calendar integration modules.
-
-Table 2-11. Calendar integration modules
+Таблица 2-10. _Конфигурационные бэкэнд-модули_
 
 | Name | Purpose |
 | :--- | :--- |
-| res\_calendar | Enables base integration to calendaring systems |
-| res\_calendar\_caldav | Allows features provided by res\_calendar to connect to calendars via CalDAV |
-| res\_calendar\_exchange | Allows features provided by res\_calendar to connect to MS Exchange |
-| res\_calendar\_icalendar | Allows features provided by res\_calendar to connect to Apple/Google iCalendar |
+| res\_config\_curl | Получает информацию о конфигурации, используя cURL |
+| res\_config\_ldap | Получает информацию о конфигурации, используя LDAP |
+| res\_config\_odbc | Получает информацию о конфигурации, используя ODBC |
 
-#### Other resource modules
+#### Итеграция календаря
 
-[Table 2-12](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/2.%20Asterisk%20Architecture%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Architecture_id293886) includes the rest of the resource modules that did not fit into one of the subgroups we defined earlier in this section.
+Asterisk включает некоторую интеграцию с календарными системами. Вы можете читать и записывать информацию календаря из плана набора. Вы также можете иметь звонки на основе записей календаря. Интеграция основного календаря обеспечивается модулем `res_calendar`. Остальные модули предоставляют возможность подключения к определенным типам календарных серверов. [Таблица 2-11](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/2.%20Asterisk%20Architecture%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Architecture_id2938862) перечисляет модули интеграции календаря.
 
-Table 2-12. Resource modules
+Таблица 2-11. _Модули интеграции календаря_
+
+| Name | Purpose |
+| :--- | :--- |
+| res\_calendar | Обеспечивает базовую интеграцию с календарными системами |
+| res\_calendar\_caldav | Позволяет функциям, предоставляемым `res_calendar` , подключаться к календарям через CalDAV |
+| res\_calendar\_exchange | Позволяет функциям `res_calendar` подключаться к MS Exchange |
+| res\_calendar\_icalendar | Позволяет функциям `res_calendar` подключаться к Apple / Google iCalendar |
+
+#### Другие ресурсные модули
+Таблица 2-12 включает остальные модули ресурсов, которые не вписываются в одну из подгрупп, которые мы определили ранее в этом разделе.
+
+Tаблица 2-12. _Ресурсные модули_
 
 <table>
   <thead>
@@ -312,7 +311,7 @@ Table 2-12. Resource modules
     </tr>
     <tr>
       <td style="text-align:left">res_agi</td>
-      <td style="text-align:left">Provides the Asterisk Gateway Interface (see <a href="https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch18.html%22%20/l%20%22AGI">Chapter 18</a>)</td>
+      <td style="text-align:left">Provides the Asterisk Gateway Interface (see <a href="https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch18.html%22%20/l%20%22AGI">Глава 18</a>)</td>
     </tr>
     <tr>
       <td style="text-align:left">res_corosync</td>
@@ -341,12 +340,11 @@ Table 2-12. Resource modules
     </tr>
     <tr>
       <td style="text-align:left">res_http_websocket</td>
-      <td style="text-align:left">Provides WebSocket support for the Asterisk internal HTTP server (required
-        by WebRTC)</td>
+      <td style="text-align:left">Provides WebSocket support for the Asterisk internal HTTP server (required by WebRTC)</td>
     </tr>
     <tr>
       <td style="text-align:left">res_monitor</td>
-      <td style="text-align:left">Provides call-recording resources</td>
+      <td style="text-align:left">Предоставляет ресурсы записи разговоров</td>
     </tr>
     <tr>
       <td style="text-align:left">res_musiconhold</td>
@@ -362,7 +360,7 @@ Table 2-12. Resource modules
     </tr>
     <tr>
       <td style="text-align:left">res_phoneprov</td>
-      <td style="text-align:left">Provisions phones from Asterisk HTTP server</td>
+      <td style="text-align:left">Автонастройка телефонов с HTTP сервера Asterisk</td>
     </tr>
     <tr>
       <td style="text-align:left">res_pktccops</td>
@@ -370,7 +368,7 @@ Table 2-12. Resource modules
     </tr>
     <tr>
       <td style="text-align:left">res_security_log</td>
-      <td style="text-align:left">Enables logging of security events generated by other parts of Asterisk</td>
+      <td style="text-align:left">Включает ведение журнала событий безопасности, генерируемых другими частями Asterisk</td>
     </tr>
     <tr>
       <td style="text-align:left">res_snmp</td>
@@ -378,7 +376,7 @@ Table 2-12. Resource modules
     </tr>
     <tr>
       <td style="text-align:left">res_speech</td>
-      <td style="text-align:left">Generic speech recognition API<a href="https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch02.html%22%20/l%20%22idm46178409412232">b</a>
+      <td style="text-align:left">Общий API распознавания речи<a href="https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch02.html%22%20/l%20%22idm46178409412232"> b</a>
       </td>
     </tr>
     <tr>
@@ -387,98 +385,98 @@ Table 2-12. Resource modules
     </tr>
     <tr>
       <td style="text-align:left">res_xmpp</td>
-      <td style="text-align:left">Provides XMPP resources (FKA Jabber)</td>
+      <td style="text-align:left">Предоставляет ресурсы XMPP (FKA Jabber)</td>
     </tr>
     <tr>
       <td style="text-align:left">
-        <p><a href="https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch02.html%22%20/l%20%22idm46178409429112-marker">a</a> While
-          most of the ADSI functionality in Asterisk is never used, the voicemail
-          application uses this resource.</p>
+        <p><a href="https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch02.html%22%20/l%20%22idm46178409429112-marker">a</a> Хотя большинство функций ADSI в Asterisk никогда не используется, приложение голосовой почты использует этот ресурс.</p>
         <p><a href="https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch02.html%22%20/l%20%22idm46178409412232-marker">b</a> Requires
           a separately licensed product in order to be used.</p>
       </td>
       <td style="text-align:left"></td>
     </tr>
   </tbody>
-</table>### Add-on Modules
+</table>
 
-Add-on modules are community-developed modules with different usage or distribution rights from those of the main code \([Table 2-13](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/2.%20Asterisk%20Architecture%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Architecture_id294470)\). They are kept in a separate directory and are not compiled and installed by default. To enable these modules, use the menuselect build configuration utility.
+### Дополнительные модули
 
-Table 2-13. Add-on modules
+Дополнительные модули - это разработанные сообществом модули с правами на использование или распространение, отличными от основного кода (Таблица 2-13). Они хранятся в отдельном каталоге и не компилируются и не устанавливаются по умолчанию. Чтобы включить эти модули, используйте утилиту настройки сборки `menuselect`.
+
+Таблица 2-13. _Дополнительные модули_
 
 | Name | Purpose | Popularity/status |
 | :--- | :--- | :--- |
-| chan\_ooh323 | Enables making and receiving VoIP calls using the H.323 protocol | Usable |
-| format\_mp3 | Allows Asterisk to play MP3 files | Usable |
-| res\_config\_mysql | Uses a MySQL database as a real-time configuration backend | Useful |
+| chan\_ooh323 | Позволяет совершать и принимать VoIP звонки по протоколу H323 | Usable |
+| format\_mp3 | Позволяет Asterisk воспроизводить MP3 файлы | Usable |
+| res\_config\_mysql | Использует базу данных MySQL как сервер конфигурации в режиме реального времени | Useful |
 
-### Test Modules
+### Тестовые модули
 
-Test modules are used by the Asterisk development team to validate new code. They are constantly changing and being added to, and are not useful unless you are developing Asterisk software.
+Тестовые модули используются командой разработчиков Asterisk для проверки нового кода. Они постоянно меняются и добавляются, и не являются полезными, если вы не разрабатываете программное обеспечение Asterisk.
 
-If you are an Asterisk developer, however, the Asterisk Test Suite may be of interest to you, as you can build automated tests for Asterisk and submit those back to the project, which runs on several different operating systems and types of machines. By expanding the number of tests constantly, the Asterisk project avoids the creation of regressions in code. By submitting your own tests to the project, you can feel more confident in future upgrades.
+Однако если вы являетесь разработчиком Asterisk, то набор тестов Asterisk может представлять для вас интерес, поскольку вы можете создавать автоматизированные тесты для Asterisk и отправлять их обратно в проект, который работает на нескольких различных операционных системах и типах машин. Постоянно расширяя число тестов, проект Asterisk позволяет избежать создания регрессий в коде. Отправляя свои собственные тесты в проект, вы можете чувствовать себя более уверенно в будущих обновлениях.
 
-More information about building tests is available in [the “Asterisk Test Suite” document](http://bit.ly/14SLEqs), or you can join the \#asterisk-testing channel on the Freenode IRC network.
+Более подробная информация о тестах построения доступна в разделе [“Asterisk Test Suite”](http://bit.ly/14SLEqs), или вы можете присоединиться к каналу _#asterisk-testing_ в IRC-сети Freenode.
 
-## File Structure
+### Файловая структура
 
-Asterisk is a complex system, composed of many resources. These resources make use of the filesystem in several ways. Since Linux is so flexible in this regard, it is helpful to understand what data is being stored, so that you can understand where you are likely to find a particular bit of stored data \(such as voicemail messages or logfiles\).
+Asterisk - сложная система, состоящая из множества ресурсов. Эти ресурсы используют файловую систему несколькими способами. Поскольку Linux настолько гибок в этом отношении, полезно понять, какие данные хранятся, чтобы вы могли понять, где вы, вероятно, найдете определенный бит хранимых данных (например, сообщения голосовой почты или файлы журналов).
 
-### Configuration Files
+### Конфигурационные файлы
 
-The Asterisk configuration files include extensions.conf, pjsip.conf, modules.conf, and dozens of other files that define parameters for the various channels, resources, modules, and functions that may be in use.
+Конфигурационные файлы Asterisk включают в себя _extensions.conf_, _pjsip.conf_, _modules.conf_ и десятки других файлов, которые определяют параметры для различных каналов, ресурсов, модулей и функций, которые могут использоваться.
 
-These files will normally be found in /etc/asterisk. You will be working in this folder a lot as you configure and administer your Asterisk system.
+Эти файлы обычно находятся в _/etc/asterisk_. Вы будете много работать в этой папке, когда будете настраивать и администрировать свою систему Asterisk.
 
-### Modules
+### Модули
 
-Asterisk modules are usually installed to the /usr/lib/asterisk/modules folder. You will not normally have to interact with this folder; however, it will be occasionally useful to know where the modules are located. For example, if you upgrade Asterisk and select different modules during the menuselect phase of the install, the old \(incompatible\) modules from the previous Asterisk version will not be deleted, and you will get a warning from the install script. Those old files will need to be deleted from the modules folder. This can be done either manually or with the “uninstall” make \(make uninstall\) target.
+Модули Asterisk обычно устанавливаются в папку _/usr/lib/asterisk/modules_. Обычно вам не придется взаимодействовать с этой папкой, однако иногда будет полезно узнать, где находятся модули. Например, если вы обновите Asterisk и выберете разные модули на этапе menuselect установки, старые (несовместимые) модули из предыдущей версии Asterisk не будут удалены, и вы получите предупреждение от сценария установки. Эти старые файлы необходимо будет удалить из папки modules. Это можно сделать либо вручную, либо with the “uninstall” make (`make uninstall`) target.
 
-### The Resource Library
+### Библиотека ресурсов
 
-There are several resources that require external data sources. For example, music on hold \(MOH\) can’t happen unless you have some music to play. System prompts also need to be stored somewhere on the hard drive. The /var/lib/asterisk folder is where system prompts, AGI scripts, music on hold, and other resource files are stored.
+Существует несколько ресурсов, которым требуются внешние источники данных. Например, музыка на удержании (MOH) не может произойти, если у вас нет какой-то музыки для воспроизведения. Системные подсказки также должны храниться где-то на жестком диске. В папке _/var/lib/asterisk_ хранятся системные приглашения, сценарии AGI, музыка на удержании и другие файлы ресурсов.
 
 ### The Spool
 
-The spool is where applications store files on a Linux system that are going to change frequently, or that will be processed by other processes at a later time. For example, Linux print jobs and pending emails are normally written to the spool until they are processed.
+Спул - это место, где приложения хранят файлы в системе Linux, которые будут часто меняться или которые будут обрабатываться другими процессами позднее. Например, задания на печать в Linux и ожидающие сообщения электронной почты обычно записываются в спул, пока они не будут обработаны.
 
-In Asterisk, the spool is used to store transient items such as voice messages, call recordings,[6](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch02.html%22%20/l%20%22idm46178409226312) call files, and so forth.
+В Asterisk спул используется для хранения временных элементов, таких как голосовые сообщения, записи вызовов,[6](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch02.html%22%20/l%20%22idm46178409226312) файлы вызовов и так далее.
 
-The Asterisk spool will be found under the /var/spool/asterisk directory.
+Спул Asterisk находится в каталоге _/var/spool/asterisk_.
 
 ### Logging
 
-Asterisk is capable of generating several different kinds of logfiles. The /var/log/asterisk folder is where call detail records \(CDRs\), channel events from CEL, debug logs, queue logs, messages, errors, and other output are written.
+Asterisk может генерировать несколько разных типов лог-файлов. Папка /_var/log/asterisk_ - это место, где записываются подробные записи вызовов (CDR), события канала из CEL, журналы отладки, журналы очереди, сообщения, ошибки и другие выходные данные.
 
-This folder will be extremely important for any troubleshooting efforts you undertake. We will talk more about how to make use of Asterisk logs in [Chapter 21](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch21.html%22%20/l%20%22asterisk-Monitoring).
+Эта папка будет чрезвычайно важна для любых предпринимаемых вами действий по устранению неполадок. Мы поговорим подробнее о том, как использовать логи Asterisk в [Главе 21](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch21.html%22%20/l%20%22asterisk-Monitoring).
 
 ## The Dialplan
 
-The dialplan is the heart of Asterisk. All channels that arrive in the system will be passed through the dialplan, which contains the call-flow scripts that determine how incoming calls are handled.
+Диалплан - это сердце Asterisk. Все каналы, поступающие в систему, будут проходить через dialplan, который содержит сценарии потока вызовов, определяющие, как обрабатываются входящие вызовы. А
 
-Dialplan is typically written using Asterisk’s own dialplan syntax, which is stored in a file named /etc/asterisk/extensions.conf. There are other ways to control call flow, and we will explore them later, but no matter which method you eventually employ, you will find that a basic understanding of the traditional dialplan will be immensely helpful. That is what we will focus on for most of the first two-thirds of this book.
+ Диалплан обычно пишется с использованием собственного синтаксиса Asterisk, который хранится в файле с именем _/etc/asterisk/extensions.conf_ . Существуют и другие способы управления потоком вызовов, и мы рассмотрим их позже, но независимо от того, какой метод вы в конечном итоге используете, вы обнаружите, что базовое понимание традиционной схемы набора номеров будет чрезвычайно полезным. Именно на этом мы сосредоточимся большую часть первых двух третей этой книги.
 
-Later, we will explore handling call flow outside of the dialplan, using technologies such as AMI, AGI, and ARI.
+Позже мы рассмотрим обработку потока вызовов вне диалплана, используя такие технологии, как AMI, AGI и ARI.
 
 ## Hardware
 
-Asterisk is capable of communicating with a vast number of different technologies. In general, these connections are made across a TCP/IP network connection \(usually using SIP\). However, connections to more traditional telecom circuits, such as PRI \(T1, E1, etc.\), BRI \(EuroISDN\) SS7 \(mostly T1 and E1\), and analog \(everything from a few FXO and FXS ports up to large channel banks fed through T1/E1 CAS/RBS connections\), can also be achieved using physical cards installed in a server.
+Asterisk способен общаться с огромным количеством различных технологий. Как правило, эти соединения выполняются через сетевое соединение TCP/IP (обычно с использованием SIP). Однако подключения к более традиционным телекоммуникационным каналам, таким как PRI (T1, E1 и т. Д.), BRI (EuroISDN) SS7 (в основном, T1 и E1), и аналоговым (все, от нескольких портов FXO и FXS до крупных каналов каналов, питаются через соединения T1/E1 CAS/RBS), также может быть достигнуто с помощью физических карт, установленных на сервере.
 
-Many companies produce this hardware, such as Digium \(the sponsor, owner, and primary developer of Asterisk\), Sangoma \(who recently purchased Digium\), Dialogic \(also a Sangoma company\), OpenVox, Pika, Voicetronix, beroNet, and many others. All of these companies have been involved with Asterisk for many years.
+Многие компании производят это оборудование, такие как Digium (спонсор, владелец и основной разработчик Asterisk), Sangoma (который недавно приобрел Digium), Dialogic (также компания Sangoma), OpenVox, Pika, Voicetronix, beroNet и многие другие. Все эти компании были связаны с Asterisk на протяжении многих лет.
 
-The most popular hardware for Asterisk is generally designed to work through the Digium Asterisk Hardware Device Interface \(known as DAHDI\). This is a complex architecture, and is out of the scope of this book. Server-based telephony cards will all have installation requirements unique to the manufacturer, and will require you to have strong skills in both Linux hardware installation as well as traditional PSTN circuit troubleshooting and provisioning.
+Наиболее популярное оборудование для Asterisk, как правило, предназначено для работы через интерфейс аппаратного устройства Digium Asterisk (известный как DAHDI). Это сложная архитектура, и она выходит за рамки этой книги. Все серверные телефонные карты будут иметь требования к установке, уникальные для производителя, и вам потребуются сильные навыки в установке оборудования Linux, а также в устранении неисправностей и подготовке традиционных сетей PSTN.
 
-If you need to interface with traditional PSTN circuits using Asterisk, we recommend that you keep Asterisk as a SIP-only platform, and interface using a third-party gateway of some sort. Be warned: this is not entry-level stuff, and if you are just starting out with Asterisk, you are strongly advised to keep your initial solutions to SIP-only.
+Если вам необходимо взаимодействовать с традиционными сетями ТфОП с использованием Asterisk, мы рекомендуем вам сохранить Asterisk в качестве платформы только для SIP и взаимодействовать с помощью стороннего шлюза какого-либо рода. Имейте в виду: это не материал начального уровня, и если вы только начинаете использовать Asterisk, вам настоятельно рекомендуется оставить свои первоначальные решения только для SIP.
 
 ## Asterisk Versioning
 
-The Asterisk release methodology has gone through several styles over time. This has led to some confusion in the past, but these days the versioning is fairly straightforward, and relatively easy to understand. Digium has maintained an excellent reference at the [Asterisk wiki](http://bit.ly/2XTb5Wl), and we encourage you to go there for the latest details on Asterisk versions.
+Методология выпуска Asterisk прошла через несколько стилей. В прошлом это приводило к некоторой путанице, но в наши дни управление версиями довольно простое и относительно простое для понимания. Digium сохранил отличную ссылку на [Asterisk wiki](http://bit.ly/2XTb5Wl), и мы призываем вас перейти на последние подробности о версиях Asterisk.
 
-This book was written and tested using version 16, but you will find that the fundamental concepts we explore will be relevant to most Asterisk versions. The conceptual structure of Asterisk has not changed for quite some time, and as of this writing there are no known plans to change that going forward. Future versions will deliver more powerful multimedia and conferencing capabilities, to be sure, but they are likely to be implemented within the existing structure.
+Эта книга была написана и протестирована с использованием версии 16, но вы обнаружите, что фундаментальные концепции, которые мы исследуем, будут актуальны для большинства версий Asterisk. Концептуальная структура Asterisk не менялась в течение достаточно долгого времени, и на момент написания этой статьи не было никаких известных планов изменить это в будущем. Будущие версии будут предоставлять более мощные мультимедийные и конференц-возможности, конечно, но они, вероятно, будут реализованы в рамках существующей структуры.
 
 ## Conclusion
 
-Asterisk is composed of many different technologies, most of which are complicated in their own right. As a result, understanding Asterisk architecture can be overwhelming. Still, the reality is that Asterisk is well designed for what it does and, in our opinion, has achieved a remarkable balance between flexibility and complexity.
+Asterisk состоит из множества различных технологий, большинство из которых сложны сами по себе. В результате понимание архитектуры Asterisk может быть ошеломляющим. Тем не менее, реальность такова, что Asterisk хорошо спроектирован для того, что он делает, и, по нашему мнению, достиг замечательного баланса между гибкостью и сложностью.
 
 [1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch02.html%22%20/l%20%22idm46178408963912-marker) A good indicator that you’ve worked with traditional PBXs is the presence of a large callus on your forehead, obtained from smashing your head against a brick wall too many times to count.
 
