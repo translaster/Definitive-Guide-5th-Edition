@@ -338,7 +338,7 @@ exten => _*99110[1-5],1,Noop(Hotdesk login)
 ... = 1] ? hotdesk,${EXTEN},logout : hotdesk,login,1
              ^same    ^same   ^diff    ^same   ^diff ^diff
 </code></pre></p>
-      <p>Другими словами, <code>true</code> переводит к контексту <code>[hotdesk]</code>, расширению <code>99110[1-5]</code>, метке <code>logout</code>; а <code>false</code> - к контексту <code>[hotdesk]</code>, расширению <code>login</code> и метке/приоритету <code>1</code>.<p>
+      <p>Другими словами, <code>true</code> переводит к контексту <code>[hotdesk]</code>, расширению <code>99110[1-5]</code>, метке <code>logout</code>; а <code>false</code> - к контексту <code>[hotdesk]</code>, расширению <code>login</code> и метке/приоритету <code>1</code>.</p>
       <p>Мы написали только то, что отличается.</p>
       <p>Если хотите, для ясности вы всегда можете указывать <code>context,extension,priority</code> для всех ваших директив. Это Ваш выбор.</p>
     </td>
