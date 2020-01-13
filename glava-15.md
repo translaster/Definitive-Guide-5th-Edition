@@ -543,12 +543,12 @@ exten => start,1,Verbose(1,Looping example with break)
   same => n,GotoIf($["${ODBC_FETCH_STATUS}" = "FAILURE"]?cleanup,1)
   same => n,GotoIf($["${ROW_RESULT}" = "1104"]?good_exten,1)
   same => n,Goto(loop_start)
-
+<br>
 exten => cleanup,1,Verbose(1,Cleaning up after all iterations)
   same => n,Verbose(1,We did not find the extension we wanted)
   same => n,ODBCFinish(${ODBC_ID})
   same => n,Hangup()
-
+<br>
 exten => good_exten,1,Verbose(1,Extension we want is available)
   same => n,ODBCFinish(${ODBC_ID})
   same => n,Verbose(1,Perform some action we wanted)
@@ -708,8 +708,6 @@ filename.conf => driver,database[,table]
     </td>
   </tr>
 </table>
-
----
 
 Модуль статического realtime использует очень специфично отформатированную таблицу, позволяющую Asterisk считывать различные статические файлы из базы данных. Таблица 15-1 иллюстрирует столбцы, как они должны быть определены в вашей базе данных.
 
