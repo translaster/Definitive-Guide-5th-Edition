@@ -419,3 +419,5 @@ Asterisk’s voicemail system is a mature and capable module, and an essential p
 [4](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch08.html%22%20/l%20%22idm46178407263160-marker) Popular MTAs these days are Postfix and Exim. The ubiquitous sendmail still exists as well, although its popularity has waned in the past few years. You’ll find Postfix on your RHEL/CentOS machines by default, and likely Exim on your Debian/Ubuntu platforms \(although Postfix is often recommended as the MTA there too\).
 
 [5](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch08.html%22%20/l%20%22idm46178407258632-marker) Nortel used to store its messages in a sort of special partition, in a proprietary format, which made it pretty much impossible to extract messages from the system, or email them, or archive them, or really do anything with them. Ah, the good old days of closed, proprietary systems. We miss ... no ... wait ... we do not miss them!
+
+[Глава 7. Внешние подключения](glava-07.md)  | [Содержание](SUMMARY.md)  |  [Глава 9. Интернационализация](glava-09.md)

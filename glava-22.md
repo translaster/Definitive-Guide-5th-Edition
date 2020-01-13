@@ -370,3 +370,5 @@ exten => _X.,1,Set(GROUP(users)=${CHANNEL(endpoint)})
 [1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch22.html%22%20/l%20%22idm46178396108536-marker) Реальный IP-адрес был заменен на 127.0.0.1 в записях лога.
 
 [2](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch22.html%22%20/l%20%22idm46178396052456-marker) Например, себя, потому что вы забыли определить `ignoreip`...
+
+[Глава 21. Системный мониторинг и журналирование](glava-21.md) | [Содержание](SUMMARY.md) | [Глава 23. Asterisk: Будущее телефонии](glava-23.md)

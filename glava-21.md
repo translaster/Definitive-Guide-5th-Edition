@@ -626,3 +626,5 @@ Asterisk is very good at allowing you to keep track of many different facets of 
 [1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch21.html%22%20/l%20%22idm46178396419208-marker) Which will normally be found at /etc/syslog.conf.
 
 [2](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch21.html%22%20/l%20%22idm46178396410888-marker) And rsyslog, syslog-ng, and what-all-else.
+
+[Глава 20. WebRTC](glava-20.md) | [Содержание](SUMMARY.md) | [Глава 22. Безопасность](glava-22.md)

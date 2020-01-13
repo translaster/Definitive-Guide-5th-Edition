@@ -1178,3 +1178,4 @@ With the information provided in this chapter, you have most of the foundational
 
 [8](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178405708120-marker) Obviously, don’t use any dialplan code in your local channel that will answer, such as Answer\(\), Playback\(\), and so forth.
 
+[Глава 11. Функции АТС, включая парковку, пейджинг и конференц-связь](glava-11.md) | [Содержание](SUMMARY.md) | [Глава 13. Состояния устройств](glava-13.md)
