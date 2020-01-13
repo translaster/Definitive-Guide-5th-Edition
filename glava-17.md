@@ -620,3 +620,5 @@ Table 17-2. AMI development frameworks
 ## Conclusion
 
 The Asterisk Manager Interface provides an API for monitoring events from an Asterisk system, as well as requesting that Asterisk perform a wide range of actions. An HTTP interface has been provided, and a number of frameworks have been developed, that make it easier to develop applications.
+
+[Глава 16. Введение в интерактивное голосовое меню](glava-16.md) | [Содержание](SUMMARY.md) | [Глава 18. AGI](glava-18.md)

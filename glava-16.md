@@ -319,3 +319,5 @@ If you are in the IVR business, you need to get to know Asterisk.
 [2](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch16.html%22%20/l%20%22idm46178404755736-marker) These free IP lookup websites seem to get bought out all the time, and turned into advertising gateways, so what might have worked at this writing may no longer work. What you need is a website that will return your IP address, and nothing else. Today, that seems to be [https://ipinfo.io/ip](https://ipinfo.io/ip). By the time you read this, it may be something else.
 
 [3](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch16.html%22%20/l%20%22idm46178404720856-marker) Actually, most of us talk to our computers, but this is seldom polite.
+
+[Глава 15. Интеграция реляционной базы данных](glava-15.md) | [Содержание](SUMMARY.md) | [Глава 17. AMI и файлы вызовов](glava-17.md)

@@ -37,3 +37,5 @@ Among our client base alone, we have several Fortune 500 companies, as well as s
 ## Matt Fredrickson (Director of Asterisk Engineering, Sangoma/Digium)
 
 I have had the opportunity to work with Asterisk for the last 18 years, and have seen it grow from a small project with one or two people into something that has a life of its own with hundreds of contributors. It’s amazing to see the number of different places it has disrupted traditional telecom—at home, in the office, and in the enterprise. As traditional communication patterns shift, the Asterisk project continues to be in the place where it does best—bridging old forms of communication with the new, and pushing the boundaries of what can be done with the new. This book will help you see the most modern face of Asterisk and how to better utilize it in your telecommunications infrastructure. Huge thanks goes to Jim Van Meggelen for all the hard work on putting this most current edition together.
+
+[Аннотация](README.md) | [Содержание](SUMMARY.md) | [Предисловие](preface.md)

@@ -65,3 +65,5 @@ Asterisk is not likely to be at the center of that revolution, but it will have 
 Telephony may look dead, but we still see movement in the tail, and it’s a long tail indeed.
 
 [1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch23.html"%20\l%20"idm46178395940040-marker) Ever heard of Elisha Gray or Antonio Meucci?
+
+[Глава 22. Безопасность](glava-22.md) | [Содержание](SUMMARY.md) | [Об авторах](about-the-authors.md)

@@ -193,3 +193,5 @@ exten => rudolph,hint,Custom:rudolph
 [1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch13.html#idm46178405538488-marker) Элементы 2 и 3 могут быть сформированы в виде одной строки, похожей на 100@hints или что-то подобное.
 
 [2](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch13.html#idm46178405536680-marker) Который написан с использованием той же библиотеки PJSIP что использует Asterisk.
+
+[Глава 12. Automatic Call Distribution Queues](glava-12.md) | [Содержание](SUMMARY.md) | [Глава 14. Автосекретарь](glava-14.md)

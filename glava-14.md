@@ -439,3 +439,5 @@ And that’s it! A simple automated attendant that is easy to manage, and will h
 [6](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch14.html%22%20/l%20%22idm46178405391512-marker) Подсказка _vm-intro_ не идеальна \(она просит вас оставить сообщение\), но она достаточно близка для наших целей. Инструкции по использованию по крайней мере верны: нажмите \#, чтобы завершить запись. После того, как вы научились записывать подсказки можете вернуться назад, записать пользовательское приглашение и изменить приоритет 1, чтобы отразить более подходящие инструкции для записи собственных приглашений.
 
 [7](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch14.html%22%20/l%20%22idm46178405356792-marker) And if you do in yours, congratulations and please be careful swimming with the sharks.
+
+[Глава 13. Состояния устройств](glava-13.md) | [Содержание](SUMMARY.md) | [Глава 15. Интеграция реляционной базы данных](glava-15.md)
