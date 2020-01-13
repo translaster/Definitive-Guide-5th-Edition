@@ -288,32 +288,27 @@ exten => s,n,Set(RETURNED_VALUE=${HOTDESK_INFO(status,1101)})
 
 После выполнения инструкции SQL возвращаемое значение (если оно есть) присваивается переменной канала `RETURNED_VALUE`.
 
----
-
-#### Использование функции ARRAY()
-
-В нашем примере мы используем два отдельных вызова базы данных и присваиваем эти значения паре переменных канала: `${HotdeskExtension}_STATUS` и `${HotdeskExtension}_PIN`. Это было сделано для упрощения примера. Мы собираемся сократить имена переменных здесь, потому что печатный формат не может обрабатывать такие длинные строки, поэтому в следующих примерах вы увидите "HE" вместо "HotdeskExtension". Если вы собираетесь использовать этот пример, пожалуйста, замените `HE` расширением `HotdeskExtension`:
-
-```
-    same => n,Set(${HE}_STATUS=${HOTDESK_INFO(status,${HE})})
-    same => n,Set(${HE}_PIN=${HOTDESK_INFO(pin,${HE})})
-```
-
-В качестве альтернативы мы могли бы вернуть несколько столбцов и сохранить их в отдельные переменные, используя функцию диалплана `Array()`. Если бы мы определили наш оператор SQL в функции `func_odbc.conf` следующим образом:
-
-```
-readsql=SELECT pin,status FROM ast_hotdesk WHERE extension = '${HE}'
-```
-
-мы могли бы использовать функцию `ARRAY()` для сохранения каждого столбца информации для строки в отдельной переменной с помощью одного вызова базы данных (обратите внимание, что мы используем пример функции с именем `HOTDESK_INFO()`, которую мы не создали):
-
-```
-     same => n,Set(ARRAY(${HE}_PIN,${HE}_STATUS)=${HOTDESK_INFO(${HE})})
-```
-
-Использование `ARRAY()` удобно в любое время, когда вы можете получить значения, разделенные запятыми, и хотите назначить значения отдельным переменным, например, с помощью `CURL()`. Однако это также может усложнить чтение, отладку и обслуживание кода.
-
----
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="center"><b>Использование функции ARRAY()</b></p>
+      <p>В нашем примере мы используем два отдельных вызова базы данных и присваиваем эти значения паре переменных канала: <code>${HotdeskExtension}_STATUS</code> и <code>${HotdeskExtension}_PIN</code>. Это было сделано для упрощения примера. Мы собираемся сократить имена переменных здесь, потому что печатный формат не может обрабатывать такие длинные строки, поэтому в следующих примерах вы увидите "HE" вместо "HotdeskExtension". Если вы собираетесь использовать этот пример, пожалуйста, замените <code>HE</code> расширением <code>HotdeskExtension</code>:</p>
+      <p><pre><code>
+        same => n,Set(${HE}_STATUS=${HOTDESK_INFO(status,${HE})})
+        same => n,Set(${HE}_PIN=${HOTDESK_INFO(pin,${HE})})
+      </code></pre></p>
+      <p>В качестве альтернативы мы могли бы вернуть несколько столбцов и сохранить их в отдельные переменные, используя функцию диалплана <code>Array()</code>. Если бы мы определили наш оператор SQL в функции <code>func_odbc.conf</code> следующим образом:</p>
+      <p><pre><code>
+      readsql=SELECT pin,status FROM ast_hotdesk WHERE extension = '${HE}'
+      </code></pre></p>
+      <p>мы могли бы использовать функцию <code>ARRAY()</code> для сохранения каждого столбца информации для строки в отдельной переменной с помощью одного вызова базы данных (обратите внимание, что мы используем пример функции с именем <code>HOTDESK_INFO()</code>, которую мы не создали):</p>
+      <p><pre><code>
+        same => n,Set(ARRAY(${HE}_PIN,${HE}_STATUS)=${HOTDESK_INFO(${HE})})
+      </code></pre></p>
+      <p>Использование <code>ARRAY()</code> удобно в любое время, когда вы можете получить значения, разделенные запятыми, и хотите назначить значения отдельным переменным, например, с помощью <code>CURL()</code>. Однако это также может усложнить чтение, отладку и обслуживание кода.</p>
+    </td>
+  </tr>
+</table>
 
 Итак, в первых двух строках следующего блока кода мы передаем значение `status` и значение, содержащееся в переменной `${HotdeskExtension}` (например, `1101`) в функцию `HOTDESK_INFO()`. Затем эти два значения заменяются в инструкции SQL на `${ARG1}` и `${ARG2}` соответственно, и выполняется инструкция SQL. Наконец, возвращаемое значение присваивается переменной канала `${HotdeskExtension}_STATUS`.
 
@@ -334,24 +329,21 @@ exten => _*99110[1-5],1,Noop(Hotdesk login)
 
 Мы напишем некоторые метки для обработки `invalid_user` и `logout` немного позже, поэтому не волнуйтесь, если вам кажется, что чего-то не хватает.
 
----
-
-**Примечание**
-
-Возможно, вы заметили, что в некоторых примерах `Goto/GotoIf` в директиве может быть `1`. Это может показаться запутанным, если только вы не вспомните, что для цели нужна только разница между текущим `context,extension,priority/label`. Таким образом, если вы отправляете что-то на метку, например `logout`, которая находится в том же расширении, вам не нужно указывать контекст и расширение, тогда как если вы отправляете вызов на расширение с именем `login` (все еще в том же контексте), вам нужно указать, что вы хотите, чтобы вызов перешел на метку/приоритет `1`. В предыдущем примере мы могли бы записать нашу директиву следующим образом:
-
-```
-... = 1] ? hotdesk,${EXTEN},logout : hotdesk,login,1
-           ^same    ^same   ^diff    ^same   ^diff ^diff
-```
-
-Другими словами, `true` переводит к контексту `[hotdesk]`, расширению `99110[1-5]`, метке `logout`; а `false` - к контексту `[hotdesk]`, расширению `login` и метке/приоритету `1`.
-
-Мы написали только то, что отличается.
-
-Если хотите, для ясности вы всегда можете указывать `context,extension,priority` для всех ваших директив. Это Ваш выбор.
-
----
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="left"><b>Примечание</b></p>
+      <p>Возможно, вы заметили, что в некоторых примерах <code>Goto/GotoIf<code> в директиве может быть <code>1</code>. Это может показаться запутанным, если только вы не вспомните, что для цели нужна только разница между текущим <code>context,extension,priority/label</code>. Таким образом, если вы отправляете что-то на метку, например <code>logout</code>, которая находится в том же расширении, вам не нужно указывать контекст и расширение, тогда как если вы отправляете вызов на расширение с именем <code>login</code> (все еще в том же контексте), вам нужно указать, что вы хотите, чтобы вызов перешел на метку/приоритет `1`. В предыдущем примере мы могли бы записать нашу директиву следующим образом:
+      <p><pre><code>
+      ... = 1] ? hotdesk,${EXTEN},logout : hotdesk,login,1
+                   ^same    ^same   ^diff    ^same   ^diff ^diff
+      </code></pre></p>
+      <p>Другими словами, <code>true</code> переводит к контексту <code>[hotdesk]</code>, расширению <code>99110[1-5]</code>, метке <code>logout</code>; а <code>false</code> - к контексту <code>[hotdesk]</code>, расширению <code>login</code> и метке/приоритету <code>1</code>.<p>
+      <p>Мы написали только то, что отличается.</p>
+      <p>Если хотите, для ясности вы всегда можете указывать <code>context,extension,priority</code> для всех ваших директив. Это Ваш выбор.</p>
+    </td>
+  </tr>
+</table>
 
 После присвоения значения столбца `status` переменной `${HotdeskExtension}_STATUS` (если пользователь идентифицирует себя как расширение `1101`, имя переменной будет `1101_STATUS`), мы проверяем, получили ли значение обратно из базы данных, используя переменную канала `${ODBCROWS}`.
 
@@ -419,13 +411,15 @@ synopsis=Clear all instances of this endpoint
 writesql=  UPDATE pbx.ast_hotdesk SET status=0,endpoint=NULL
 writesql+= WHERE endpoint='${SQL_ESC(${VAL1})}'
 ```
----
 
-**Подсказка**
-
-Из-за ограничений длины строк в книге мы разбили команды `readsql` и `writesql` на несколько строк, используя синтаксис `+=`, который говорит Asterisk добавлять содержимое после `readsql+=` к самому последнему определенному значению `readsql=` (или `writesql` и `writesql+`). Использование `+=` применимо не только к опции `readsql`, но и может использоваться в других местах в других файлах _.conf_ внутри Asterisk.
-
----
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="left"><b>Подсказка</b></p>
+      <p>Из-за ограничений длины строк в книге мы разбили команды <code>readsql</code> и <code>writesql</code> на несколько строк, используя синтаксис <code>+=</code>, который говорит Asterisk добавлять содержимое после <code>readsql+=</code> к самому последнему определенному значению <code>readsql=</code> (или <code>writesql</code> и <code>writesql+</code>). Использование <code>+=</code> применимо не только к опции <code>readsql</code>, но и может использоваться в других местах в других файлах <i>.conf</i> внутри Asterisk.</p>
+    </td>
+  </tr>
+</table>
 
 В нашем диалплане нам нужно будет вызвать функцию, которую мы только что создали, и передать поток вызовов метке `forcelogout`, если кто-то уже вошел в это устройство:
 
@@ -452,13 +446,14 @@ writesql+= WHERE endpoint='${SQL_ESC(${VAL1})}'
 
 Есть некоторые потенциально новые концепции, которые мы только что представили в примерах. В частности, синтаксис функции `HOTDESK_STATUS()` содержит несколько новых трюков, которые вы могли заметить. Теперь у нас есть переменные `${Valx}` и `${ARGx}` в нашем операторе SQL.
 
----
-
-**Примечание**
-
-Мы также завернули значения `${Valx}` и `${ARGx}` в функцию `SQL_ESC()`, которая будет экранировать символы, такие как обратные кавычки, которые могут быть использованы в атаке SQL-инъекцией.
-
----
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="left"><b>Примечание</b></p>
+      <p>Мы также завернули значения <code>${Valx}</code> и <code>${ARGx}</code> в функцию <code>SQL_ESC()</code>, которая будет экранировать символы, такие как обратные кавычки, которые могут быть использованы в атаке SQL-инъекцией.</p>
+    </td>
+  </tr>
+</table>
 
 Они содержат информацию, которую мы передаем функции из диалплана. В этом случае у нас есть две переменные `VAL` и одна переменная `ARG`, которые были установлены из диалплана с помощью этого оператора:
 
@@ -496,73 +491,73 @@ same => n(set_login_status),Set(HOTDESK_STATUS(${HotdeskExtension})=1,${LOCATION
   </tr>
 </table>
 
----
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="center"><b>Многорядная функциональность с func_odbc</b></p>
+      <p>Asterisk имеет многорядный режим, который позволяет ему обрабатывать несколько строк данных, возвращаемых из базы данных. Например, если бы мы создали функцию диалплана в <i>func_odbc.conf</i>, которая возвращает все доступные расширения, нам нужно было бы включить режим мультистрочности для функции. Это заставило бы функцию работать немного по-другому, возвращая идентификационный номер, который затем можно было бы передать функции <i>ODBC_FETCH()</i> для возврата каждой строки по очереди.</p>
 
-#### Многорядная функциональность с func_odbc
+      <p>Далее следует простой пример. Предположим, что у нас есть следующий <i>func_odbc.conf</i>:</p>
+      <p><pre><code>
+        [AVAILABLE_EXTENS]
+        prefix=HOTDESK
+        dsn=asterisk
+        mode=multirow
+        readsql=SELECT extension FROM ast_hotdesk WHERE status = '${ARG1}'
+      </code></pre></p>
+      <p>и диалплан в <i>extensions.conf</i>, выглядящий примерно так:</p>
+      <p><pre><code>
+        exten => *9997,1,Noop(multirow)
+          same => n,Set(ODBC_ID=${HOTDESK_AVAILABLE_EXTENS()})
+          same => n,GotoIf($[${ODBCROWS} < 1]?no_rows)
+          same => n,Answer()
+          same => n,Set(COUNTER=1)
+          same => n,While($[${COUNTER} <= ${ODBCROWS}])
+          same => n,Set(AVAIL_EXTEN_${COUNTER}=${ODBC_FETCH(${ODBC_ID})})
+          same => n,SayDigits(${AVAIL_EXTEN_${COUNTER}})
+          same => n,Wait(0.2) ; Pause between speaking
+          same => n,Set(COUNTER=$[${COUNTER} + 1])
+          same => n,EndWhile()
+          same => n(norows),ODBCFinish()
+          same => n,Hangup()
+      </code></pre></p>
+      <p>Обратите внимание, что если у вас нет нескольких конечных точек для входа в систему, это никогда не вернет более одного расширения в вашей лаборатории, потому что только одно устройство будет входить в систему в любое время. Вы можете добавить некоторые фиктивные данные в таблицу, чтобы просто посмотреть, как это работает:</p>
+      <p><pre><code>
+        MySQL> UPDATE pbx.ast_hotdesk
+               SET status='1',endpoint='HOTDESK_2'
+               WHERE id='3'
+               ;
+        MySQL> UPDATE pbx.ast_hotdesk
+               SET status='1',endpoint='HOTDESK_3'
+               WHERE id='5'
+               ;
+      </code></pre></p>
+      <p>Функция `ODBC_FETCH()` по существу будет обрабатывать информацию как стек, и каждый вызов к ней с переданным `ODBC_ID` будет выводить следующую строку информации из стека. У нас также есть возможность использовать переменную канала `ODBC_FETCH_STATUS`, которая устанавливается после вызова функции `ODBC_FETCH()` (которая возвращает `SUCCESS` - если доступны дополнительные строки, или `FAILURE` - если нет дополнительных строк). Это позволяет нам написать диалплан, подобный приведенному ниже, использующий счетчик, но все же циклически перебирающий данные. Это может быть полезно, если мы ищем что-то конкретное и не нужно просматривать все данные. Как только мы закончим, приложение диалплана `ODBCFinish()` должно быть вызвано для очистки всех оставшихся данных.</p>
 
-Asterisk имеет многорядный режим, который позволяет ему обрабатывать несколько строк данных, возвращаемых из базы данных. Например, если бы мы создали функцию диалплана в _func_odbc.conf_, которая возвращает все доступные расширения, нам нужно было бы включить режим мультистрочности для функции. Это заставило бы функцию работать немного по-другому, возвращая идентификационный номер, который затем можно было бы передать функции `ODBC_FETCH()` для возврата каждой строки по очереди.
+      <p>Вот еще один пример <i>extensions.conf</i>:</p>
+      <p><pre><code>
+        [multirow_example_2]
+        exten => start,1,Verbose(1,Looping example with break)
+          same => n,Set(ODBC_ID=${GET_ALL_AVAIL_EXTENS(1)})
+          same => n(loop_start),NoOp()
+          same => n,Set(ROW_RESULT=${ODBC_FETCH(${ODBC_ID})})
+          same => n,GotoIf($["${ODBC_FETCH_STATUS}" = "FAILURE"]?cleanup,1)
+          same => n,GotoIf($["${ROW_RESULT}" = "1104"]?good_exten,1)
+          same => n,Goto(loop_start)
 
-Далее следует простой пример. Предположим, что у нас есть следующий _func_odbc.conf_:
-```
-[AVAILABLE_EXTENS]
-prefix=HOTDESK
-dsn=asterisk
-mode=multirow
-readsql=SELECT extension FROM ast_hotdesk WHERE status = '${ARG1}'
-```
-и диалплан в _extensions.conf_, выглядящий примерно так:
-```
-exten => *9997,1,Noop(multirow)
- same => n,Set(ODBC_ID=${HOTDESK_AVAILABLE_EXTENS()})
- same => n,GotoIf($[${ODBCROWS} < 1]?no_rows)
- same => n,Answer()
- same => n,Set(COUNTER=1)
- same => n,While($[${COUNTER} <= ${ODBCROWS}])
-   same => n,Set(AVAIL_EXTEN_${COUNTER}=${ODBC_FETCH(${ODBC_ID})})
-   same => n,SayDigits(${AVAIL_EXTEN_${COUNTER}})
-   same => n,Wait(0.2) ; Pause between speaking
-   same => n,Set(COUNTER=$[${COUNTER} + 1])
- same => n,EndWhile()
- same => n(norows),ODBCFinish()
- same => n,Hangup()
-```
-Обратите внимание, что если у вас нет нескольких конечных точек для входа в систему, это никогда не вернет более одного расширения в вашей лаборатории, потому что только одно устройство будет входить в систему в любое время. Вы можете добавить некоторые фиктивные данные в таблицу, чтобы просто посмотреть, как это работает:
-```
-MySQL> UPDATE pbx.ast_hotdesk
-       SET status='1',endpoint='HOTDESK_2'
-       WHERE id='3'
-       ;
-MySQL> UPDATE pbx.ast_hotdesk
-       SET status='1',endpoint='HOTDESK_3'
-       WHERE id='5'
-       ;
-```
-Функция `ODBC_FETCH()` по существу будет обрабатывать информацию как стек, и каждый вызов к ней с переданным `ODBC_ID` будет выводить следующую строку информации из стека. У нас также есть возможность использовать переменную канала `ODBC_FETCH_STATUS`, которая устанавливается после вызова функции `ODBC_FETCH()` (которая возвращает `SUCCESS` - если доступны дополнительные строки, или `FAILURE` - если нет дополнительных строк). Это позволяет нам написать диалплан, подобный приведенному ниже, использующий счетчик, но все же циклически перебирающий данные. Это может быть полезно, если мы ищем что-то конкретное и не нужно просматривать все данные. Как только мы закончим, приложение диалплана `ODBCFinish()` должно быть вызвано для очистки всех оставшихся данных.
+        exten => cleanup,1,Verbose(1,Cleaning up after all iterations)
+          same => n,Verbose(1,We did not find the extension we wanted)
+          same => n,ODBCFinish(${ODBC_ID})
+          same => n,Hangup()
 
-Вот еще один пример _extensions.conf_:
-```
-[multirow_example_2]
-exten => start,1,Verbose(1,Looping example with break)
-   same => n,Set(ODBC_ID=${GET_ALL_AVAIL_EXTENS(1)})
-   same => n(loop_start),NoOp()
-   same => n,Set(ROW_RESULT=${ODBC_FETCH(${ODBC_ID})})
-   same => n,GotoIf($["${ODBC_FETCH_STATUS}" = "FAILURE"]?cleanup,1)
-   same => n,GotoIf($["${ROW_RESULT}" = "1104"]?good_exten,1)
-   same => n,Goto(loop_start)
-
-exten => cleanup,1,Verbose(1,Cleaning up after all iterations)
-   same => n,Verbose(1,We did not find the extension we wanted)
-   same => n,ODBCFinish(${ODBC_ID})
-   same => n,Hangup()
-
-exten => good_exten,1,Verbose(1,Extension we want is available)
-   same => n,ODBCFinish(${ODBC_ID})
-   same => n,Verbose(1,Perform some action we wanted)
-   same => n,Hangup()
-```
-
----
-
+        exten => good_exten,1,Verbose(1,Extension we want is available)
+          same => n,ODBCFinish(${ODBC_ID})
+          same => n,Verbose(1,Perform some action we wanted)
+          same => n,Hangup()
+      </code></pre></p>
+    </td>
+  </tr>
+</table>
 Ладно, мы немного отклонились от темы. Давайте завершим несколько частей компонентов агента, которые еще не обработали.
 
 В расширении `_*99110[1-5]` нам нужны следующие метки:
@@ -906,63 +901,63 @@ exten => _NXXNXXXXXX,1,Verbose(1,Example of adaptive ODBC usage)
     <td><p align="center"><b>Дополнительные параметры конфигурации для cdr_adaptive_odbc.conf</b></p>
     <p>Некоторые дополнительные параметры конфигурации существуют в файле <i>cdr_adaptive_odbc.conf</i>, которые можгут быть полезны. Во-первых, вы можете определить несколько баз данных или таблиц для хранения информации, поэтому, если у вас есть несколько баз данных, которым нужна одна и та же информация, вы можете просто определить их в <i>res_odbc.conf</i>, создать таблицы в базах данных, а затем обращаться к ним в отдельных разделах конфигурации:</p>
 
-<pre><code>
-[mysql_connection]
-connection=asterisk_mysql
-table=cdr
+    <pre><code>
+      [mysql_connection]
+      connection=asterisk_mysql
+      table=cdr
 
-[mssql_connection]
-connection=production_mssql
-table=call_records
-</code></pre>
+      [mssql_connection]
+      connection=production_mssql
+      table=call_records
+    </code></pre>
 
-<hr>
+    <hr>
 
-<p><b>Примечание</b></p>
+    <p><b>Примечание</b></p>
 
-<p>Если вы зададите несколько разделов, используя одно и то же соединение и таблицу, то получите дублирующиеся записи.</p>
-<hr>
-<p>Помимо простой настройки нескольких соединений и таблиц (которые, конечно, могут содержать или не содержать одну и ту же информацию; модуль CDR, который мы используем, адаптирован к подобным ситуациям), мы можем определить псевдонимы для встроенных переменных, таких как <code>accountcode</code>, <code>src</code>, <code>dst</code> и <code>billsec</code>.</p>
-<p>Если бы мы добавили псевдонимы для имен столбцов для нашего соединения MS SQL, мы могли бы изменить наше определение соединения следующим образом:</p>
+    <p>Если вы зададите несколько разделов, используя одно и то же соединение и таблицу, то получите дублирующиеся записи.</p>
+    <hr>
+    <p>Помимо простой настройки нескольких соединений и таблиц (которые, конечно, могут содержать или не содержать одну и ту же информацию; модуль CDR, который мы используем, адаптирован к подобным ситуациям), мы можем определить псевдонимы для встроенных переменных, таких как <code>accountcode</code>, <code>src</code>, <code>dst</code> и <code>billsec</code>.</p>
+    <p>Если бы мы добавили псевдонимы для имен столбцов для нашего соединения MS SQL, мы могли бы изменить наше определение соединения следующим образом:</p>
 
-<pre><code>
-[mssql_connection]
-connection=production_mssql
-table=call_records
-alias src => Source
-alias dst => Destination
-alias accountcode => AccountCode
-alias billsec => BillableTime
-</code></pre>
+    <pre><code>
+      [mssql_connection]
+      connection=production_mssql
+      table=call_records
+      alias src => Source
+      alias dst => Destination
+      alias accountcode => AccountCode
+      alias billsec => BillableTime
+    </code></pre>
 
-<p>В некоторых ситуациях можно указать соединение, в котором требуется регистрировать вызовы только из определенного источника или в определенное место назначения. Мы можем сделать это с помощью фильтров:</p>
+    <p>В некоторых ситуациях можно указать соединение, в котором требуется регистрировать вызовы только из определенного источника или в определенное место назначения. Мы можем сделать это с помощью фильтров:</p>
 
-<pre><code>
-[logging_for_device_0000FFFF0008]
-connection=asterisk_mysql
-table=cdr_for_0000FFFF0008
-filter src => 0000FFFF0008
-</code></pre>
+    <pre><code>
+      [logging_for_device_0000FFFF0008]
+      connection=asterisk_mysql
+      table=cdr_for_0000FFFF0008
+      filter src => 0000FFFF0008
+    </code></pre>
 
-<p>Если вам нужно заполнить определенный столбец информацией, основанной на имени раздела, вы можете установить его статически с помощью параметра <code>static</code>, который вы можете использовать с параметром <code>filter</code>:</p>
+    <p>Если вам нужно заполнить определенный столбец информацией, основанной на имени раздела, вы можете установить его статически с помощью параметра <code>static</code>, который вы можете использовать с параметром <code>filter</code>:</p>
 
-<pre><code>
-[mysql_connection]
-connection=asterisk_mysql
-table=cdr
+    <pre><code>
+      [mysql_connection]
+      connection=asterisk_mysql
+      table=cdr
 
-[filtered_mysql_connection]
-connection=asterisk_mysql
-table=cdr
-filter src => 0000FFFF0008
-static "DoNotCharge" => accountcode
-</code></pre>
+      [filtered_mysql_connection]
+      connection=asterisk_mysql
+      table=cdr
+      filter src => 0000FFFF0008
+      static "DoNotCharge" => accountcode
+    </code></pre>
 
-<hr>
-<b>Примечание</b>
+    <hr>
+    <b>Примечание</b>
 
-<p>В предыдущем примере вы получите повторяющиеся записи в той же таблице, но вся информация будет одинаковой, за исключением заполненного столбца <code>accountcode</code>, поэтому вы должны иметь возможность отфильтровать его с помощью SQL.</p>
-<hr>
+    <p>В предыдущем примере вы получите повторяющиеся записи в той же таблице, но вся информация будет одинаковой, за исключением заполненного столбца <code>accountcode</code>, поэтому вы должны иметь возможность отфильтровать его с помощью SQL.</p>
+    <hr>
     </td>
   </tr>
 </table>
