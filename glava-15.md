@@ -897,7 +897,7 @@ exten => _NXXNXXXXXX,1,Verbose(1,Example of adaptive ODBC usage)
   <tr>
     <td><p align="center"><b>Дополнительные параметры конфигурации для cdr_adaptive_odbc.conf</b></p>
     <p>Некоторые дополнительные параметры конфигурации существуют в файле <i>cdr_adaptive_odbc.conf</i>, которые можгут быть полезны. Во-первых, вы можете определить несколько баз данных или таблиц для хранения информации, поэтому, если у вас есть несколько баз данных, которым нужна одна и та же информация, вы можете просто определить их в <i>res_odbc.conf</i>, создать таблицы в базах данных, а затем обращаться к ним в отдельных разделах конфигурации:</p>
-    <pre><code>
+    <p><pre><code>
       [mysql_connection]
       connection=asterisk_mysql
       table=cdr
@@ -905,7 +905,7 @@ exten => _NXXNXXXXXX,1,Verbose(1,Example of adaptive ODBC usage)
       [mssql_connection]
       connection=production_mssql
       table=call_records
-    </code></pre>
+    </code></pre></p>
     <hr>
     <p><b>Примечание</b></p>
     <p>Если вы зададите несколько разделов, используя одно и то же соединение и таблицу, то получите дублирующиеся записи.</p>
