@@ -1,123 +1,117 @@
-# Глава 12. Automatic Call Distribution Queues
+# Глава 12. Автоматические очереди распределения вызовов
 
-## Chapter 12. Automatic Call Distribution Queues
+## Глава 12. Очереди автоматического распределения вызовов
 
-An Englishman, even if he is alone, forms an orderly queue of one.
+>Англичанин, даже если он один, формирует упорядоченную очередь из одного человека.
+>
+>Джордж Майкс
 
-George Mikes
+Автоматическое распределение вызовов (ACD), или организация очереди вызовов, позволяет УАТС ставить в очередь входящие вызовы от группы пользователей. Он объединяет несколько вызовов в шаблон удержания, присваивает каждому вызову ранг и определяет порядок, в котором этот вызов должен быть доставлен доступному оператору (как правило, сначала в порядке очереди). Когда агент становится доступным, вызывающий абонент с самым высоким рейтингом в очереди доставляется этому агенту, а все остальные повышаются в рейтинге.
 
-Automatic call distribution \(ACD\), or call queuing, provides a way for a PBX to queue up incoming calls from a group of users. It aggregates multiple calls into a holding pattern, assigns each call a rank, and determines the order in which that call should be delivered to an available agent \(typically, first in first out\). When an agent becomes available, the highest-ranked caller in the queue is delivered to that agent, and everyone else moves up a rank.
+Если вы когда-либо звонили в организацию и слышали, что «все наши представители заняты», вы испытали ACD. Преимущество ACD для вызывающих абонентов в том, что им не нужно продолжать набирать номер в попытке связаться с кем-то, а преимущества для организаций заключаются в том, что они могут лучше обслуживать своих клиентов и временно обрабатывать ситуации, когда есть больше звонящие, чем есть агенты.<sup><a href="#sn1">1</a></sup>
 
-If you have ever called an organization and heard “all of our representatives are busy,” you have experienced ACD. The advantage of ACD to the callers is that they don’t have to keep dialing back in an attempt to reach someone, and the advantages to the organizations are that they are able to better serve their customers and to temporarily handle situations where there are more callers than there are agents.[1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178406156120)
+**Примечание**
 
-**Note**
+Существует два типа колл-центров: входящие и исходящие. ACD относится к технологии, которая обрабатывает центры обработки входящих вызовов, тогда как термин _Dialer_ (или _Predictive Dialer_) относится к технологии, которая обрабатывает центры обработки исходящих вызовов. В этой книге мы прежде всего сосредоточимся на входящих звонках.
 
-There are two types of call centers: inbound and outbound. ACD refers to the technology that handles inbound call centers, whereas the term Dialer \(or Predictive Dialer\) refers to the technology that handles outbound call centers. In this book we will primarily focus on inbound calling.
+Мы все были разочарованы плохо спроектированными и управляемыми очередями: длительное удержание музыки с радио, которое не соответствует мелодии, ошеломляющее время ожидания и бессмысленные сообщения, которые каждые 20 секунд сообщают вам, насколько важен ваш звонок, несмотря на этот факт. что вы ждали 30 минут и слышали это сообщение так много раз, что можете процитировать его по памяти. С точки зрения обслуживания клиентов, дизайн очереди может быть одним из наиболее важных аспектов вашей телефонной системы. Как и в случае с автосекретарем, прежде всего следует помнить, что _ваши абоненты не заинтересованы в том, чтобы стоять в очереди_. Они позвонили, потому что _хотят с тобой поговорить_. Все ваши дизайнерские решения должны помнить об этом важном факте: люди хотят общаться с другими людьми, а не с вашей телефонной системой.<sup><a href="#sn2">2</a></sup>
 
-We’ve all been frustrated by poorly designed and managed queues: enduring hold music from a radio that isn’t in tune, mind-numbing wait times, and pointless messages that tell you every 20 seconds how important your call is, despite that fact that you’ve been waiting for 30 minutes and have heard the message so many times you can quote it from memory. From a customer service perspective, queue design may be one of the most important aspects of your telephone system. As with an automated attendant, what must be kept in mind above all else is that your callers are not interested in holding in a queue. They called because they want to talk to you. All your design decisions must keep this crucial fact front-and-center in your mind: people want to talk to other people, not to your phone system.[2](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178406149400)
+Цель этой главы - научить вас, как создавать и проектировать очереди, которые доставляют абонентов по назначению максимально быстро и безболезненно.
 
-The purpose of this chapter is to teach you how to create and design queues that get callers to their intended destinations as quickly and painlessly as possible.
+**Примечание**
 
-**Note**
+В этой главе мы можем переключаться между использованием терминов _queue members_ и _agents_. Так как мы не собираемся тратить много времени на модуль Asterisk с именем `chan_agent` (используя `AgentLogin()`), нам нужно прояснить, что в этой книге, когда мы используем термин _agent_, имеется в виду конечный пользователь - человек, а не канальная технология в Asterisk с именем `chan_agent`. Читайте дальше, и это должно иметь больше смысла.
 
-In this chapter, we may flip back and forth between the usage of the terms queue members and agents. Since we’re not going to spend much time on the Asterisk module named chan\_agent \(using AgentLogin\(\)\), we need to make it clear that in this book, when we use the term agent, we’re referring to an endpoint—a human being, and not the channel technology in Asterisk named chan\_agent. Read on, and this should make more sense.
+## Создание простой очереди ACD
 
-## Creating a Simple ACD Queue
+Для начала мы собираемся создать простую очередь ACD. Он будет принимать звонящих и пытаться доставить их участнику очереди.
 
-To start with, we’re going to create a simple ACD queue. It will accept callers and attempt to deliver them to a member of the queue.
+**Примечание**
 
-**Note**
+В Asterisk термин _member_ относится к каналу (обычно одноранговому узлу SIP), назначенному очереди, которую можно набрать, например, `SIP/0000FFFF0001`. _agent_ технически относится к каналу агента, также используемому для набора конечных точек. К сожалению, канал агента является устаревшей технологией в Asterisk, так как он ограничен в гибкости и может вызвать непредвиденные проблемы, которые трудно диагностировать и разрешать. Мы не будем покрывать использование `chan_agent`, поэтому помните, что мы обычно будем использовать термин _member_ (_Участник_) для обозначения телефонного устройства и _agent_ (_Агент_) для обозначения лица, которое выполняет вызов. Так как один не эффективен без другого, любой термин может относиться к обоим.
 
-In Asterisk, the term member refers to a channel \(typically a SIP peer\) assigned to a queue that can be dialed, such as SIP/0000FFFF0001. An agent technically refers to the Agent channel also used for dialing endpoints. Unfortunately, the Agent channel is a deprecated technology in Asterisk, as it is limited in flexibility and can cause unexpected issues that can be hard to diagnose and resolve. We will not be covering the use of chan\_agent, so be aware that we will generally use the term member to refer to the telephone device and agent to refer to the person who handles the call. Since one isn’t generally effective without the other, either term may refer to both.
+Мы создадим очередь(и) в файле _queues.conf_ и добавим в нее членов очереди через консоль Asterisk. В разделе “Queue Members” мы рассмотрим, как создать абонентскую группу, которая позволяет нам динамически добавлять и удалять участников очереди (а также приостанавливать и отменять их).
 
-We’ll create the queue\(s\) in the queues.conf file, and manually add queue members to it through the Asterisk console. In the section [“Queue Members”](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/12.%20Automatic%20Call%20Distribution%20Queues%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22ACD_id289508), we’ll look into how to create a dialplan that allows us to dynamically add and remove queue members \(as well as pause and unpause them\).
+Первым шагом является создание пустого файла _agents.conf_ в вашем каталоге конфигурации _/etc/asterisk_. Мы не будем использовать или редактировать этот файл, но модуль `app_queue` ожидает его нахождения и не будет загружаться, если он не существует:
 
-The first step is to create an empty agents.conf file in your /etc/asterisk configuration directory. We will not use or edit this file, but the app\_queue module expects to find it, and will not load if it does not exist:
-
+```text
 $ cd /etc/asterisk
-
 $ sudo -u asterisk touch agents.conf
-
-Since we haven’t done so yet, we’re also going to configure basic music on hold, using the sample file:
-
-$ sudo cp ~/src/asterisk-16.&lt;TAB&gt;/configs/samples/musiconhold.conf.sample \
-
-/etc/asterisk/musiconhold.conf
-
+```
+Поскольку мы еще не сделали этого, мы также собираемся настроить базовую музыку в режиме ожидания, используя файл примера:
+```text
+$ sudo cp ~/src/asterisk-16.*/configs/samples/musiconhold.conf.sample /etc/asterisk/musiconhold.conf
+```
+```text
 $ sudo chown asterisk:asterisk /etc/asterisk/musiconhold.conf
-
-Next you need to create the queues.conf file, which we’re not going to edit because we’ll be creating our queues in the database \(it just needs to be there\):
-
+```
+Затем вам нужно создать файл _queues.conf_, который мы не собираемся редактировать, потому что мы будем создавать наши очереди в базе данных (он просто должен быть там):
+```text
 $ sudo touch -u asterisk queues.conf
+```
+Далее мы собираемся создать несколько очередей в нашей базе данных:
+```text
+MySQL>; INSERT INTO `asterisk`.`queues`
 
-Next, we’re going to create some queues in our database:
-
-MySQL&gt; INSERT INTO \`asterisk\`.\`queues\`
-
-\(name,strategy,joinempty,leavewhenempty,ringinuse,autofill,musiconhold, \
-
-monitor\_format,monitor\_type\)
+(name,strategy,joinempty,leavewhenempty,ringinuse,autofill,musiconhold, \
+monitor_format,monitor_type)
 
 VALUES
-
 'sales','rrmemory','unavailable,invalid,unknown','unavailable,invalid,unknown','no','yes',\
+'default','wav','MixMonitor'),
+('support','rrmemory','unavailable,invalid,unknown','unavailable,invalid,unknown','no',\
+'yes','default','wav','MixMonitor') ;
+```
+Это даст нам две очереди, названные `sales` и `support`. Вы можете называть их как угодно, но мы будем использовать эти имена позже в этой книге, поэтому, если вы используете имена очередей, отличные от тех, которые мы рекомендовали здесь, запишите ваш выбор для дальнейшего использования.
 
-'default','wav','MixMonitor'\),
+Мы также определили параметры, изложенные в Таблице 12-1.
 
-\('support','rrmemory','unavailable,invalid,unknown','unavailable,invalid,unknown','no',\
-
-'yes','default','wav','MixMonitor'\) ;
-
-This will give us two queues named sales and support. You can name them anything you want, but we will be using these names later in the book, so if you use different queue names from what we’ve recommended here, make note of your choices for future reference.
-
-We have also defined the parameters outlined in [Table 12-1](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/12.%20Automatic%20Call%20Distribution%20Queues%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22table12queueparams).
-
-Table 12-1. Sample queue parameters
+Таблица 12-1. Пример параметров очереди
 
 | Parameter | Purpose |
 | :--- | :--- |
 | strategy=rrmemory | Use the round robin with memory strategy |
-| joinempty=unavailable,invalid,unknown | Do not join the queue when no members available |
-| leavewhenempty=unavailable,invalid,unknown | Leave the queue when no members available |
-| ringinuse=no | Don’t ring members when already InUse \(prevents multiple calls to an agent\) |
-| autofill=yes | Distribute all waiting callers to available members |
-| musiconhold=default | Play music from the \[default\] class \(see musiconhold.conf\) |
+| joinempty=unavailable,invalid,unknown | Не присоединятся к очереди, когда нет доступных участников |
+| leavewhenempty=unavailable,invalid,unknown | Покинуть очередь, когда нет доступных участников |
+| ringinuse=no | Не звонить участникам, когда они уже используются (предотвращает многократные звонки участникам)|
+| autofill=yes | Распределить всех ожидающих абонентов среди доступных участников |
+| musiconhold=default | Воспроизведение музыки из класса `[default]` (см. <code>musiconhold.conf</code>) |
 
-The strategy we’ll employ is rrmemory, which stands for round robin with memory. The rrmemory strategy works by rotating through the agents in the queue in sequential order, keeping track of which agent got the last call, and presenting the next call to the next agent. When it gets to the last agent, it goes back to the top \(as agents log in, they are added to the end of the list\).
+`Strategy`, которую мы будем использовать, это `rrmemory`, что означает «круговой прием с памятью». Стратегия `rrmemory` работает, чередуя агентов в очереди в последовательном порядке, отслеживая, какой агент получил последний вызов, и представляя следующий вызов следующему агенту. Когда он попадает к последнему агенту, он возвращается к началу (при входе агентов они добавляются в конец списка).
 
-**A Few Notes on Strategies**
+**Несколько примечаний по  Strategies**
 
-ringall
+`ringall`
 
-Rings all available members \(default\). This distribution strategy doesn’t really count as ACD. In traditional telephony terms, this would be known as a ring group.
+Звонит всем доступным _members_ (по умолчанию). Эта стратегия распределения на самом деле не считается ACD. В традиционных терминах телефонии это называется группой звонков (_ring group_).
 
-leastrecent
+`leastrecent`
 
 Rings the interface that least recently received a call. In a queue where there are many calls of roughly the same duration, this can work. It doesn’t work as well if an agent has been on a call for an hour, and their colleagues all got their last call 30 minutes ago, because the agent who just finished the 60-minute call will get the next one.
 
-fewestcalls
+`fewestcalls`
 
 Rings the interface that has completed the fewest calls in this queue. This can be unfair if calls are not always of the same duration. An agent could handle three calls of 15 minutes each and her colleague had four 5-second calls; the agent who handled three calls will get the next one.
 
-random
+`random`
 
 Rings a random interface. This actually can work very well and end up being very fair in terms of evenly distributing calls among agents.
 
-rrmemory
+`rrmemory`
 
 Rings members in a round-robin fashion, remembering where it left off last for the next caller. This can also work out to be very fair, but not as much as random.
 
-linear
+`linear`
 
 Rings members in the order specified, always starting at the beginning of the list. This works if you have a team where there are some agents who are supposed to handle most calls, and other agents who should only get calls if the primary agents are busy.
 
-wrandom
+`wrandom`
 
 Rings a random member, but uses the members’ penalties as a weight. Worth considering in a larger queue with complex weighting among the agents.
 
 We’ve set joinempty to no since it is generally bad form to put callers into a queue where there are no agents available to take their calls.
 
-**Note**
+**Примечание**
 
 You could set this to yes for ease of testing, but we would not recommend putting it into production unless you are using the queue for some function that is not about getting your callers to your agents. Nobody wants to wait in a line that is not going anywhere.
 
@@ -1156,15 +1150,18 @@ Table 12-7. Events in the Asterisk queue log
 | SYSCOMPAT | Recorded if an agent attempts to answer a call, but the call cannot be set up due to incompatibilities in the media setup. |
 | [a](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178405642568-marker) Please note that when the caller is transferred using SIP transfers \(rather than the built-in transfers triggered by DTMF and configured in features.conf\), the TRANSFER event may not be written. |  |
 
-## Conclusion
+## Вывод
 
 We started this chapter with a look at basic call queues, discussing what they are, how they work, and when you might want to use one. After building a simple queue, we explored how to control queue members through various means \(including the use of local channels, which provide the ability to perform some dialplan logic just prior to connecting to a queue member\). Of course, we need the ability to monitor what our queues are doing, so we had a quick look at the queue\_log file, and the various fields written as a result of events happening in our queues.
 
 With the information provided in this chapter, you have most of the foundational knowledge required to implement queues in Asterisk.
 
-[1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178406156120-marker) It is a common misconception that a queue can allow you to handle more calls. This is not strictly true: your callers will still want to speak to a live person, and they will only be willing to wait for so long. In other words, if you are short-staffed, your queue could end up being nothing more than an obstacle to your callers. This is the same whether you’re on the phone or at the Walmart checkout. Nobody likes to wait in line. The ideal queue is invisible to the callers, since their calls get answered immediately without them having to wait.
+##
 
-[2](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178406149400-marker) There are several books available that discuss call center metrics and available queuing strategies, such as James C. Abbott’s The Executive Guide to Call Center Metrics \(Robert Houston Smith\).
+<ol>
+<li id="sn1"> Это распространенное заблуждение, что очередь может позволить вам обрабатывать больше вызовов. Это не совсем верно: ваши абоненты все равно захотят поговорить с живым человеком, и они будут только ждать так долго. Другими словами, если у вас мало сотрудников, ваша очередь может оказаться не более чем препятствием для ваших абонентов. Это то же самое, говорите ли вы по телефону или на кассе Walmart. Никто не любит ждать в очереди. Идеальная очередь невидима для звонящих, так как на их звонки отвечают сразу, без ожидания.</li>
+
+<li id="sn2"> Существует несколько книг, в которых обсуждаются метрики колл-центра и доступные стратегии организации очередей, например, «Руководство по метрикам колл-центра» Джеймса Эббота (Роберт Хьюстон Смит).</li>
 
 [3](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178405949096-marker) We’re going to use the ^ character as a delimiter. You could probably use another character instead, just so long as it’s not one the Asterisk parser would see as a normal delimiter \(and thus get confused by\). So avoid commas, semicolons, and so forth.
 
@@ -1177,5 +1174,6 @@ With the information provided in this chapter, you have most of the foundational
 [7](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178405718440-marker) Perhaps we could have used / instead of - as a delimiter, giving us Local/PJSIP/SOFTPHONE\_A@localMemberConnector, but we felt that would be more prone to strange syntax errors, and awkward to filter and parse, so we went with -.
 
 [8](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178405708120-marker) Obviously, don’t use any dialplan code in your local channel that will answer, such as Answer\(\), Playback\(\), and so forth.
+</ol>
 
 [Глава 11. Функции АТС, включая парковку, пейджинг и конференц-связь](glava-11.md) | [Содержание](SUMMARY.md) | [Глава 13. Состояния устройств](glava-13.md)
