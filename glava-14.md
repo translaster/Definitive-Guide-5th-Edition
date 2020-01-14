@@ -1,7 +1,7 @@
 # Глава 14. Автосекретарь
 
 > _Я не отвечаю на звонки. У меня всегда такое чувство, что на другом конце провода кто-то есть._
-> 
+>
 >  -- Фред Коуплз
 
 Во многих УАТС, как правило, есть система меню для автоматического ответа на входящие вызовы, которая позволяет абонентам направлять себя на различные расширения и ресурсы в системе с помощью выбора меню. Эта система известна в телекоммуникационной отрасли как _автосекретарь_ (АС). АС, как правило, предоставляет следующие возможности:
@@ -241,23 +241,18 @@ The simplest method of recording prompts is to use the Record() application.
 
 Add this new subroutine at the bottom of your extensions.conf file:
 
-\[subRecordPrompt\]
+```
+[subRecordPrompt]
+exten => 500,1,Playback(vm-intro)
+   same => n,Record(daygreeting.wav)
+   same => n,Wait(2)
+   same => n,Playback(daygreeting)
+   same => n,Hangup
 
-exten =&gt; 500,1,Playback\(vm-intro\)
-
- same =&gt; n,Record\(daygreeting.wav\)
-
- same =&gt; n,Wait\(2\)
-
- same =&gt; n,Playback\(daygreeting\)
-
- same =&gt; n,Hangup
-
-exten =&gt; 501,1,Playback\(vm-intro\)
-
- same =&gt; n,Record\(mainmenu.wav\)
-
- same =&gt; ... etc ... \(create dialplan code for each prompt you need to record\)
+exten => 501,1,Playback(vm-intro)
+   same => n,Record(mainmenu.wav)
+   same => ... etc ... (create dialplan code for each prompt you need to record)
+```
 
 **Note**
 
@@ -269,37 +264,26 @@ You’ll probably want a separate extension for recording each of the prompts, p
 
 Here’s the dialplan (in bold) that’ll create all our prompts. Place it wherever you wish in the `[sets]` context:
 
-exten =&gt; \_4XX,1,Noop\(User Dialed ${EXTEN}\)
+```
+exten => _4XX,1,Noop(User Dialed ${EXTEN})
+  same => n,Answer()
+  same => n,SayDigits(${EXTEN})
+  same => n,Hangup()
 
- same =&gt; n,Answer\(\)
+exten => 500,1,GoSub(subRecordPrompt,${EXTEN},1(daygreeting)
+exten => 501,1,GoSub(subRecordPrompt,${EXTEN},1(nightgreeting)
+exten => 502,1,GoSub(subRecordPrompt,${EXTEN},1(mainmenu)
+exten => 503,1,GoSub(subRecordPrompt,${EXTEN},1(holdwhileweconnect)
+exten => 504,1,GoSub(subRecordPrompt,${EXTEN},1(faxandaddress)
+exten => 505,1,GoSub(subRecordPrompt,${EXTEN},1(transfertoreception)
+exten => 506,1,GoSub(subRecordPrompt,${EXTEN},1(invalid)
+exten => 507,1,GoSub(subRecordPrompt,${EXTEN},1(holdwhileweconnect)
 
- same =&gt; n,SayDigits\(${EXTEN}\)
-
- same =&gt; n,Hangup\(\)
-
-exten =&gt; 500,1,GoSub\(subRecordPrompt,${EXTEN},1\(daygreeting\)
-
-exten =&gt; 501,1,GoSub\(subRecordPrompt,${EXTEN},1\(nightgreeting\)
-
-exten =&gt; 502,1,GoSub\(subRecordPrompt,${EXTEN},1\(mainmenu\)
-
-exten =&gt; 503,1,GoSub\(subRecordPrompt,${EXTEN},1\(holdwhileweconnect\)
-
-exten =&gt; 504,1,GoSub\(subRecordPrompt,${EXTEN},1\(faxandaddress\)
-
-exten =&gt; 505,1,GoSub\(subRecordPrompt,${EXTEN},1\(transfertoreception\)
-
-exten =&gt; 506,1,GoSub\(subRecordPrompt,${EXTEN},1\(invalid\)
-
-exten =&gt; 507,1,GoSub\(subRecordPrompt,${EXTEN},1\(holdwhileweconnect\)
-
-exten =&gt; \_555XXXX,1,Answer\(\)
-
- same =&gt; n,SayDigits\(${EXTEN}\)
-
-exten =&gt; \_55512XX,1,Answer\(\)
-
- same =&gt; n,Playback\(tt-monkeys\)
+exten => _555XXXX,1,Answer()
+  same => n,SayDigits(${EXTEN})
+exten => _55512XX,1,Answer()
+  same => n,Playback(tt-monkeys)
+```
 
 The recordings (aka prompts) will be placed in the /var/lib/asterisk/sounds folder. You can put them elsewhere, so long as you specify the full path when recording and playing back \(and ensure the directory where you put them is readable by the asterisk user\). In a production system, you should put them elsewhere, so as to separate your custom prompts from the generic prompts. For now, we’ll keep things simple and put them in the same folder as the system prompts.
 
@@ -309,111 +293,89 @@ Here is the code required to create the AA that we designed earlier. We will oft
 
 You can place this code at the end of your `[TestMenu]` context, right before your subroutines:
 
-\[MainMenu\]
+```
+[MainMenu]
 
-exten =&gt; s,1,Verbose\(1, Caller ${CALLERID\(all\)} has entered the auto attendant\)
-
- same =&gt; n,Answer\(\)
+exten => s,1,Verbose(1, Caller ${CALLERID(all)} has entered the auto attendant)
+    same => n,Answer()
 
 ; this sets the inter-digit timer
-
- same =&gt; n,Set\(TIMEOUT\(digit\)=2\)
+    same => n,Set(TIMEOUT(digit)=2)
 
 ; wait one second to establish audio
-
- same =&gt; n,Wait\(1\)
+    same => n,Wait(1)
 
 ; If Mon-Fri 9-5 goto label daygreeting
+    same => n,GotoIfTime(9:00-17:00,mon-fri,*,*?daygreeting:afterhoursgreeting)
 
- same =&gt; n,GotoIfTime\(9:00-17:00,mon-fri,\*,\*?daygreeting:afterhoursgreeting\)
+    same => n(afterhoursgreeting),Background(nightgreeting) ; AFTER HOURS GREETING
+    same => n,Goto(menuprompt)
 
- same =&gt; n\(afterhoursgreeting\),Background\(nightgreeting\) ; AFTER HOURS GREETING
+    same => n(daygreeting),Background(daygreeting)   ; DAY GREETING
+    same => n,Goto(menuprompt)
 
- same =&gt; n,Goto\(menuprompt\)
+    same => n(menuprompt),Background(mainmenu) ; MAIN MENU PROMPT
+    same => n,WaitExten(4)                      ; more than 4 seconds is probably
+                                                ; too much
+    same => n,Goto(0,1)                         ; Treat as if caller has pressed '0'
 
- same =&gt; n\(daygreeting\),Background\(daygreeting\) ; DAY GREETING
+exten => 1,1,Verbose(1, Caller ${CALLERID(all)} has entered the sales queue)
+    same => n,Goto(sets,610,1)     ; Sales Queue - see Chapter 13 for details
 
- same =&gt; n,Goto\(menuprompt\)
+exten => 2,1,Verbose(1, Caller ${CALLERID(all)} has entered the service queue)
+    same => n,Goto(sets,611,1)     ; Service Queue - see Chapter 13 for details
 
- same =&gt; n\(menuprompt\),Background\(mainmenu\) ; MAIN MENU PROMPT
+exten => 3,1,Verbose(1, Caller ${CALLERID(all)} has requested address and fax info)
+    same => n,Background(faxandaddress)            ; Address and fax info
+    same => n,Goto(s,menuprompt)      ; Take caller back to main menu prompt
 
- same =&gt; n,WaitExten\(4\) ; more than 4 seconds is probably
+exten => #,1,Verbose(1, Caller ${CALLERID(all)} is entering the directory)
+    same => n,Directory(default)   ; Send the caller to the directory.
+                                   ; Use InternalSets as the dialing context
 
- ; too much
+exten => 0,1,Verbose(1, Caller ${CALLERID(all)} is calling the operator)
+    same => n,Goto(sets,611,1)     ; Service Queue - see Chapter 13 for details
 
- same =&gt; n,Goto\(0,1\) ; Treat as if caller has pressed '0'
+exten => i,1,Verbose(1, Caller ${CALLERID(all)} has entered an invalid selection)
+    same => n,Playback(invalid)
+    same => n,Goto(s,menuprompt)
 
-exten =&gt; 1,1,Verbose\(1, Caller ${CALLERID\(all\)} has entered the sales queue\)
-
- same =&gt; n,Goto\(sets,610,1\) ; Sales Queue - see [Chapter 13](glava-13.md) for details
-
-exten =&gt; 2,1,Verbose\(1, Caller ${CALLERID\(all\)} has entered the service queue\)
-
- same =&gt; n,Goto\(sets,611,1\) ; Service Queue - see [Chapter 13](glava-13.md) for details
-
-exten =&gt; 3,1,Verbose\(1, Caller ${CALLERID\(all\)} has requested address and fax info\)
-
- same =&gt; n,Background\(faxandaddress\) ; Address and fax info
-
- same =&gt; n,Goto\(s,menuprompt\) ; Take caller back to main menu prompt
-
-exten =&gt; \#,1,Verbose\(1, Caller ${CALLERID\(all\)} is entering the directory\)
-
- same =&gt; n,Directory\(default\) ; Send the caller to the directory.
-
- ; Use InternalSets as the dialing context
-
-exten =&gt; 0,1,Verbose\(1, Caller ${CALLERID\(all\)} is calling the operator\)
-
- same =&gt; n,Goto\(sets,611,1\) ; Service Queue - see [Chapter 13](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch13.html%22%20/l%20%22asterisk-DeviceStates) for details
-
-exten =&gt; i,1,Verbose\(1, Caller ${CALLERID\(all\)} has entered an invalid selection\)
-
- same =&gt; n,Playback\(invalid\)
-
- same =&gt; n,Goto\(s,menuprompt\)
-
-exten =&gt; t,1,Verbose\(1, Caller ${CALLERID\(all\)} has timed out\)
-
- same =&gt; n,Goto\(0,1\)
+exten => t,1,Verbose(1, Caller ${CALLERID(all)} has timed out)
+    same => n,Goto(0,1)
 
 ; You will want to have a pattern match for the various extensions
-
 ; that you'll allow external callers to dial
-
 ; BUT DON'T JUST INCLUDE THE LocalSets CONTEXT
-
 ; OR EXTERNAL CALLERS WILL BE ABLE TO MAKE CALLS OUT OF YOUR SYSTEM
 
 ; WHATEVER YOU DO HERE, TEST IT CAREFULLY TO ENSURE EXTERNAL CALLERS
-
 ; WILL NOT BE ABLE TO DO ANYTHING BUT DIAL INTERNAL EXTENSIONS
 
-exten =&gt; \_1XX,1,Verbose\(1,Call to an extension starting with '1'\)
-
- same =&gt; n,Goto\(sets,${EXTEN},1\)
+exten => _1XX,1,Verbose(1,Call to an extension starting with '1')
+    same => n,Goto(sets,${EXTEN},1)
+```
 
 ### Delivering Incoming Calls to the AA
 
-Any call coming into the system will enter the dialplan in the context defined for whatever channel the call arrives on. In many cases this will be a context named `[incoming]`, or `[from-pstn]`, or something similar. The calls will arrive either with an extension \(as would be the case with a DID\) or without one \(which would be the case with a traditional analog line\).
+Any call coming into the system will enter the dialplan in the context defined for whatever channel the call arrives on. In many cases this will be a context named `[incoming]`, or `[from-pstn]`, or something similar. The calls will arrive either with an extension \(as would be the case with a DID) or without one \(which would be the case with a traditional analog line\).
 
 Whatever the name of the context, and whatever the name of the extension, you will want to send each incoming call to the menu.
 
-\[incoming\] ; a DID coming in on a channel with
-
- ; context=incoming
-
-exten =&gt; 4169671111,1,Goto\(MainMenu,s,1\)
+```
+[incoming] ; a DID coming in on a channel with
+           ; context=incoming
+exten => 4169671111,1,Goto(MainMenu,s,1)
+```
 
 Depending on how you configure your incoming channels, you will generally want to use the Goto\(\) application if you want to send the call to an AA. This is far neater than just coding your whole AA in the incoming context.
 
 Since we don’t have any incoming circuits in our lab,<sup><a href="#sn7">7</a></sup> we’re going to create a simple extension that’ll deliver us to our fancy new AA:
 
-exten =&gt; 613,1,Noop()
-
- same =&gt; n,Goto\(MainMenu,s,1\)
-
- same =&gt; n,Hangup\(\)
+```
+exten => 613,1,Noop()
+  same => n,Goto(MainMenu,s,1)
+  same => n,Hangup()
+```
 
 And that’s it! A simple automated attendant that is easy to manage, and will handle the expectations of most callers.
 
