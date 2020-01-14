@@ -752,7 +752,7 @@ sippeers => driver,database[,table]
 
 Имя таблицы является необязательным. Если оно опущено, Asterisk будет использовать предопределенное имя (т.е. `sippeers`) для определения таблицы, в которой будут искаться данные.
 
-Пример файла _~/src/asterisk-15.<TAB>/configs/samples/extconfig.conf.sample_ содержит отличную информацию о динамическом realtime.
+Пример файла _~/src/asterisk-15.\<TAB\>/configs/samples/extconfig.conf.sample_ содержит отличную информацию о динамическом realtime.
 
 ## Хранение записей деталей вызовов (CDR)
 
