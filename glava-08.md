@@ -332,33 +332,28 @@ exten => \*98,1,NoOp\(Access voicemail retrieval.\)
 
 _Figure 8-1. Кнопки конфигурации для Comedian Mail_
 
-### Creating a Dial-by-Name Directory
 
-One last feature of the Asterisk voicemail system that we should cover is the dial-by-name directory. This is created with the Directory\(\) application. This application uses the names defined in the mailboxes in voicemail.conf to present the caller with a dial-by-name directory of users.
+### Создание каталога Набор-по-имени
 
-Directory\(\) takes up to three arguments: the voicemail context from which to read the names, the optional dialplan context in which to dial the user, and an option string \(which is also optional\). By default, Directory\(\) searches for the user by last name, but passing the f option forces it to search by first name instead. Let’s add two dial-by-name directories to the TestMenu context of our sample dialplan, so that callers can search by either first or last name:
+Еще одной особенностью голосовой почты Asterisk, которую мы должны рассмотреть является каталог набора-по-имени. Он создается приложением Directory\(\). Это приложение использует имена определенные в почтовых ящиках в voicemail.conf чтобы предоставить предоставить вызывающему абоненту каталог для набора пользователей по имени.
+
+Directory\(\) принимает до трех аргументов: контекст голосовой почты из которого будут считываться имена, необязательный контекст диалплана, в котором будет набираться пользователь, и строка параметров (так же являющаяся необязательной). По умолчанию Directory\(\) ищет пользователя по фамилии, но установка f-параметра заставляет вместо этого искать по имени. Давайте добавим  два каталога набора-по-имени в контекст TestMenu нашего диалплана, так чтобы звонящие абоненты могли  осуществлять поиск по имени или фамилии:
 
 ```
 exten => 4,1,Dial\(${UserB\_SoftPhone},10\)
-
    same => n,Playback\(vm-nobodyavail\)
-
    same => n,Hangup\(\)
-
 exten => 8,1,Directory\(default,sets,f\)
-
 exten => 9,1,Directory\(default,sets\)
-
 exten => i,1,Playback\(pbx-invalid\)
-
    same => n,Goto\(TestMenu,start,1\)
 ```
 
-If you call 201, and then press 8, you’ll get a directory by first name. If you dial 9, you’ll get the directory by last name.
+Если вы набираете 201 и затем нажимаете 8, вы  получаете каталог с поиском по имени, если вы нажали 9  то каталог с поиском по фамилии.
 
-## Voicemail to Email
+## Голосовая почта по электронной почте
 
-When Asterisk first came out, it did something very simple that was nevertheless revolutionary within the PBX market of the time. None of the major PBX brands could figure out how to effectively send voice messages to email \(which, put simply, is just sending an email with the message itself as a WAV file attachment\). Sure, some manufacturers offered the functionality, but it was needlessly complex, unreliable, and expensive. Asterisk cut through all that nonsense and just allowed a mailbox to have an assigned email address, and messages would simply be sent through the normal email mechanisms of Linux. This proved both simple and effective, and really showed how out-of-date and out-of-touch the traditional PBX manufacturers were.
+Когда Asterisk впервые вышел, он делал нечто очень простое но тем не менее революционным на рынке АТС того времени. Ни один из крупных брендов АТС не смог предоставить технологию эффективной отправки голосовых сообщений на электронную почту (проще говоря просто отправку на электронную почту сообщения как прикрепление WAV файла). Конечно некоторые производители предлагали такую функциональность, но она была излишне сложной, ненадежной и дорогой. Asterisk прекратил это недоразумение и просто разрешил ящику голосовй почты иметь прикрепленный адрес электронной почты, таким образом сообщения отправлялись нормальными механизмами отправки электронной почты Linux. Это оказалось и просто и эффективнои и действительно показало насколько устарели традиционные производители АТС.
 
 Unfortunately, in every great story there’s always a bad guy, and in this case a whole epidemic of them: spammers nearly brought the internet to its knees. The simple SMTP relay could no longer be trusted, as any machine open to relaying email would quickly become a vector for spam.
 
