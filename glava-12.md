@@ -66,104 +66,97 @@ VALUES
 
 Мы также определили параметры, изложенные в Таблице 12-1.
 
-Таблица 12-1. Пример параметров очереди
+Таблица 12-1. _Пример параметров очереди_
 
 | Parameter | Purpose |
 | :--- | :--- |
-| strategy=rrmemory | Use the round robin with memory strategy |
+| strategy=rrmemory | Используйте стратегию кругового перебора с памятью |
 | joinempty=unavailable,invalid,unknown | Не присоединятся к очереди, когда нет доступных участников |
 | leavewhenempty=unavailable,invalid,unknown | Покинуть очередь, когда нет доступных участников |
 | ringinuse=no | Не звонить участникам, когда они уже используются (предотвращает многократные звонки участникам)|
 | autofill=yes | Распределить всех ожидающих абонентов среди доступных участников |
 | musiconhold=default | Воспроизведение музыки из класса `[default]` (см. <code>musiconhold.conf</code>) |
 
-`Strategy`, которую мы будем использовать, это `rrmemory`, что означает «круговой прием с памятью». Стратегия `rrmemory` работает, чередуя агентов в очереди в последовательном порядке, отслеживая, какой агент получил последний вызов, и представляя следующий вызов следующему агенту. Когда он попадает к последнему агенту, он возвращается к началу (при входе агентов они добавляются в конец списка).
+`strategy`, которую мы будем использовать, - это `rrmemory`, что означает круговой перебор с памятью. Стратегия `rrmemory` работает путем чередования агентов в очереди в последовательном порядке, отслеживая, какой агент получил последний вызов, и предоставляя следующий вызов следующему агенту. Когда он попадает к последнему агенту, он возвращается к началу (при входе агентов они добавляются в конец списка).
 
-**Несколько примечаний по  Strategies**
+**Несколько примечаний по  Стратегиям**
 
 `ringall`
 
-Звонит всем доступным _members_ (по умолчанию). Эта стратегия распределения на самом деле не считается ACD. В традиционных терминах телефонии это называется группой звонков (_ring group_).
+Звонит всем доступным участникам (по умолчанию). Эта стратегия распределения на самом деле не считается ACD. В традиционных терминах телефонии это называется группой звонков (_ring group_).
 
 `leastrecent`
 
-Rings the interface that least recently received a call. In a queue where there are many calls of roughly the same duration, this can work. It doesn’t work as well if an agent has been on a call for an hour, and their colleagues all got their last call 30 minutes ago, because the agent who just finished the 60-minute call will get the next one.
+Каждый следующий звонок будет получать участник, который в последний раз положил трубку раньше всех остальных. В очереди, где есть много вызовов примерно одинаковой продолжительности, это справедливо.  Но это не будет справеливым, если агент был на вызове в течение часа а все его коллеги получили последний звонок 30 минут назад,потому что  агент, который закончил последним свой 60-минутный вызов получит следующий вызов.
 
 `fewestcalls`
 
-Rings the interface that has completed the fewest calls in this queue. This can be unfair if calls are not always of the same duration. An agent could handle three calls of 15 minutes each and her colleague had four 5-second calls; the agent who handled three calls will get the next one.
+Вызывается первый свободный участник, который обработал наименьшее количество вызовов из данной очереди. Это может быть несправедливо, если звонки не всегда имеют одинаковую продолжительность. Агент мог обрабатывать три звонка по 15 минут каждый, а его коллега имел четыре 5-секундных звонка; агент, который обработал три звонка, получит следующий звонок.
 
 `random`
 
-Rings a random interface. This actually can work very well and end up being very fair in terms of evenly distributing calls among agents.
+Звонит случайный интерфейс. Это на самом деле может быть хорошо и в конечном итоге будет очень справедливым с точки зрения равномерного распределения вызовов между агентами.
 
 `rrmemory`
 
-Rings members in a round-robin fashion, remembering where it left off last for the next caller. This can also work out to be very fair, but not as much as random.
+Обзванивает участников по кругу, запоминается последний участник, ответивший на вызов. Это также может быть справедливым, но не так как `random`.
 
 `linear`
 
-Rings members in the order specified, always starting at the beginning of the list. This works if you have a team where there are some agents who are supposed to handle most calls, and other agents who should only get calls if the primary agents are busy.
+Звонит участникам в указанном порядке, всегда начиная с начала списка. Это работает, если у вас есть команда, в которой есть некоторые агенты, которые должны обрабатывать большинство вызовов, и другие агенты, которые должны получать вызовы, только если основные агенты заняты.
 
 `wrandom`
 
-Rings a random member, but uses the members’ penalties as a weight. Worth considering in a larger queue with complex weighting among the agents.
+Звонит случайному участнику, но использует `penalty` участников в качестве аргумента выбора. Стоит рассмотреть в очередях с большой нагрузкой среди агентов.
 
-We’ve set joinempty to no since it is generally bad form to put callers into a queue where there are no agents available to take their calls.
+Мы установили `joinempty` на `no`, так как обычно плохо ставить абонентов в очередь, где нет доступных агентов, чтобы принимать их звонки.
 
 **Примечание**
 
-You could set this to yes for ease of testing, but we would not recommend putting it into production unless you are using the queue for some function that is not about getting your callers to your agents. Nobody wants to wait in a line that is not going anywhere.
+Вы можете установить это значение в `yes` для удобства тестирования, но мы не рекомендуем запускать его в производство, если вы не используете очередь для какой-либо функции, которая не предназначена для передачи абонентов вашим агентам. Никто не хочет ждать в очереди, которая никуда не идет.
 
-The leavewhenempty option is used to control whether callers should fall out of the Queue\(\) application and continue on in the dialplan if no members are available to take their calls. We’ve set this to yes because you won’t normally want callers waiting in a queue with no logged-in agents.
+Опция `leavewhenempty` используется для управления тем, должны ли абоненты выпадать из приложения `Queue()` и продолжать работу в диалплане, если ни один из участников не может принимать их вызовы. Мы установили это значение на `yes`, потому что обычно вы не хотите, чтобы абоненты ждали в очереди без зарегистрированных агентов.
 
-**Note**
+**Примечание**
 
-From a business perspective, you should be telling your agents to clear all calls out of the queue before logging off for the day. If you find that there are a lot of calls queued up at the end of the day, you might want to consider extending someone’s shift to deal with them. Otherwise, they’ll just add to your stress when they call back the next day, in a worse mood.
+С точки зрения бизнеса, вы должны сказать своим агентам очищять все вызовы из очереди перед выходом из системы. Если вы обнаружите, что в конце дня в очереди много вызовов, возможно, вы захотите продлить чью-то смену, чтобы справиться с ними. В противном случае, они просто добавят вам стресса, когда перезвонят на следующий день в худшем настроении.
 
-You can use GotoIfTime\(\) near the end of the day to redirect callers to voicemail, or some other appropriate location in your dialplan, while your agents clear out any remaining calls in the queue.
+Вы можете использовать `GotoIfTime()` ближе к концу дня, чтобы перенаправить абонентов на голосовую почту или другое подходящее место в вашем диалплане, пока ваши агенты очищают все оставшиеся вызовы в очереди.
 
-We’ll want ringinuse to be no, which tells Asterisk not to ring members when their devices are already ringing. The purpose of setting ringinuse to no is to avoid multiple calls to the same member from one or more queues.
+Мы хотим, чтобы `ringinuse` было `no`, что говорит Asterisk не звонить участникам, когда их устройства уже используются. Целью установки `ringinuse` в `no` является предотвращение многократных вызовов одного и того же участника из одной или нескольких очередей.
 
-**Note**
+**Примечание**
 
-It should be mentioned that joinempty and leavewhenempty are looking for either no members logged into the queue, or all members unavailable. Agents that are Ringing or InUse are not considered unavailable, so will not block callers from joining the queue or cause them to be kicked out when joinempty=no and/or leavewhenempty=yes.
+Следует отметить, что `joinempty` и `leftwhenempty` ищут либо участников, не вошедших в очередь, либо всех недоступных участников. Агенты, которые являются `Ringing` или `InUse`, не считаются недоступными, поэтому не будут блокировать абонентов от присоединения к очереди и не будут вызывать их исключение, когда `joinempty=no` и/или `leftwhenempty=yes`.
 
-The autofill option tells the queue to distribute all waiting callers to all available members immediately. Previous versions of Asterisk would only distribute one caller at a time, which meant that while Asterisk was signaling an agent, all other calls were held \(even if other agents were available\) until the first caller in line had been connected to an agent \(which obviously led to bottlenecks in older versions of Asterisk where large, busy queues were being used\). Unless you have a particular need for backward compatibility, this option should always be set to yes.
+Опция `autofill` указывает очереди немедленно распределить всех ожидающих абонентов между всеми доступными участниками. Предыдущие версии Asterisk распространяли только одного абонента за один раз, что означало, что в то время как Asterisk подавал сигнал агенту, все остальные вызовы удерживались (даже если другие агенты были доступны) до тех пор, пока первый абонент в очереди не был подключен к агенту (что, очевидно, приводило к узким местам в старых версиях Asterisk, где использовались большие, занятые очереди). Если у вас нет особой потребности в обратной совместимости, _этот параметр всегда_ должен быть установлен в `yes`.
 
-Verify that your /etc/asterisk/extconfig file contains the following lines:
+Убедитесь, что ваш файл _/etc/asterisk/extconfig_ содержит следующие строки:
+```text
+queues => odbc,asterisk,queues
 
-queues =&gt; odbc,asterisk,queues
-
-queue\_members =&gt; odbc,asterisk,queue\_members
-
+queue_members => odbc,asterisk,queue_members
+```
 Save and reload your queue configuration from the Asterisk CLI:
-
-\*CLI&gt; queues reload
-
-Verify that your queues were loaded into memory \(don’t forget to ensure an empty agents.conf file exists\):
-
-localhost\*CLI&gt; queue show
-
-support has 0 calls \(max unlimited\) in 'rrmemory' strategy
-
-\(0s holdtime, 0s talktime\), W:0, C:0, A:0, SL:0.0% within 0s
-
+```text
+*CLI> queues reload
+```
+Убедитесь, что ваши очереди были загружены в память (не забудьте убедиться, что существует пустой файл _agents.conf_):
+```text
+localhost*CLI> queue show
+support has 0 calls (max unlimited) in 'rrmemory' strategy
+(0s holdtime, 0s talktime), W:0, C:0, A:0, SL:0.0% within 0s
  No Members
-
  No Callers
 
-sales has 0 calls \(max unlimited\) in 'rrmemory' strategy
-
-\(0s holdtime, 0s talktime\), W:0, C:0, A:0, SL:0.0% within 0s
-
+sales has 0 calls (max unlimited) in 'rrmemory' strategy
+(0s holdtime, 0s talktime), W:0, C:0, A:0, SL:0.0% within 0s
  No Members
-
  No Callers
+```
+Выходные данные `queue show` предоставляют различную информацию, в том числе детали, подробно описанные в [Таблице 12-2].
 
-The output of queue show provides various pieces of information, including those parts detailed in [Table 12-2](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/12.%20Automatic%20Call%20Distribution%20Queues%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22queue_show_output_001).
-
-Table 12-2. Output of queue show CLI command
+Таблица 12-2. _Output of queue show CLI command_
 
 | Field | Description |
 | :--- | :--- |
