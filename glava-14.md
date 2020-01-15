@@ -68,14 +68,14 @@ _Таблица 14-1. Базовый автосекретарь_
     <tr>
       <td style="text-align:left">1</td>
       <td style="text-align:left">Пожалуйста, подождите пока мы переключим ваш звонок.</td>
-      <td style="text-align:left">Перевод на очередь продаж.</td>
+      <td style="text-align:left">Перевод на очередь sales.</td>
       <td style="text-align:left"><em>holdwhileweconnect.wav</em>
       </td>
     </tr>
     <tr>
       <td style="text-align:left">2</td>
       <td style="text-align:left">Пожалуйста, подождите пока мы переключим ваш звонок.</td>
-      <td style="text-align:left">Перевод на очередь поддержки.</td>
+      <td style="text-align:left">Перевод на очередь support.</td>
       <td style="text-align:left"><em>holdwhileweconnect.wav</em>
       </td>
     </tr>
@@ -130,8 +130,8 @@ _Таблица 14-1. Базовый автосекретарь_
     </tr>
   </tbody>
 </table>
-<p><sup><a href="sn1a">a</a></sup>Эти файлы пока нигде не существуют. Мы используем их в качестве примеров.</p>
-<p><sup><a href="sn1b">b</a></sup>Это совпадение шаблонов должно соответствовать вашему диапазону расширений.</p>
+<p><sup><a name="sn1a">a</a></sup>Эти файлы пока нигде не существуют. Мы используем их в качестве примеров.</p>
+<p><sup><a name="sn1b">b</a></sup>Это совпадение шаблонов должно соответствовать вашему диапазону расширений.</p>
 
 ---
 
@@ -151,31 +151,31 @@ _Таблица 14-1. Базовый автосекретарь_
 
 #### Выбор 1
 
-Option 1 in our example will be a simple transfer. Normally this would be to a resource located in another context, and it would typically have an internal extension number so that internal users could also transfer calls to it. In this example, we are going to use this option to send callers to the queue called sales that was created in [Chapter 12](glava-12.md).
+Вариант 1 в нашем примере будет простым переводом. Обычно это ресурс, расположенный в другом контексте, и он, как правило, имеет внутренний добавочный номер, так что внутренние пользователи могут также передавать вызовы на него. В этом примере мы будем использовать эту опцию для отправки абонентов в очередь `sales`, созданную в [Главе 12](glava-12.md).
 
-#### Selection 2
+#### Выбор 2
 
-Option 2 will be technically identical to option 1. Only the destination will be different. This selection will transfer callers to the support queue.
+Вариант 2 будет технически идентичен варианту 1. Только место назначения будет другим. Этот выбор переместит абонентов в очередь `support`.
 
-#### Selection #
+#### Выбор #
 
 It’s good to have the option for the directory as close to the beginning of the recording as possible. Many people will use a directory if they know it is there, but can’t be bothered to listen to the whole menu prompt to find out about it. Impatient people will press 0, so the sooner you tell them about the directory, the better the odds that they’ll use it, and thus reduce the workload on your receptionist.
 
-#### Selection 3
+#### Выбор 3
 
 When you have an option that does nothing but play a recording back to the caller (such as address and fax information), you can leave all the code for that in the same context as the menu, and simply return the caller to the main menu prompt at the end of the recording. In general, these sorts of options are not as useful as we would like to think they are, so in most cases you’ll probably want to leave this out.
 
-#### Selection 9
+#### Выбор 9
 
 It is very important to give the caller the option to hear the choices again. Many people will not be paying attention throughout the whole menu, and if you don’t give them the option to hear the choices again, they will most likely press 0.
 
 Note that you do not have to play the greeting again, only the main menu prompt.
 
-#### Selection 0
+#### Выбор 0
 
 As stated before, and whether you like it or not, this is the choice that many (possibly the majority) of your callers will select. If you really don’t want to have somebody handle these calls, you can send this extension to a mailbox, but we don’t recommend it. If you are a business, many of your callers will be your customers. You want to make it easy for them to get in touch with you. Trust us.
 
-### Timeout
+### Тайм-аут
 
 Many people will call a number and not pay too much attention to what is happening. They know that if they just wait on the line, they will eventually be transferred to the operator. Or perhaps they are in their cars, and really shouldn’t be pressing buttons on their phones. Either way, oblige them. If they don’t make any selection, don’t harass them and force them to do so. Connect them to the operator.
 
@@ -187,7 +187,7 @@ People make mistakes. That’s OK. The invalid handler will let them know that w
 
 If somebody calls your system and knows the extension she wants to reach, your automated attendant should have code in place to handle this.
 
-**Note**
+**Примечание**
 
 Although Asterisk can handle an overlap between menu choices and extension numbers (e.g., you can have a menu choice 1 and extensions from 100 to 199), it is generally best to avoid this overlap. Otherwise, the dialplan will always have to wait for the interdigit timeout whenever somebody presses 1, because it won’t know if they are planning to dial extension 123. The interdigit timeout is the delay the system will allow between digits before it assumes the entire number has been input. This timer ensures callers have enough time to dial a multidigit extension, but it also causes a delay in the processing of single-digit inputs.
 
