@@ -173,23 +173,28 @@ _Таблица 14-1. Базовый автосекретарь_
 
 #### Выбор 0
 
-As stated before, and whether you like it or not, this is the choice that many (possibly the majority) of your callers will select. If you really don’t want to have somebody handle these calls, you can send this extension to a mailbox, but we don’t recommend it. If you are a business, many of your callers will be your customers. You want to make it easy for them to get in touch with you. Trust us.
+Как было сказано ранее, и нравится вам это или нет, это выбор, который предпочтут многие (возможно, большинство) ваши абоненты. Если вы действительно не хотите, чтобы кто-то отвечал на эти звонки, то можете отправлять вызовы в почтовый ящик, но мы не рекомендуем это делать. Если вы занимаетесь бизнесом, многие из ваших абонентов будут вашими клиентами. Вы же хотите, чтобы им было легко связаться с вами. Доверьтесь нам.
 
 ### Тайм-аут
 
-Many people will call a number and not pay too much attention to what is happening. They know that if they just wait on the line, they will eventually be transferred to the operator. Or perhaps they are in their cars, and really shouldn’t be pressing buttons on their phones. Either way, oblige them. If they don’t make any selection, don’t harass them and force them to do so. Connect them to the operator.
+Многие люди будут звонить по номеру и не обращать слишком много внимания на то, что происходит. Они знают, что если будут просто ждать на линии, то в конце концов их переведут на оператора. Или, возможно, они находятся в автомобиле, и на самом деле не могут нажимать кнопки своих телефонов. В любом случае, сделайте им одолжение. Если они не делают никакого выбора, не преследуйте их и не заставляйте их делать этого. Соедините их с оператором.
 
-### Invalid
+### Invalid (Неверно)
 
-People make mistakes. That’s OK. The invalid handler will let them know that whatever they have chosen is not a valid option and will return them to the menu prompt so that they can try again. Note that you should not play the greeting again, only the main menu prompt.
+Люди совершают ошибки. Это нормально. Неверный обработчик сообщит им о том, что они выбрали, не является допустимым вариантом, и вернет их в приглашение меню, чтобы они могли повторить попытку выбора. Обратите внимание, что вы не должны воспроизводить приветствие снова, только приглашение главного меню.
 
-### Dial by Extension
+### Вызов добавочного номера
 
-If somebody calls your system and knows the extension she wants to reach, your automated attendant should have code in place to handle this.
+Если кто-то звонит в вашу систему и знает добавочный номер, который хочет набрать, ваш автосекретарь должен иметь код для обработки этого.
 
-**Примечание**
-
-Although Asterisk can handle an overlap between menu choices and extension numbers (e.g., you can have a menu choice 1 and extensions from 100 to 199), it is generally best to avoid this overlap. Otherwise, the dialplan will always have to wait for the interdigit timeout whenever somebody presses 1, because it won’t know if they are planning to dial extension 123. The interdigit timeout is the delay the system will allow between digits before it assumes the entire number has been input. This timer ensures callers have enough time to dial a multidigit extension, but it also causes a delay in the processing of single-digit inputs.
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="center"><b>Примечание</b></p>
+      <p>Хотя Asterisk может обрабатывать перекрытие между вариантами меню и добавочными номерами (например, у вас может быть выбор меню `1` и расширения от 100 до 199), лучше избегать этого перекрытия. В противном случае диалплану всегда придется ожидать межразрядный тайм-аут всякий раз, когда кто-то нажимает `1`, потому что не будет знать, планируют ли набрать добавочный номер 123. Межразрядный тайм-аут - это задержка, которую система допускает между цифрами, прежде чем предполагает, что было введено все число. Этот таймер гарантирует, что абоненты имеют достаточно времени для набора многоразрядного расширения, но он также вызывает задержку в обработке одноразрядных вводов.</p>
+    </td>
+  </tr>
+</table>
 
 ## Building Your AA
 
