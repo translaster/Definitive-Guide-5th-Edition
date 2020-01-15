@@ -157,19 +157,19 @@ _Таблица 14-1. Базовый автосекретарь_
 
 Вариант 2 будет технически идентичен варианту 1. Только место назначения будет другим. Этот выбор переместит абонентов в очередь `support`.
 
-#### Выбор #
+#### Выбор `#`
 
-It’s good to have the option for the directory as close to the beginning of the recording as possible. Many people will use a directory if they know it is there, but can’t be bothered to listen to the whole menu prompt to find out about it. Impatient people will press 0, so the sooner you tell them about the directory, the better the odds that they’ll use it, and thus reduce the workload on your receptionist.
+Хорошо иметь возможность выбора справочника как можно ближе к началу записи. Многие люди будут использовать каталог, если знают что тот существует, но им не требуется прослушивать все меню, чтобы узнать о нем. Нетерпеливые люди будут нажимать 0, поэтому чем раньше вы расскажете им о справочнике, тем больше шансов, что они им воспользуются, и тем самым уменьшится нагрузка на вашего секретаря.
 
 #### Выбор 3
 
-When you have an option that does nothing but play a recording back to the caller (such as address and fax information), you can leave all the code for that in the same context as the menu, and simply return the caller to the main menu prompt at the end of the recording. In general, these sorts of options are not as useful as we would like to think they are, so in most cases you’ll probably want to leave this out.
+Если у вас есть опция, которая ничего не делает, кроме воспроизведения записи абоненту (например, адрес и факс), вы можете оставить весь код для неё в том же контексте, что и меню, и просто вернуть абонента в главное меню в конце записи. В общем, такие варианты не очень полезны, как нам хотелось бы думать, поэтому в большинстве случаев вы, вероятно, захотите оставить её.
 
 #### Выбор 9
 
-It is very important to give the caller the option to hear the choices again. Many people will not be paying attention throughout the whole menu, and if you don’t give them the option to hear the choices again, they will most likely press 0.
+Очень важно дать звонящему возможность услышать подсказку еще раз. Многие люди не будут обращать внимания на все меню, и если вы не дадите им возможность услышать меню снова, они, скорее всего, нажмут 0.
 
-Note that you do not have to play the greeting again, only the main menu prompt.
+Обратите внимание, что вам не нужно воспроизводить приветствие снова, только подсказку главного меню.
 
 #### Выбор 0
 
