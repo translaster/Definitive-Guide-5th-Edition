@@ -48,87 +48,74 @@ _Таблица 14-1. Базовый автосекретарь_
   </thead>
   <tbody>
     <tr>
-      <td style="text-align:left">Greeting&#x2014;business hours</td>
-      <td style="text-align:left">Thank you for calling ABC company.</td>
-      <td style="text-align:left">Day greeting. Played immediately after the system answers the call.</td>
-      <td
-      style="text-align:left"><em>daygreeting.wav</em>
-        </td>
+      <td style="text-align:left">Приветствие - рабочее время</td>
+      <td style="text-align:left">Спасибо,что позвонили в компанию ABC.</td>
+      <td style="text-align:left">Дневное приветствие. Воспроизводится сразу после того, как система отвечает на вызов.</td>
+      <td style="text-align:left"><em>daygreeting.wav</em></td>
     </tr>
     <tr>
-      <td style="text-align:left">Greeting&#x2014;nonbusiness hours</td>
-      <td style="text-align:left">Thank you for calling ABC company. Our office is now closed.</td>
-      <td style="text-align:left">Night greeting. As above, but plays outside of business hours.</td>
-      <td
-      style="text-align:left"><em>nightgreeting.wav</em>
-        </td>
+      <td style="text-align:left">Приветствие - нерабочеее время</td>
+      <td style="text-align:left">Спасибо,что позвонили в компанию ABC. Наш офис сейчас закрыт.</td>
+      <td style="text-align:left">Ночное приветствие. Как и выше, но играет в нерабочее время.</td>
+      <td style="text-align:left"><em>nightgreeting.wav</em></td>
     </tr>
     <tr>
-      <td style="text-align:left">Main menu</td>
-      <td style="text-align:left">If you know the extension of the person you wish to reach, please enter
-        it now. For sales, please press 1; for service, press 2; for our company
-        directory, press #. For our address and fax information, please press 3.
-        To repeat these choices press 9, or you can remain on the line or press
-        0 to be connected to our operator.</td>
-      <td style="text-align:left">Main menu prompt. Plays immediately after the greeting. For the caller,
-        the greeting and the main menu are heard as a single prompt; however, in
-        the system it is helpful to keep these prompts separate.</td>
-      <td style="text-align:left"><em>mainmenu.wav</em>
-      </td>
+      <td style="text-align:left">Главное меню</td>
+      <td style="text-align:left">Если вы знаете внутренний номер оператора, с которым хотите связаться, пожалуйста, введите его сейчас. Для свзи с отделом продаж, пожалуйста, нажмите 1; для отдела обслуживания, нажмите 2; для нашего каталога компании, нажмите #. Для получения информации о нашем адресе и факсе нажмите кнопку 3. Чтобы повторить это сообщение - нажмите 9, или оставайтесь на линии, или нажмите 0, чтобы связаться с операторому.</td>
+      <td style="text-align:left">Подсказка главного меню. Играет сразу после приветствия. Для вызывающего абонента приветствие и главное меню звучат как единое приглашение; однако в системе полезно держать эти подсказки раздельно.</td>
+      <td style="text-align:left"><em>mainmenu.wav</em></td>
     </tr>
     <tr>
       <td style="text-align:left">1</td>
-      <td style="text-align:left">Please hold while we connect your call.</td>
-      <td style="text-align:left">Transfer to sales queue.</td>
+      <td style="text-align:left">Пожалуйста, подождите пока мы переключим ваш звонок.</td>
+      <td style="text-align:left">Перевод на очередь продаж.</td>
       <td style="text-align:left"><em>holdwhileweconnect.wav</em>
       </td>
     </tr>
     <tr>
       <td style="text-align:left">2</td>
-      <td style="text-align:left">Please hold while we connect your call.</td>
-      <td style="text-align:left">Transfer to support queue.</td>
+      <td style="text-align:left">Пожалуйста, подождите пока мы переключим ваш звонок.</td>
+      <td style="text-align:left">Перевод на очередь поддержки.</td>
       <td style="text-align:left"><em>holdwhileweconnect.wav</em>
       </td>
     </tr>
     <tr>
       <td style="text-align:left">#</td>
       <td style="text-align:left">n/a</td>
-      <td style="text-align:left">Run Directory() application</td>
+      <td style="text-align:left">Запуск приложения <code>Directory()<code></td>
       <td style="text-align:left">n/a</td>
     </tr>
     <tr>
       <td style="text-align:left">3</td>
-      <td style="text-align:left">Our address is [address]. Our fax number is [fax number], etc.</td>
+      <td style="text-align:left">Наш адрес [address]. Наш номер факса [fax number], и тд.</td>
       <td
-      style="text-align:left">Play a recording containing address and fax information. Return caller
-        to menu prompt when done.</td>
+      style="text-align:left">Воспроизведение записи, содержащей информацию об адресе и факсе. Возврат вызывающего абонента к подсказке меню после завершения.</td>
         <td style="text-align:left"><em>faxandaddress.wav</em>
         </td>
     </tr>
     <tr>
       <td style="text-align:left">0</td>
-      <td style="text-align:left">Transferring to our attendant. Please hold.</td>
-      <td style="text-align:left">Transfer to reception/operator.</td>
+      <td style="text-align:left">Соединяем со специалистом. Пожалуйста, подождите.</td>
+      <td style="text-align:left">Перевод на приемную/оператора.</td>
       <td style="text-align:left"><em>transfertoreception.wav</em>
       </td>
     </tr>
     <tr>
       <td style="text-align:left">9</td>
       <td style="text-align:left">n/a</td>
-      <td style="text-align:left">Repeat. Replay menu prompt (but not greeting).</td>
+      <td style="text-align:left">Повтор. Воспроизведение подсказки меню (но не приветствие).</td>
       <td style="text-align:left">n/a</td>
     </tr>
     <tr>
       <td style="text-align:left">t</td>
       <td style="text-align:left">n/a</td>
-      <td style="text-align:left">Timeout. If the caller does not make a choice, treat the call as if caller
-        has dialed 0 (or in some cases, replay the prompt).</td>
+      <td style="text-align:left">Тайм-аут. Если абонент не сделал выбора - считайте, что он набрал 0 (или в некоторых случаях повторите подсказку).</td>
       <td style="text-align:left"></td>
     </tr>
     <tr>
       <td style="text-align:left">i</td>
-      <td style="text-align:left">You have made an invalid selection. Please try again.</td>
-      <td style="text-align:left">Caller pressed an invalid digit: replay menu prompt (but not greeting).</td>
+      <td style="text-align:left">Вы сделали неверный выбор. Пожалуйста, попробуйте еще раз.</td>
+      <td style="text-align:left">Абонент нажал неверную цифру: воспроизведение подсказки меню (но не приветствия).</td>
       <td
       style="text-align:left"><em>invalid.wav</em>
         </td>
@@ -137,17 +124,14 @@ _Таблица 14-1. Базовый автосекретарь_
       <td style="text-align:left">_XXX <sup><a href="#sn1b">b</a></sup>
       </td>
       <td style="text-align:left">n/a</td>
-      <td style="text-align:left">Transfer call to dialed extension.</td>
+      <td style="text-align:left">Перевод вызова на вызываемый номер.</td>
       <td style="text-align:left"><em>holdwhileweconnect.wav</em>
       </td>
     </tr>
   </tbody>
 </table>
-<p><sup><a href="sn1a">a</a></sup> These
-  files don&#x2019;t exist anywhere as of yet. We&#x2019;re using these as
-  examples.</p>
-<p><sup><a href="sn1b">b</a></sup> This
-  pattern match must be relevant to your extension range.</p>
+<p><sup><a href="sn1a">a</a></sup>Эти файлы пока нигде не существуют. Мы используем их в качестве примеров.</p>
+<p><sup><a href="sn1b">b</a></sup>Это совпадение шаблонов должно соответствовать вашему диапазону расширений.</p>
 
 ---
 
@@ -285,7 +269,7 @@ exten => _55512XX,1,Answer()
   same => n,Playback(tt-monkeys)
 ```
 
-The recordings (aka prompts) will be placed in the /var/lib/asterisk/sounds folder. You can put them elsewhere, so long as you specify the full path when recording and playing back \(and ensure the directory where you put them is readable by the asterisk user\). In a production system, you should put them elsewhere, so as to separate your custom prompts from the generic prompts. For now, we’ll keep things simple and put them in the same folder as the system prompts.
+The recordings (aka prompts) will be placed in the /var/lib/asterisk/sounds folder. You can put them elsewhere, so long as you specify the full path when recording and playing back (and ensure the directory where you put them is readable by the asterisk user). In a production system, you should put them elsewhere, so as to separate your custom prompts from the generic prompts. For now, we’ll keep things simple and put them in the same folder as the system prompts.
 
 ### The Dialplan
 
