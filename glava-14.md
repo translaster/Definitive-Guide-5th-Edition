@@ -48,87 +48,74 @@ _Таблица 14-1. Базовый автосекретарь_
   </thead>
   <tbody>
     <tr>
-      <td style="text-align:left">Greeting&#x2014;business hours</td>
-      <td style="text-align:left">Thank you for calling ABC company.</td>
-      <td style="text-align:left">Day greeting. Played immediately after the system answers the call.</td>
-      <td
-      style="text-align:left"><em>daygreeting.wav</em>
-        </td>
+      <td style="text-align:left">Приветствие - рабочее время</td>
+      <td style="text-align:left">Спасибо,что позвонили в компанию ABC.</td>
+      <td style="text-align:left">Дневное приветствие. Воспроизводится сразу после того, как система отвечает на вызов.</td>
+      <td style="text-align:left"><em>daygreeting.wav</em></td>
     </tr>
     <tr>
-      <td style="text-align:left">Greeting&#x2014;nonbusiness hours</td>
-      <td style="text-align:left">Thank you for calling ABC company. Our office is now closed.</td>
-      <td style="text-align:left">Night greeting. As above, but plays outside of business hours.</td>
-      <td
-      style="text-align:left"><em>nightgreeting.wav</em>
-        </td>
+      <td style="text-align:left">Приветствие - нерабочеее время</td>
+      <td style="text-align:left">Спасибо,что позвонили в компанию ABC. Наш офис сейчас закрыт.</td>
+      <td style="text-align:left">Ночное приветствие. Как и выше, но играет в нерабочее время.</td>
+      <td style="text-align:left"><em>nightgreeting.wav</em></td>
     </tr>
     <tr>
-      <td style="text-align:left">Main menu</td>
-      <td style="text-align:left">If you know the extension of the person you wish to reach, please enter
-        it now. For sales, please press 1; for service, press 2; for our company
-        directory, press #. For our address and fax information, please press 3.
-        To repeat these choices press 9, or you can remain on the line or press
-        0 to be connected to our operator.</td>
-      <td style="text-align:left">Main menu prompt. Plays immediately after the greeting. For the caller,
-        the greeting and the main menu are heard as a single prompt; however, in
-        the system it is helpful to keep these prompts separate.</td>
-      <td style="text-align:left"><em>mainmenu.wav</em>
-      </td>
+      <td style="text-align:left">Главное меню</td>
+      <td style="text-align:left">Если вы знаете внутренний номер оператора, с которым хотите связаться, пожалуйста, введите его сейчас. Для свзи с отделом продаж, пожалуйста, нажмите 1; для отдела обслуживания, нажмите 2; для нашего каталога компании, нажмите #. Для получения информации о нашем адресе и факсе нажмите кнопку 3. Чтобы повторить это сообщение - нажмите 9, или оставайтесь на линии, или нажмите 0, чтобы связаться с операторому.</td>
+      <td style="text-align:left">Подсказка главного меню. Играет сразу после приветствия. Для вызывающего абонента приветствие и главное меню звучат как единое приглашение; однако в системе полезно держать эти подсказки раздельно.</td>
+      <td style="text-align:left"><em>mainmenu.wav</em></td>
     </tr>
     <tr>
       <td style="text-align:left">1</td>
-      <td style="text-align:left">Please hold while we connect your call.</td>
-      <td style="text-align:left">Transfer to sales queue.</td>
+      <td style="text-align:left">Пожалуйста, подождите пока мы переключим ваш звонок.</td>
+      <td style="text-align:left">Перевод на очередь sales.</td>
       <td style="text-align:left"><em>holdwhileweconnect.wav</em>
       </td>
     </tr>
     <tr>
       <td style="text-align:left">2</td>
-      <td style="text-align:left">Please hold while we connect your call.</td>
-      <td style="text-align:left">Transfer to support queue.</td>
+      <td style="text-align:left">Пожалуйста, подождите пока мы переключим ваш звонок.</td>
+      <td style="text-align:left">Перевод на очередь support.</td>
       <td style="text-align:left"><em>holdwhileweconnect.wav</em>
       </td>
     </tr>
     <tr>
       <td style="text-align:left">#</td>
       <td style="text-align:left">n/a</td>
-      <td style="text-align:left">Run Directory() application</td>
+      <td style="text-align:left">Запуск приложения <code>Directory()<code></td>
       <td style="text-align:left">n/a</td>
     </tr>
     <tr>
       <td style="text-align:left">3</td>
-      <td style="text-align:left">Our address is [address]. Our fax number is [fax number], etc.</td>
+      <td style="text-align:left">Наш адрес [address]. Наш номер факса [fax number], и тд.</td>
       <td
-      style="text-align:left">Play a recording containing address and fax information. Return caller
-        to menu prompt when done.</td>
+      style="text-align:left">Воспроизведение записи, содержащей информацию об адресе и факсе. Возврат вызывающего абонента к подсказке меню после завершения.</td>
         <td style="text-align:left"><em>faxandaddress.wav</em>
         </td>
     </tr>
     <tr>
       <td style="text-align:left">0</td>
-      <td style="text-align:left">Transferring to our attendant. Please hold.</td>
-      <td style="text-align:left">Transfer to reception/operator.</td>
+      <td style="text-align:left">Соединяем со специалистом. Пожалуйста, подождите.</td>
+      <td style="text-align:left">Перевод на приемную/оператора.</td>
       <td style="text-align:left"><em>transfertoreception.wav</em>
       </td>
     </tr>
     <tr>
       <td style="text-align:left">9</td>
       <td style="text-align:left">n/a</td>
-      <td style="text-align:left">Repeat. Replay menu prompt (but not greeting).</td>
+      <td style="text-align:left">Повтор. Воспроизведение подсказки меню (но не приветствие).</td>
       <td style="text-align:left">n/a</td>
     </tr>
     <tr>
       <td style="text-align:left">t</td>
       <td style="text-align:left">n/a</td>
-      <td style="text-align:left">Timeout. If the caller does not make a choice, treat the call as if caller
-        has dialed 0 (or in some cases, replay the prompt).</td>
+      <td style="text-align:left">Тайм-аут. Если абонент не сделал выбора - считайте, что он набрал 0 (или в некоторых случаях повторите подсказку).</td>
       <td style="text-align:left"></td>
     </tr>
     <tr>
       <td style="text-align:left">i</td>
-      <td style="text-align:left">You have made an invalid selection. Please try again.</td>
-      <td style="text-align:left">Caller pressed an invalid digit: replay menu prompt (but not greeting).</td>
+      <td style="text-align:left">Вы сделали неверный выбор. Пожалуйста, попробуйте еще раз.</td>
+      <td style="text-align:left">Абонент нажал неверную цифру: воспроизведение подсказки меню (но не приветствия).</td>
       <td
       style="text-align:left"><em>invalid.wav</em>
         </td>
@@ -137,17 +124,14 @@ _Таблица 14-1. Базовый автосекретарь_
       <td style="text-align:left">_XXX <sup><a href="#sn1b">b</a></sup>
       </td>
       <td style="text-align:left">n/a</td>
-      <td style="text-align:left">Transfer call to dialed extension.</td>
+      <td style="text-align:left">Перевод вызова на вызываемый номер.</td>
       <td style="text-align:left"><em>holdwhileweconnect.wav</em>
       </td>
     </tr>
   </tbody>
 </table>
-<p><sup><a href="sn1a">a</a></sup> These
-  files don&#x2019;t exist anywhere as of yet. We&#x2019;re using these as
-  examples.</p>
-<p><sup><a href="sn1b">b</a></sup> This
-  pattern match must be relevant to your extension range.</p>
+<p><sup><a name="sn1a">a</a></sup>Эти файлы пока нигде не существуют. Мы используем их в качестве примеров.</p>
+<p><sup><a name="sn1b">b</a></sup>Это совпадение шаблонов должно соответствовать вашему диапазону расширений.</p>
 
 ---
 
@@ -167,45 +151,50 @@ _Таблица 14-1. Базовый автосекретарь_
 
 #### Выбор 1
 
-Option 1 in our example will be a simple transfer. Normally this would be to a resource located in another context, and it would typically have an internal extension number so that internal users could also transfer calls to it. In this example, we are going to use this option to send callers to the queue called sales that was created in [Chapter 12](glava-12.md).
+Вариант 1 в нашем примере будет простым переводом. Обычно это ресурс, расположенный в другом контексте, и он, как правило, имеет внутренний добавочный номер, так что внутренние пользователи могут также передавать вызовы на него. В этом примере мы будем использовать эту опцию для отправки абонентов в очередь `sales`, созданную в [Главе 12](glava-12.md).
 
-#### Selection 2
+#### Выбор 2
 
-Option 2 will be technically identical to option 1. Only the destination will be different. This selection will transfer callers to the support queue.
+Вариант 2 будет технически идентичен варианту 1. Только место назначения будет другим. Этот выбор переместит абонентов в очередь `support`.
 
-#### Selection #
+#### Выбор `#`
 
-It’s good to have the option for the directory as close to the beginning of the recording as possible. Many people will use a directory if they know it is there, but can’t be bothered to listen to the whole menu prompt to find out about it. Impatient people will press 0, so the sooner you tell them about the directory, the better the odds that they’ll use it, and thus reduce the workload on your receptionist.
+Хорошо иметь возможность выбора справочника как можно ближе к началу записи. Многие люди будут использовать каталог, если знают что тот существует, но им не требуется прослушивать все меню, чтобы узнать о нем. Нетерпеливые люди будут нажимать 0, поэтому чем раньше вы расскажете им о справочнике, тем больше шансов, что они им воспользуются, и тем самым уменьшится нагрузка на вашего секретаря.
 
-#### Selection 3
+#### Выбор 3
 
-When you have an option that does nothing but play a recording back to the caller (such as address and fax information), you can leave all the code for that in the same context as the menu, and simply return the caller to the main menu prompt at the end of the recording. In general, these sorts of options are not as useful as we would like to think they are, so in most cases you’ll probably want to leave this out.
+Если у вас есть опция, которая ничего не делает, кроме воспроизведения записи абоненту (например, адрес и факс), вы можете оставить весь код для неё в том же контексте, что и меню, и просто вернуть абонента в главное меню в конце записи. В общем, такие варианты не очень полезны, как нам хотелось бы думать, поэтому в большинстве случаев вы, вероятно, захотите оставить её.
 
-#### Selection 9
+#### Выбор 9
 
-It is very important to give the caller the option to hear the choices again. Many people will not be paying attention throughout the whole menu, and if you don’t give them the option to hear the choices again, they will most likely press 0.
+Очень важно дать звонящему возможность услышать подсказку еще раз. Многие люди не будут обращать внимания на все меню, и если вы не дадите им возможность услышать меню снова, они, скорее всего, нажмут 0.
 
-Note that you do not have to play the greeting again, only the main menu prompt.
+Обратите внимание, что вам не нужно воспроизводить приветствие снова, только подсказку главного меню.
 
-#### Selection 0
+#### Выбор 0
 
-As stated before, and whether you like it or not, this is the choice that many (possibly the majority) of your callers will select. If you really don’t want to have somebody handle these calls, you can send this extension to a mailbox, but we don’t recommend it. If you are a business, many of your callers will be your customers. You want to make it easy for them to get in touch with you. Trust us.
+Как было сказано ранее, и нравится вам это или нет, это выбор, который предпочтут многие (возможно, большинство) ваши абоненты. Если вы действительно не хотите, чтобы кто-то отвечал на эти звонки, то можете отправлять вызовы в почтовый ящик, но мы не рекомендуем это делать. Если вы занимаетесь бизнесом, многие из ваших абонентов будут вашими клиентами. Вы же хотите, чтобы им было легко связаться с вами. Доверьтесь нам.
 
-### Timeout
+### Тайм-аут
 
-Many people will call a number and not pay too much attention to what is happening. They know that if they just wait on the line, they will eventually be transferred to the operator. Or perhaps they are in their cars, and really shouldn’t be pressing buttons on their phones. Either way, oblige them. If they don’t make any selection, don’t harass them and force them to do so. Connect them to the operator.
+Многие люди будут звонить по номеру и не обращать слишком много внимания на то, что происходит. Они знают, что если будут просто ждать на линии, то в конце концов их переведут на оператора. Или, возможно, они находятся в автомобиле, и на самом деле не могут нажимать кнопки своих телефонов. В любом случае, сделайте им одолжение. Если они не делают никакого выбора, не преследуйте их и не заставляйте их делать этого. Соедините их с оператором.
 
-### Invalid
+### Invalid (Неверно)
 
-People make mistakes. That’s OK. The invalid handler will let them know that whatever they have chosen is not a valid option and will return them to the menu prompt so that they can try again. Note that you should not play the greeting again, only the main menu prompt.
+Люди совершают ошибки. Это нормально. Неверный обработчик сообщит им о том, что они выбрали, не является допустимым вариантом, и вернет их в приглашение меню, чтобы они могли повторить попытку выбора. Обратите внимание, что вы не должны воспроизводить приветствие снова, только приглашение главного меню.
 
-### Dial by Extension
+### Вызов добавочного номера
 
-If somebody calls your system and knows the extension she wants to reach, your automated attendant should have code in place to handle this.
+Если кто-то звонит в вашу систему и знает добавочный номер, который хочет набрать, ваш автосекретарь должен иметь код для обработки этого.
 
-**Note**
-
-Although Asterisk can handle an overlap between menu choices and extension numbers (e.g., you can have a menu choice 1 and extensions from 100 to 199), it is generally best to avoid this overlap. Otherwise, the dialplan will always have to wait for the interdigit timeout whenever somebody presses 1, because it won’t know if they are planning to dial extension 123. The interdigit timeout is the delay the system will allow between digits before it assumes the entire number has been input. This timer ensures callers have enough time to dial a multidigit extension, but it also causes a delay in the processing of single-digit inputs.
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="center"><b>Примечание</b></p>
+      <p>Хотя Asterisk может обрабатывать перекрытие между вариантами меню и добавочными номерами (например, у вас может быть выбор меню `1` и расширения от 100 до 199), лучше избегать этого перекрытия. В противном случае диалплану всегда придется ожидать межразрядный тайм-аут всякий раз, когда кто-то нажимает `1`, потому что не будет знать, планируют ли набрать добавочный номер 123. Межразрядный тайм-аут - это задержка, которую система допускает между цифрами, прежде чем предполагает, что было введено все число. Этот таймер гарантирует, что абоненты имеют достаточно времени для набора многоразрядного расширения, но он также вызывает задержку в обработке одноразрядных вводов.</p>
+    </td>
+  </tr>
+</table>
 
 ## Building Your AA
 
@@ -285,7 +274,7 @@ exten => _55512XX,1,Answer()
   same => n,Playback(tt-monkeys)
 ```
 
-The recordings (aka prompts) will be placed in the /var/lib/asterisk/sounds folder. You can put them elsewhere, so long as you specify the full path when recording and playing back \(and ensure the directory where you put them is readable by the asterisk user\). In a production system, you should put them elsewhere, so as to separate your custom prompts from the generic prompts. For now, we’ll keep things simple and put them in the same folder as the system prompts.
+The recordings (aka prompts) will be placed in the /var/lib/asterisk/sounds folder. You can put them elsewhere, so long as you specify the full path when recording and playing back (and ensure the directory where you put them is readable by the asterisk user). In a production system, you should put them elsewhere, so as to separate your custom prompts from the generic prompts. For now, we’ll keep things simple and put them in the same folder as the system prompts.
 
 ### The Dialplan
 
