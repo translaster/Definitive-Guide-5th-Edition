@@ -39,104 +39,14 @@ _Таблица 14-1. Базовый автосекретарь_
 | Приветствие - нерабочеее время | Спасибо,что позвонили в компанию ABC. Наш офис сейчас закрыт. | Ночное приветствие. Как и выше, но играет в нерабочее время. | _nightgreeting.wav_ |
 | Главное меню | Если вы знаете внутренний номер оператора, с которым хотите связаться, пожалуйста, введите его сейчас. Для свзи с отделом продаж, пожалуйста, нажмите 1; для отдела обслуживания, нажмите 2; для нашего каталога компании, нажмите #. Для получения информации о нашем адресе и факсе нажмите кнопку 3. Чтобы повторить это сообщение - нажмите 9, или оставайтесь на линии, или нажмите 0, чтобы связаться с операторому. | Подсказка главного меню. Играет сразу после приветствия. Для вызывающего абонента приветствие и главное меню звучат как единое приглашение; однако в системе полезно держать эти подсказки раздельно. | _mainmenu.wav_ |
 | 1 | Пожалуйста, подождите пока мы переключим ваш звонок. | Перевод на очередь sales. | _holdwhileweconnect.wav_ |
-| 2 |   |   |   |
-| # |   |   |   |
-| 3 |   |   |   |
-| 0 |   |   |   |
-| 9 |   |   |   |
-| t |   |   |   |
-| i |   |   |   |
-| _XXX<sup><a href="#sn1b">b</a></sup> |   |   |   |
-
-<!--
-<table>
-  <thead>
-    <tr>
-      <th style="text-align:left">Шаг или выбор</th>
-      <th style="text-align:left">Образец приглашения</th>
-      <th style="text-align:left">Примечание</th>
-      <th style="text-align:left">Имя файла<sup><a href="#sn1a">a</a></sup></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align:left">Приветствие - рабочее время</td>
-      <td style="text-align:left">Спасибо,что позвонили в компанию ABC.</td>
-      <td style="text-align:left">Дневное приветствие. Воспроизводится сразу после того, как система отвечает на вызов.</td>
-      <td style="text-align:left"><em>daygreeting.wav</em></td>
-    </tr>
-    <tr>
-      <td style="text-align:left">Приветствие - нерабочеее время</td>
-      <td style="text-align:left">Спасибо,что позвонили в компанию ABC. Наш офис сейчас закрыт.</td>
-      <td style="text-align:left">Ночное приветствие. Как и выше, но играет в нерабочее время.</td>
-      <td style="text-align:left"><em>nightgreeting.wav</em></td>
-    </tr>
-    <tr>
-      <td style="text-align:left">Главное меню</td>
-      <td style="text-align:left">Если вы знаете внутренний номер оператора, с которым хотите связаться, пожалуйста, введите его сейчас. Для свзи с отделом продаж, пожалуйста, нажмите 1; для отдела обслуживания, нажмите 2; для нашего каталога компании, нажмите #. Для получения информации о нашем адресе и факсе нажмите кнопку 3. Чтобы повторить это сообщение - нажмите 9, или оставайтесь на линии, или нажмите 0, чтобы связаться с операторому.</td>
-      <td style="text-align:left">Подсказка главного меню. Играет сразу после приветствия. Для вызывающего абонента приветствие и главное меню звучат как единое приглашение; однако в системе полезно держать эти подсказки раздельно.</td>
-      <td style="text-align:left"><em>mainmenu.wav</em></td>
-    </tr>
-    <tr>
-      <td style="text-align:left">1</td>
-      <td style="text-align:left">Пожалуйста, подождите пока мы переключим ваш звонок.</td>
-      <td style="text-align:left">Перевод на очередь sales.</td>
-      <td style="text-align:left"><em>holdwhileweconnect.wav</em>
-      </td>
-    </tr>
-    <tr>
-      <td style="text-align:left">2</td>
-      <td style="text-align:left">Пожалуйста, подождите пока мы переключим ваш звонок.</td>
-      <td style="text-align:left">Перевод на очередь support.</td>
-      <td style="text-align:left"><em>holdwhileweconnect.wav</em>
-      </td>
-    </tr>
-    <tr>
-      <td style="text-align:left">#</td>
-      <td style="text-align:left">n/a</td>
-      <td style="text-align:left">Запуск приложения <code>Directory()<code></td>
-      <td style="text-align:left">n/a</td>
-    </tr>
-    <tr>
-      <td style="text-align:left">3</td>
-      <td style="text-align:left">Наш адрес [address]. Наш номер факса [fax number], и тд.</td>
-      <td
-      style="text-align:left">Воспроизведение записи, содержащей информацию об адресе и факсе. Возврат вызывающего абонента к подсказке меню после завершения.</td>
-      <td style="text-align:left"><em>faxandaddress.wav</em></td>
-    </tr>
-    <tr>
-      <td style="text-align:left">0</td>
-      <td style="text-align:left">Соединяем со специалистом. Пожалуйста, подождите.</td>
-      <td style="text-align:left">Перевод на приемную/оператора.</td>
-      <td style="text-align:left"><em>transfertoreception.wav</em></td>
-    </tr>
-    <tr>
-      <td style="text-align:left">9</td>
-      <td style="text-align:left">n/a</td>
-      <td style="text-align:left">Повтор. Воспроизведение подсказки меню (но не приветствие).</td>
-      <td style="text-align:left">n/a</td>
-    </tr>
-    <tr>
-      <td style="text-align:left">t</td>
-      <td style="text-align:left">n/a</td>
-      <td style="text-align:left">Тайм-аут. Если абонент не сделал выбора - считайте, что он набрал 0 (или в некоторых случаях повторите подсказку).</td>
-      <td style="text-align:left"></td>
-    </tr>
-    <tr>
-      <td style="text-align:left">i</td>
-      <td style="text-align:left">Вы сделали неверный выбор. Пожалуйста, попробуйте еще раз.</td>
-      <td style="text-align:left">Абонент нажал неверную цифру: воспроизведение подсказки меню (но не приветствия).</td>
-      <td style="text-align:left"><em>invalid.wav</em></td>
-    </tr>
-    <tr>
-      <td style="text-align:left">_XXX <sup><a href="#sn1b">b</a></sup></td>
-      <td style="text-align:left">n/a</td>
-      <td style="text-align:left">Перевод вызова на вызываемый номер.</td>
-      <td style="text-align:left"><em>holdwhileweconnect.wav</em></td>
-    </tr>
-  </tbody>
-</table>
--->
+| 2 | Пожалуйста, подождите пока мы переключим ваш звонок. | Перевод на очередь support. | _holdwhileweconnect.wav_ |
+| # | n/a | Запуск приложения `Directory()` | n/a |
+| 3 | Наш адрес [address]. Наш номер факса [fax number], и тд. | Воспроизведение записи, содержащей информацию об адресе и факсе. Возврат вызывающего абонента к подсказке меню после завершения. | _faxandaddress.wav_ |
+| 0 | Соединяем со специалистом. Пожалуйста, подождите. | Перевод на приемную/оператора. | _transfertoreception.wav_ |
+| 9 | n/a | Повтор. Воспроизведение подсказки меню (но не приветствие). | n/a |
+| t | n/a | Тайм-аут. Если абонент не сделал выбора - считайте, что он набрал 0 (или в некоторых случаях повторите подсказку). | n/a |
+| i | Вы сделали неверный выбор. Пожалуйста, попробуйте еще раз. | Абонент нажал неверную цифру: воспроизведение подсказки меню (но не приветствия). | _invalid.wav_ |
+| \_XXX<sup><a href="#sn1b">b</a></sup> | n/a | Перевод вызова на вызываемый номер. | _holdwhileweconnect.wav_ |
 
 <p><sup><a name="sn1a">a</a></sup>Эти файлы пока нигде не существуют. Мы используем их в качестве примеров.</p>
 <p><sup><a name="sn1b">b</a></sup>Это совпадение шаблонов должно соответствовать вашему диапазону расширений.</p>
@@ -216,27 +126,37 @@ _Таблица 14-1. Базовый автосекретарь_
 
 ### Запись подсказок
 
-Recording prompts for a telephone system is a critical task. This is what your callers will hear when they interact with your system, and the quality and professionalism of these prompts will reflect on your organization.
+Запись подсказок для телефонной системы является критически важной задачей. Это то, что ваши абоненты будут слышать при взаимодействии с вашей системой, и качество и профессионализм этих записей отразится на вашей организации.
 
-Asterisk is very flexible in this regard and can work with many different audio formats. We have found that, in general, the most useful format to use is WAV. Files saved in this format can be of many different kinds, but only one type of WAV file will work with Asterisk: files must be encoded in 16-bit, 8,000 Hz, mono format.
+Asterisk очень гибок в этом отношении и может работать со многими различными аудиоформатами. Мы обнаружили, что в целом наиболее лучшим форматом для использования является WAV. Файлы, сохраненные в этом формате, могут быть самыми разными, но только один тип WAV-файла будет работать с Asterisk: файлы должны быть закодированы в 16-битном, 8000 Гц, моно-формате.
 
-**Recommended Prompt File Format**
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="center"><b>Рекомендуемый формат файла подсказки</b></p>
+      <p>Формат WAV, который мы рекомендуем, удобен для системных подсказок, потому что он может быть легко преобразован в любой другой формат, который могут использовать ваши телефоны, без потери или искажения, и почти любой компьютер может воспроизводить его без специального программного обеспечения. Таким образом, Asterisk может не только легко обрабатывать файл, но и легко будет работать с ним на ПК (что может быть полезно). Asterisk может обрабатывать и другие форматы файлов, и в некоторых случаях они могут быть более подходящими для ваших нужд, но в целом мы считаем, что 16-битные 8 кГц WAV файлы являются самыми простыми в работе и, в большинстве случаев, наилучшего качества.</p>
+    </td>
+  </tr>
+</table>
 
-The WAV file format we have recommended is useful for system prompts because it can easily be converted to any other format that your phones might use, without loss or distortion, and almost any computer can play it without any special software. Thus, not only can Asterisk handle the file easily, but it is also easy to work with it on a PC \(which can be useful\). Asterisk can handle other file formats as well, and in some cases these may be more suitable for your needs, but in general we find 16-bit 8 kHz WAV files to be the easiest to work with and, most of the time, the best possible quality.
+Есть два основных способа ввести подсказки в систему. Один из них заключается в записи звуковых файлов в студии или на ПК, а затем переместить эти файлы в систему. Второй способ заключается в записи подсказок непосредственно в системе с помощью телефонного аппарата. Мы предпочитаем второй способ.
 
-There are essentially two ways to get prompts into a system. One is to record sound files in a studio or on a PC, and then move those files into the system. A second way is to record the prompts directly onto the system using a telephone set. We prefer the second method.
+Наш совет таков: Не зацикливайтесь на сложностях записи звука через ПК или в студии.<sup><a href="#sn5">5</a></sup> Это вообще не нужно. Телефон будет делать записи отличного качества, и причины этого просты: микрофон и электроника в телефоне тщательно проработаны для захвата человеческого голоса в формате, который идеально подходит для передачи по телефонным сетям, и поэтому телефон также идеально подходит для выполнения записи подсказок. Аппарат захватит звук в правильном формате, отфильтрует фоновый шум и нормализует уровень децибел.
 
-Our advice is this: don’t get hung up on the complexities of recording audio through a PC or in a studio.<sup><a href="#sn5">5</a></sup> It is generally not necessary. A telephone set will produce excellent-quality recordings, and the reasons are simple: the microphone and electronics in a telephone are carefully designed to capture the human voice in a format that is ideal for transmission on telephone networks, and therefore a phone set is also ideal for doing prompts. The set will capture the audio in the correct format, and will filter out background noise and normalize the decibel level.
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="left"><b>Примечание</b></p>
+      <p>Да, правильно подготовленная подсказка в студии будет лучше подсказки, записанной по телефону, но если у вас нет оборудования или опыта, воспользуйтесь нашим советом и используйте телефон для записи, потому что плохо подготовленная подсказка в студии будет намного хуже, чем подсказка, записанная по телефону.</p>
+    </td>
+  </tr>
+</table>
 
-**Note**
+#### Использование диалплана для создания записей
 
-Yes, a properly produced studio prompt will be superior to a prompt recorded over a telephone, but if you don’t have the equipment or experience, take our advice and use a telephone to do your recordings, because a poorly produced studio prompt will be much worse than a prompt recorded through a phone set.
+Самый простой способ записи подсказок-это использование приложения `Record()`.
 
-#### Using the dialplan to create recordings
-
-The simplest method of recording prompts is to use the Record() application.
-
-Add this new subroutine at the bottom of your extensions.conf file:
+Добавьте эту новую подпрограмму в нижнюю часть вашего файла _extensions.conf_:
 
 ```
 [subRecordPrompt]
@@ -251,22 +171,27 @@ exten => 501,1,Playback(vm-intro)
    same => ... etc ... (create dialplan code for each prompt you need to record)
 ```
 
-**Note**
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="left"><b>Примечание</b></p>
+      <p>Чтобы использовать этот контекст, вам нужно будет включить его в контекст, в котором ваши устройства входят в диалплан. Поэтому в контекст <code>[LocalSets]</code> вы должны добавить строку <code>include=>User Services</code>. В рабочей среде вам, вероятно, понадобится пароль, чтобы кто попало не записывали подсказки.</p>
+    </td>
+  </tr>
+</table>
 
-In order to use this context, you will need to include it in the context where your sets enter the dialplan. So in your \[LocalSets\] context, you will want to add the line include=&gt;UserServices. In a production environment, you’ll probably want a password on this so that not just anybody can record prompts.
+Эта подпрограмма воспроизводит запрос, издает звуковой сигнал, делает запись и воспроизводит эту запись.<sup><a href="#sn6">6</a></sup> Примечательно, что приложение `Record()` принимает в качестве аргумента все имя файла, в то время как приложение `Playback()` исключает расширение типа файла (_.wav_, _.gsm_ и др.). Это происходит потому, что приложение `Record()` должно знать, в каком формате должна быть сделана запись, а `Playback()` - нет. Вместо этого `Playback()` автоматически выбирает наилучший доступный аудиоформат, основываясь на кодеке, используемом вашим телефоном, и форматах, доступных в папке _sounds_ (например, если у вас есть _daygreeting.wav_ и _daygreeting.gsm_ в папке _sounds_, `Playback(daygreeting)` выберет тот, который требует наименьших усилий процессора для воспроизведения вызывающему абоненту).
 
-This subroutine plays a prompt, issues a beep, makes a recording, and plays that recording back.<sup><a href="#sn6">6</a></sup> It’s notable that the Record() application takes the entire filename as its argument, while the Playback() application excludes the filetype extension (.wav, .gsm, etc.). This is because the Record() application needs to know which format the recording should be made in, while the Playback() application does not. Instead, Playback() automatically selects the best audio format available, based upon the codec your handset is using and the formats available in the sounds folder \(for example, if you have a daygreeting.wav and a daygreeting.gsm file in your sounds folder, Playback\(daygreeting\) will select the one that requires the least CPU to play back to the caller\).
+Вам, вероятно, потребуется отдельное расширение для записи каждого из приглашений, возможно, скрытое от обычного набора расширений, чтобы предотвратить затирание любой из ваших текущих подсказок меню с помощью неправильно набранного расширения. Если количество подсказок у вас велико, повторение этого расширения с небольшими изменениями для каждого будет утомительным, но есть способы обойти это. Мы покажем вам, как сделать вашу быструю запись более разумной в [Главе 16](glava-16.md), но сейчас только что описанный метод будет служить нашим непосредственным потребностям.
 
-You’ll probably want a separate extension for recording each of the prompts, possibly hidden away from your normal set of extensions, to prevent a mistyped extension from wiping out any of your current menu prompts. If the number of prompts you have is large, repeating this extension with slight modifications for each will get tedious, but there are ways around that. We’ll show you how to make your prompt recording more intelligent in [Chapter 16](glava-16.md), but for now the method just described will serve our immediate needs.
+Вот диалплан (выделен жирным шрифтом), который создаст все наши подсказки. Поместите его туда, куда вы хотите, в контекст `[sets]`:
 
-Here’s the dialplan (in bold) that’ll create all our prompts. Place it wherever you wish in the `[sets]` context:
-
-```
+<pre><code>
 exten => _4XX,1,Noop(User Dialed ${EXTEN})
   same => n,Answer()
   same => n,SayDigits(${EXTEN})
-  same => n,Hangup()
-
+  same => n,Hangup()<br>
+<b>
 exten => 500,1,GoSub(subRecordPrompt,${EXTEN},1(daygreeting)
 exten => 501,1,GoSub(subRecordPrompt,${EXTEN},1(nightgreeting)
 exten => 502,1,GoSub(subRecordPrompt,${EXTEN},1(mainmenu)
@@ -274,21 +199,20 @@ exten => 503,1,GoSub(subRecordPrompt,${EXTEN},1(holdwhileweconnect)
 exten => 504,1,GoSub(subRecordPrompt,${EXTEN},1(faxandaddress)
 exten => 505,1,GoSub(subRecordPrompt,${EXTEN},1(transfertoreception)
 exten => 506,1,GoSub(subRecordPrompt,${EXTEN},1(invalid)
-exten => 507,1,GoSub(subRecordPrompt,${EXTEN},1(holdwhileweconnect)
-
+exten => 507,1,GoSub(subRecordPrompt,${EXTEN},1(holdwhileweconnect)</b><br>
 exten => _555XXXX,1,Answer()
   same => n,SayDigits(${EXTEN})
 exten => _55512XX,1,Answer()
   same => n,Playback(tt-monkeys)
-```
+</code></pre>
 
-The recordings (aka prompts) will be placed in the /var/lib/asterisk/sounds folder. You can put them elsewhere, so long as you specify the full path when recording and playing back (and ensure the directory where you put them is readable by the asterisk user). In a production system, you should put them elsewhere, so as to separate your custom prompts from the generic prompts. For now, we’ll keep things simple and put them in the same folder as the system prompts.
+Записи (они же подсказки) будут помещены в директорию _/var/lib/asterisk/sounds_. Вы можете поместить их в другое место, если вы укажете полный путь при записи и воспроизведении (и убедитесь, что каталог, в который вы их поместили, доступен пользователю `asterisk`). В производственной системе их следует размещать в другом месте, чтобы отделить пользовательские приглашения от общих. На данный момент мы не будем усложнять и поместим их в ту же директорию, что и системные подсказки.
 
-### The Dialplan
+### Диалплан
 
-Here is the code required to create the AA that we designed earlier. We will often use blank lines before labels within an extension to make the dialplan easier to read, but note that just because there is a blank line does not mean there is a different extension.
+Вот код, необходимый для создания АС, который мы разработали ранее. Мы часто используем пустые строки перед метками внутри расширения, чтобы облегчить чтение диалплана, но обратите внимание, что только потому, что есть пустая строка, не означает, что есть другое расширение.
 
-You can place this code at the end of your `[TestMenu]` context, right before your subroutines:
+Вы можете поместить этот код в конце контекста `[TestMenu]`, прямо перед вашими подпрограммами:
 
 ```
 [MainMenu]
@@ -352,21 +276,21 @@ exten => _1XX,1,Verbose(1,Call to an extension starting with '1')
     same => n,Goto(sets,${EXTEN},1)
 ```
 
-### Delivering Incoming Calls to the AA
+### Доставка входящих звонков в АС
 
-Any call coming into the system will enter the dialplan in the context defined for whatever channel the call arrives on. In many cases this will be a context named `[incoming]`, or `[from-pstn]`, or something similar. The calls will arrive either with an extension \(as would be the case with a DID) or without one \(which would be the case with a traditional analog line\).
+Любой вызов, поступающий в систему, будет входить в диалплан в контексте, определенном для канала, на который поступает вызов. Во многих случаях это будет контекст с именем `[incoming]` или `[from-pstn]`, или что-то подобное. Вызовы будут поступать либо с добавочным номером (как в случае с DID), либо без него (как в случае с традиционной аналоговой линией).
 
-Whatever the name of the context, and whatever the name of the extension, you will want to send each incoming call to the menu.
+Как бы ни назывался контекст и как бы ни назывался добавочный номер, вы будете отправлять каждый входящий вызов в меню.
 
 ```
-[incoming] ; a DID coming in on a channel with
+[incoming] ; DID, приходящие в канал с
            ; context=incoming
 exten => 4169671111,1,Goto(MainMenu,s,1)
 ```
 
-Depending on how you configure your incoming channels, you will generally want to use the Goto\(\) application if you want to send the call to an AA. This is far neater than just coding your whole AA in the incoming context.
+В зависимости от того, как вы настраиваете входящие каналы, обычно будете использовать приложение `Goto()` для отправки вызова AС. Это гораздо аккуратнее, чем просто кодирование всего АС во входящем контексте.
 
-Since we don’t have any incoming circuits in our lab,<sup><a href="#sn7">7</a></sup> we’re going to create a simple extension that’ll deliver us to our fancy new AA:
+Поскольку у нас в лаборатории<sup><a href="#sn7">7</a></sup> нет больше входящих линий, мы создадим простое расширение, которое доставит нас к нашему новому модному АС:
 
 ```
 exten => 613,1,Noop()
@@ -374,11 +298,11 @@ exten => 613,1,Noop()
   same => n,Hangup()
 ```
 
-And that’s it! A simple automated attendant that is easy to manage, and will handle the expectations of most callers.
+И это все! Простой автосекретарь, которым легко управлять, и который справится с ожиданиями большинства абонентов.
 
 ### IVR
 
-Мы рассмотрим интерактивное голосовое меню \(IVR\) более подробно в [Главе 16](glava-16.md), но прежде чем мы это сделаем поговорим о том, что важно для любого IVR. Интеграция баз данных является предметом следующей главы.
+Мы рассмотрим интерактивное голосовое меню (IVR) более подробно в [Главе 16](glava-16.md), но прежде чем мы это сделаем поговорим о том, что важно для любого IVR. Интеграция баз данных является предметом следующей главы.
 
 ## Вывод
 
@@ -387,17 +311,17 @@ And that’s it! A simple automated attendant that is easy to manage, and will h
 <ol>
 <li id="sn1">Это, скорее всего, потому, что "IVR“ гораздо легче сказать, чем "автосекретарь".</li>
 
-<li id="sn2"> Следует отметить, что Asterisk - это отличный инструмент для создания IVR. Но также отлично подходит и для создания автосекретаря.</li>
+<li id="sn2">Следует отметить, что Asterisk - это отличный инструмент для создания IVR. Но также отлично подходит и для создания автосекретаря.</li>
 
-<li id="sn3"> При необходимости вы можете использовать программу редактирования звука, такую как Audacity, чтобы удалить тишину и даже немного ускорить запись.</li>
+<li id="sn3">При необходимости вы можете использовать программу редактирования звука, такую как Audacity, чтобы удалить тишину и даже немного ускорить запись.</li>
 
-<li id="sn4"> На самом деле, мы обычно не рекомендуем это в AС, потому что это добавляется к тому, что абонент должен слушать, и большинство людей все равно пойдет на сайт для получения такого рода информации.</li>
+<li id="sn4">На самом деле, мы обычно не рекомендуем это в AС, потому что это добавляется к тому, что абонент должен слушать, и большинство людей все равно пойдет на сайт для получения такого рода информации.</li>
 
-<li id="sn5"> Если вы не являетесь экспертом в этих областях, в таком случае пойдите на это!</li>
+<li id="sn5">Если вы не являетесь экспертом в этих областях, в таком случае пойдите на это!</li>
 
-<li id="sn6"> Подсказка <i>vm-intro</i> не идеальна (она просит вас оставить сообщение), но она достаточно близка для наших целей. Инструкции по использованию по крайней мере верны: нажмите <b>#</b>, чтобы завершить запись. После того, как вы научились записывать подсказки можете вернуться назад, записать пользовательское приглашение и изменить приоритет 1, чтобы отразить более подходящие инструкции для записи собственных приглашений.</li>
+<li id="sn6">Подсказка <i>vm-intro</i> не идеальна (она просит вас оставить сообщение), но она достаточно близка для наших целей. Инструкции по использованию по крайней мере верны: нажмите <b>#</b>, чтобы завершить запись. После того, как вы научились записывать подсказки можете вернуться назад, записать пользовательское приглашение и изменить приоритет 1, чтобы отразить более подходящие инструкции для записи собственных приглашений.</li>
 
-<li id="sn7"> And if you do in yours, congratulations and please be careful swimming with the sharks.</li>
+<li id="sn7">А если Вы это делаете, то и в Вашей; поздравляю и, пожалуйста, будьте осторожны, плавая с акулами.</li>
 </ol>
 
 [Глава 13. Состояния устройств](glava-13.md) | [Содержание](SUMMARY.md) | [Глава 15. Интеграция реляционной базы данных](glava-15.md)
