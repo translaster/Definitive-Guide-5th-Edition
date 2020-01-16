@@ -37,13 +37,9 @@ _Таблица 14-1. Базовый автосекретарь_
   <thead>
     <tr>
       <th style="text-align:left">Шаг или выбор</th>
-      <th
-      style="text-align:left">Образец приглашения</th>
-        <th
-        style="text-align:left">Примечание</th>
-          <th
-          style="text-align:left">Имя файла<sup><a href="#sn1a">a</a>
-            </th></sup>
+      <th style="text-align:left">Образец приглашения</th>
+      <th style="text-align:left">Примечание</th>
+      <th style="text-align:left">Имя файла<sup><a href="#sn1a">a</a></sup></th>
     </tr>
   </thead>
   <tbody>
@@ -90,15 +86,13 @@ _Таблица 14-1. Базовый автосекретарь_
       <td style="text-align:left">Наш адрес [address]. Наш номер факса [fax number], и тд.</td>
       <td
       style="text-align:left">Воспроизведение записи, содержащей информацию об адресе и факсе. Возврат вызывающего абонента к подсказке меню после завершения.</td>
-        <td style="text-align:left"><em>faxandaddress.wav</em>
-        </td>
+      <td style="text-align:left"><em>faxandaddress.wav</em></td>
     </tr>
     <tr>
       <td style="text-align:left">0</td>
       <td style="text-align:left">Соединяем со специалистом. Пожалуйста, подождите.</td>
       <td style="text-align:left">Перевод на приемную/оператора.</td>
-      <td style="text-align:left"><em>transfertoreception.wav</em>
-      </td>
+      <td style="text-align:left"><em>transfertoreception.wav</em></td>
     </tr>
     <tr>
       <td style="text-align:left">9</td>
@@ -116,20 +110,17 @@ _Таблица 14-1. Базовый автосекретарь_
       <td style="text-align:left">i</td>
       <td style="text-align:left">Вы сделали неверный выбор. Пожалуйста, попробуйте еще раз.</td>
       <td style="text-align:left">Абонент нажал неверную цифру: воспроизведение подсказки меню (но не приветствия).</td>
-      <td
-      style="text-align:left"><em>invalid.wav</em>
-        </td>
+      <td style="text-align:left"><em>invalid.wav</em></td>
     </tr>
     <tr>
-      <td style="text-align:left">_XXX <sup><a href="#sn1b">b</a></sup>
-      </td>
+      <td style="text-align:left">_XXX <sup><a href="#sn1b">b</a></sup></td>
       <td style="text-align:left">n/a</td>
       <td style="text-align:left">Перевод вызова на вызываемый номер.</td>
-      <td style="text-align:left"><em>holdwhileweconnect.wav</em>
-      </td>
+      <td style="text-align:left"><em>holdwhileweconnect.wav</em></td>
     </tr>
   </tbody>
 </table>
+
 <p><sup><a name="sn1a">a</a></sup>Эти файлы пока нигде не существуют. Мы используем их в качестве примеров.</p>
 <p><sup><a name="sn1b">b</a></sup>Это совпадение шаблонов должно соответствовать вашему диапазону расширений.</p>
 
