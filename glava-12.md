@@ -544,182 +544,144 @@ exten => *736,1,Verbose(2,Logging into multiple queues per the database values)
 </pre>
 Эти примеры, вероятно, не подходят для производственной среды (мы бы использовали специально построенные таблицы MySQL для такого рода вещей, а не AstDB), но это дает вам представление о том, как диалплан может быть использован для применения динамической логики к более сложным сценариям конфигурации.
 
-### Changing Penalties Dynamically (queuerules)
+### Динамическое изменение пенальти (queuerules)
 
-Using the asterisk.queuerules table, it is possible to define rules that change the values of the QUEUE_MIN_PENALTY and QUEUE_MAX_PENALTY channel variables. The QUEUE_MIN_PENALTY and QUEUE_MAX_PENALTY channel variables are used to control which members of a queue are preferred for servicing callers. Let’s say we have a queue called support, and we have five queue members with various penalties ranging from 1 through 5. If, prior to a caller entering the queue, the QUEUE_MIN_PENALTY channel variable is set to a value of 2 and the QUEUE_MAX_PENALTY is set to a value of 4, only queue members whose penalties are set to values ranging from 2 through 4 will be considered available to answer that call:
+Используя таблицу `asterisk.queuerules`, можно определить правила, которые изменяют значения переменных канала `QUEUE_MIN_PENALTY` и `QUEUE_MAX_PENALTY`. Переменные канала `QUEUE_MIN_PENALTY` и `QUEUE_MAX_PENALTY` используются для управления тем, какие участники очереди предпочтительнее для обслуживания абонентов. Допустим, у нас есть очередь с именем `support`, и у нас есть пять участников очереди с различными пенальти в диапазоне от 1 до 5. Если до того, как абонент войдет в очередь, для переменной канала `QUEUE_MIN_PENALTY` задано значение 2, а для `QUEUE_MAX_PENALTY` - значение 4, то для ответа на этот вызов будут считаться доступными только участники очереди, пенальти которых находятся в диапазоне от 2 до 4.:
+```
+same => n,Set(QUEUE_MIN_PENALTY=2) ; установить минимальный пенальти участника
+same => n,Set(QUEUE_MAX_PENALTY=4) ; установить максимальное пенальти участника
+same => n,Queue(support) ; вход в очередь с минимальными и максимальными пенальти
+                         ; для участников, которые будут использоваться
+```
+Более того, во время пребывания абонента в очереди мы можем динамически изменять значения `QUEUE_MIN_PENALTY` и `QUEUE_MAX_PENALTY` для этого абонента. Это позволяет использовать либо больше, либо другой набор участников очереди, в зависимости от того, как долго вызывающий абонент ожидает в очереди. Например, в предыдущем примере мы могли бы изменить минимальное пенальти на 1 и максимальное пенальти на 5, если абонент находится более 60 секунд в очереди.
 
- same => n,Set(QUEUE_MIN_PENALTY=2) ; set minimum member penalty
+Файл примера _~/src/asterisk-15.*/configs/samples/queuerules.conf.sample_ содержит отличную справку о том, как работают правила очереди.
 
- same => n,Set(QUEUE_MAX_PENALTY=4) ; set maximum member penalty
-
- same => n,Queue(support) ; entering the queue with min and max
-
- ; member penalties to be used
-
-What’s more, during the caller’s stay in the queue, we can dynamically change the values of QUEUE_MIN_PENALTY and QUEUE_MAX_PENALTY for that caller. This allows either more or a different set of queue members to be used, depending on how long the caller waits in the queue. For instance, in the previous example, we could modify the minimum penalty to 1 and the maximum penalty to 5 if the caller has to wait more than 60 seconds in the queue.
-
-The sample file ~/src/asterisk-15.&lt;TAB>/configs/samples/queuerules.conf.sample contains an excellent reference for how queue rules work.
-
-The rules are defined using the asterisk.queuerules table. Multiple rules can be created in order to facilitate different penalty changes throughout the call. Let’s take a look at how we might choose to define a rule:
-
+Правила определяются с использованием таблицы `asterisk.queuerules`. Несколько правил могут быть созданы для того, чтобы облегчить различные изменения пенальти на протяжении всего вызова. Давайте посмотрим, как мы можем определить правило.:
+```
 MySQL> insert into `asterisk`.`queue_rules`
-
 (rule_name,time,min_penalty,max_penalty)
 
 VALUES
-
 ('more_members',60,5,1);
+```
+**Примечание**
 
-**Note**
+Новые правила будут касаться только новых абонентов, входящих в очередь, а не существующих абонентов, которые уже находятся в ней.
+Мы назвали правило `more_members` и определили следующие значения:
 
-New rules will affect only new callers entering the queue, not existing callers already holding.
+60  Количество секунд ожидания перед изменением значений пеналти.<br>
+5   Новый `QUEUE_MAX_PENALTY`.<br>
+1   Новый `QUEUE_MIN_PENALTY`.
 
-We’ve named the rule more_members and defined the following values:
-
-60
-
-The number of seconds to wait before changing the penalty values.
-
-5
-
-The new QUEUE_MAX_PENALTY.
-
-1
-
-The new QUEUE_MIN_PENALTY.
-
-We can now tell our queues to make use of it.
-
+Теперь мы можем сказать нашим очередям использовать его.
+```
 MySQL> update `asterisk`.`queues`
 
 set defaultrule='more_members' where `name` in ('sales','support')
+```
+Файл _queuerules.conf.sample_ показывает, что эти правила достаточно гибкие. Если вы хотите детально контролировать приоритеты вызовов, вам может потребоваться дополнительная лабораторная работа.
 
-The queuerules.conf.sample file shows that these rules are quite flexible. If you want fine-grained control over call prioritization, some additional lab work may be worth your while.
+### Управление Объявлениями
 
-### Announcement Control
+Asterisk имеет возможность проигрывать несколько объявлений абонентам, ожидающим в очереди. Например, вы можете объявить позицию вызывающего абонента в очереди, объявить среднее время ожидания или периодически благодарить вызывающих абонентов за ожидание (или все, что скажут ваши аудиофайлы). Важно тщательно настроить значения, которые контролируют, когда эти объявления воспроизводятся для абонентов, потому что объявление их позиции, благодарность им за ожидание и информирование их о среднем времени ожидания слишком часто будет раздражать их, что не является нашей целью.
 
-Asterisk has the ability to play several announcements to callers waiting in the queue. For example, you might want to announce the caller’s position in the queue, announce the average wait time, or periodically thank your callers for waiting (or whatever your audio files say). It’s important to carefully tune the values that control when these announcements are played to the callers, because announcing their position, thanking them for waiting, and informing them of the average hold time too frequently is going to tend to annoy them, which is not the goal of these things.
+**Воспроизведение объявлений между музыкальными файлами на удержании**
 
-**Playing Announcements Between Music on Hold Files**
-
-Instead of handling the intricacies of announcements for each of your queues, you could alternatively (or in conjunction) utilize the announcement functionality defined in musiconhold.conf. Prior to playing a file for music, the announcement file will be played, and then played again between audio files. Let’s say you have a 5-minute loop of audio, but you want to play a “Thank you for waiting” message every 30 seconds. You could split the audio file into 30-second segments, set their filenames as starting with 00-, 01-, 02-, and so on (to keep them playing in order), and then define the announcement. The musiconhold.conf class might look something like this:
-
+Вместо того, чтобы разбираться со сложностями объявлений для каждой из ваших очередей, вы можете альтернативно (или совместно) использовать функциональность объявления, определенную в _musiconhold.conf_. Перед воспроизведением файла музыки на удержании будет воспроизведен файл объявления, а затем воспроизведен снова между аудиофайлами. Допустим, у вас есть 5-минутный цикл аудио, но вы хотите воспроизводить сообщение “Спасибо за ожидание” каждые 30 секунд. Вы можете разбить аудиофайл на 30-секундные сегменты, задать их имена, начиная с `00-`, `01-`, `02-` и так далее (чтобы они воспроизводились по порядку), а затем определить объявление The _musiconhold.conf_ может выглядеть примерно так:
+```
 [moh_jazz_queue]
-
 mode=files
-
 sort=alpha
-
 announcement=queue-thankyou
-
 directory=moh_jazz_queue
+```
+В таблице очередей есть несколько параметров, которые можно использовать для точной настройки того, какие и когда объявления воспроизводятся для ваших абонентов. Полный список опций очереди доступен в разделе _~/src/asterisk-16.*/configs/samples/queues.conf.sample_. Таблица 12-3 рассматривает несколько наиболее полезных из них.
 
-There are several options in the queues table that you can use to fine-tune what and when announcements are played to your callers. The full list of queue options is available in the ~/src/asterisk-15.&lt;TAB>/configs/samples/queues.conf.sample file. [Table 12-3](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/12.%20Automatic%20Call%20Distribution%20Queues%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22options_prompt_control_timing_id001) reviews a few of the more useful ones.
+Таблица 12-3. _Параметры, связанные с контролем времени запроса в очереди_
 
-Table 12-3. Options related to prompt control timing within a queue
-
-| Option | Available values | Description |
+| Параметр | Доступные значения | Описание |
 | :--- | :--- | :--- |
-| announce-frequency | Value in seconds | Defines how often we should announce the caller’s position and/or estimated hold time in the queue. Set this value to zero to disable. |
-| min-announce-frequency | Value in seconds | Indicates the minimum amount of time that must pass before we announce the caller’s position in the queue again. This is used when the caller’s position may change frequently, to prevent the caller hearing multiple updates in a short period of time. |
-| periodic-announce-frequency | Value in seconds | Specifies how often to make periodic announcements to the caller. |
-| random-periodic-announce | yes, no | If set to yes, will play the defined periodic announcements in a random order. See periodic-announce. |
-| relative-periodic-announce | yes, no | If set to yes, the periodic-announce-frequency timer will start when the end of the file being played back is reached, instead of from the beginning. Defaults to no. |
-| announce-holdtime | yes, no, once | Defines whether the estimated hold time should be played along with the periodic announcements. Can be set to yes, no, or only once. |
-| announce-position | yes, no, limit, more | Defines whether the caller’s position in the queue should be announced to them. If set to no, the position will never be announced. If set to yes, the caller’s position will always be announced. If the value is set to limit, the caller will hear their position in the queue only if it is within the limit defined by announce-position-limit. If the value is set to more, the caller will hear their position only if it is beyond the number defined by announce-position-limit. |
-| announce-position-limit | Number of zero or greater | Used if you’ve defined announce-position as either limit or more. |
-| announce-round-seconds | Value in seconds | If this value is nonzero, the number of seconds is announced as well, and rounded to the value defined. |
+| announce-frequency | Значение в секундах | Определяет, как часто мы должны объявлять позицию вызывающего абонента и / или предполагаемое время удержания в очереди. Установите это значение на ноль, чтобы отключить. |
+| min-announce-frequency | Значение в секундах | Указывает минимальное количество времени, которое должно пройти, прежде чем мы снова объявим позицию вызывающего абонента в очереди. Это используется, когда позиция вызывающего абонента может часто меняться, чтобы предотвратить прослушивание несколькими обновлениями за короткий промежуток времени.|
+| periodic-announce-frequency | Значение в секундах | Указывает, как часто делать периодические объявления абоненту. |
+| random-periodic-announce | yes, no | Если установлено значение `yes`, будут воспроизводиться определенные периодические объявления в случайном порядке. Смотрите `periodic-announce`. |
+| relative-periodic-announce | yes, no | Если установлено значение `yes`,  `periodic-announce-frequency` таймер запустится, когда будет достигнут конец воспроизводимого файла, а не с самого начала. По умолчанию `no`. |
+| announce-holdtime | yes, no, once | Определяет, следует ли воспроизводить расчетное время ожидания вместе с периодическими объявлениями. Может быть установлено значение `yes`, `no` или только один раз `once`. |
+| announce-position | yes, no, limit, more | Определяет, следует ли объявлять им позицию вызывающего абонента в очереди. Если установлено значение `no`, позиция никогда не будет объявлена. Если установлено значение да, позиция вызывающего абонента всегда будет объявлена. Если задано значение `limit`, вызывающий абонент услышит свою позицию в очереди только в том случае, если она находится в пределах предела, определенного параметром `announce-position-limit`. Если задано значение больше, вызывающий абонент услышит свою позицию только в том случае, если она выходит за пределы номера, определенного параметром `announce-position-limit`. |
+| announce-position-limit | Number of zero or greater | Используется, если вы определили объявленную позицию как `limit` или `more`. |
+| announce-round-seconds | Значение в секундах | Если это значение отлично от нуля, число секунд также объявляется и округляется до определенного значения. |
 
-[Table 12-4](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/12.%20Automatic%20Call%20Distribution%20Queues%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22options_controlling_playback_prompts) defines the files that will be used when announcements are played to the caller.
+Таблица 12-4 определяет файлы, которые будут использоваться при воспроизведении объявлений вызывающему абоненту.
 
-Table 12-4. Options for controlling the playback of prompts within a queue
+Таблица 12-4. Параметры управления воспроизведением подсказок в очереди
 
-| Option | Available values | Description |
+| Параметр | Доступные значения | Описание |
 | :--- | :--- | :--- |
-| musicclass | Music class as defined by musiconhold.conf | Sets the music class to be used by a particular queue. You can also override this value with the CHANNEL(musicclass) channel variable. |
-| queue-thankyou | Filename of prompt to play | If not defined, plays the default value (“Thank you for your patience”). If set to an empty value, prompt will not be played at all. |
-| queue-youarenext | Filename of prompt to play | If not defined, plays the default value (“You are now first in line”). If set to an empty value, prompt will not be played at all. |
-| queue-thereare | Filename of prompt to play | If not defined, plays the default value (“There are”). If set to an empty value, prompt will not be played at all. |
-| queue-callswaiting | Filename of prompt to play | If not defined, plays the default value (“calls waiting”). If set to an empty value, prompt will not be played at all. |
-| queue-holdtime | Filename of prompt to play | If not defined, plays the default value (“The current estimated hold time is”). If set to an empty value, prompt will not be played at all. |
-| queue-minutes | Filename of prompt to play | If not defined, plays the default value (“minutes”). If set to an empty value, prompt will not be played at all. |
-| queue-seconds | Filename of prompt to play | If not defined, plays the default value (“seconds”). If set to an empty value, prompt will not be played at all. |
-| queue-reporthold | Filename of prompt to play | If not defined, plays the default value (“hold time”). If set to an empty value, prompt will not be played at all. |
-| periodic-announce | A set of periodic announcements to be played, separated by commas | Prompts are played in the order they are defined. Defaults to queue-periodic-announce (“All representatives are currently busy assisting other callers. Please wait for the next available representative”). |
+| musicclass | Music class as defined by musiconhold.conf | Устанавливает музыкальный класс, который будет использоваться определенной очередью. Вы также можете переопределить это значение с помощью канальной переменной `CHANNEL` (musicclass). |
+| queue-thankyou | Имя файла для воспроизведения | Если не определено, воспроизводится значение по умолчанию («Спасибо за ожидание»). Если установлено пустое значение, подсказка не будет воспроизводиться вообще. |
+| queue-youarenext | Имя файла для воспроизведения |Если не определено, воспроизводится значение по умолчанию («Вы сейчас первый в очереди»). Если установлено пустое значение, подсказка не будет воспроизводиться вообще. |
+| queue-thereare | Имя файла для воспроизведения | Если не определено, воспроизводится значение по умолчанию («Есть»). Если установлено пустое значение, подсказка не будет воспроизводиться вообще. |
+| queue-callswaiting | Имя файла для воспроизведения | Если не определено, воспроизводится значение по умолчанию («ожидание вызова»). Если установлено пустое значение, подсказка не будет воспроизводиться вообще. |
+| queue-holdtime | Имя файла для воспроизведения | Если не определено, воспроизводится значение по умолчанию («Текущее расчетное время ожидания»). Если установлено пустое значение, подсказка не будет воспроизводиться вообще. |
+| queue-minutes | Имя файла для воспроизведения | Если не определено, воспроизводится значение по умолчанию («минут(ы)»). Если установлено пустое значение, подсказка не будет воспроизводиться вообще. |
+| queue-seconds | Имя файла для воспроизведения | Если не определено, воспроизводится значение по умолчанию («секунд(ы)»). Если установлено пустое значение, подсказка не будет воспроизводиться вообще. |
+| queue-reporthold | Имя файла для воспроизведения | Если не определено, воспроизводится значение по умолчанию («время ожидания»). Если установлено пустое значение, подсказка не будет воспроизводиться вообще. |
+| periodic-announce | Набор периодических объявлений для воспроизведения, разделенных запятыми | Подсказки воспроизводятся в том порядке, в котором они определены. По умолчанию используется параметр `queue-periodic-announce` ("В настоящий момент все операторы заняты. Пожалуйста оставайтесь на линии и дождитесь свободного оператора"). |
 
-There’s a ton of flexibility possible when designing a caller’s experience while they’re waiting, but please don’t forget that your callers will never be happy to be waiting in the queue. Also, if you’ve found some half-decent hold music, and your callers are enjoying it, an interruption to play yet another message runs the risk of really setting their blood boiling. When they are finally answered, your poor agents will get the brunt of their anger, even though it is actually your fault.[5](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178405806600)
+Существует масса возможностей для гибкости при проектировании взаимодействия абонента во время ожидания, но, пожалуйста, не забывайте, что ваши абоненты никогда не будут счастливы ожидая в очереди. Кроме того, если вы нашли какую-то более-менее приличную музыку для MOH, и ваши абоненты наслаждаются ею, прерывание воспроизведения еще одним сообщением несёт риск по-настоящему вспенить их кровь. Когда абоненту наконец ответит участник очереди, он получит удар гнева, даже если это на самом деле ваша вина.<sup><a href="#sn5">5</a></sup>
 
-So keep your on-hold tweaking simple. Callers know they’re waiting, and they aren’t going to be happy about it. Get them to an agent as quickly as possible, with the bare minimum amount of silliness while they’re holding, and don’t succumb to the temptation of making the queue more important to your callers than it actually is.
+Так что не нужно усложнять настройку удержания. Абоненты знают, что они ждут, и они не рады этому. Доставьте их агенту как можно быстрее, с минимальным количеством глупостей, пока они держатся, и не поддавайтесь искушению сделать очередь более важной для ваших абонентов, чем она есть на самом деле.
 
-### Overflow
+### Переполнение
 
-Unfortunately, your queue will not always get your callers to an agent in a timely manner. When various conditions cause the queue to reject incoming callers, we have an overflow situation. Overflowing out of the queue is done either with a timeout value or when no queue members are available (as defined by joinempty or leavewhenempty). In this section we’ll discuss how to control when overflow happens.
+К сожалению, ваша очередь не всегда будет своевременно доставлять ваших абонентов к агенту. Когда различные условия заставляют очередь отклонять входящих абонентов, мы имеем ситуацию переполнения. Переполнение очереди выполняется либо со значением таймаута, либо при отсутствии доступных членов очереди (как определено `joinempty` или `leavewhenempty`). В этом разделе мы обсудим, как контролировать возникновение переполнения.
 
-#### Controlling timeouts
+#### Контроль времени ожидания
 
-The Queue() application supports two kinds of timeout: one defines the maximum period of time a caller stays in the queue, and the other specifies how long to ring a device when attempting to connect a caller to a queue member. The two are unrelated but can affect each other. In this section we’ll be talking about the maximum period of time a caller stays in the Queue() application before the call overflows to the next step in the dialplan, which could be something like VoiceMail(), or even another queue. Once the call has fallen out of the queue, it can go anywhere that a call could normally go when controlled by the dialplan.
+Приложение `Queue ()` поддерживает два вида тайм-аута: один определяет максимальный период времени, в течение которого вызывающий абонент находится в очереди, а другой - как долго следует звонить устройству при попытке подключить вызывающего абонента к участнику очереди. Эти парметры не связаны, но могут влиять друг на друга. В этом разделе мы будем говорить о максимальном периоде времени, в течение которого вызывающий абонент остается в приложении `Queue()` до того, как вызов переполнится, до следующего шага в диалплане, который может быть чем-то вроде `VoiceMail()` или даже другая очередь. После того, как вызов выпал из очереди, он может отправиться куда угодно, куда обычно может идти вызов, если он контролируется диалпланом.
 
-The timeouts are specified in two locations. The timeout that indicates how long to ring queue members for is specified in the queues table. The absolute timeout (how long the caller stays in the queue) is controlled via the Queue() application. To set a maximum amount of time for callers to stay in a queue, simply specify it after the queue name in the Queue() application:
-
-; Queue
-
+Таймауты указываются в двух местах. Тайм-аут, указывающий, в течение какого времени звонить участникам очереди, указывается в таблице `queues`. Абсолютный тайм-аут (время пребывания абонента в очереди) контролируется с помощью приложения `Queue()`. Чтобы задать максимальное время пребывания абонентов в очереди, просто укажите его после имени очереди в приложении `Queue()`:
+```
+; Очередь
 exten => 610,1,Noop()
-
- same => n,Progress()
-
- same => n,Queue(sales,120)
-
- same => n,Voicemail(${EXTEN}@queues,u)
-
- same => n,Hangup()
-
+   same => n,Progress()
+   same => n,Queue(sales,120)
+   same => n,Voicemail(${EXTEN}@queues,u)
+   same => n,Hangup()
 exten => 611,1,Noop()
-
- same => n,Progress()
-
- same => n,Queue(support,120)
-
- same => n,Voicemail(${EXTEN}@queues,u)
-
- same => n,Hangup()
-
+   same => n,Progress()
+   same => n,Queue(support,120)
+   same => n,Voicemail(${EXTEN}@queues,u)
+   same => n,Hangup()
 exten => 612,1,Noop()
-
- same => n,Progress()
-
- same => n,Queue(support-priority,120)
-
- same => n,Voicemail(${EXTEN}@queues,u)
-
- same => n,Hangup()
-
-Since we’re sending the calls to voicemail, we’ll need some mailboxes:
-
+   same => n,Progress()
+   same => n,Queue(support-priority,120)
+   same => n,Voicemail(${EXTEN}@queues,u)
+   same => n,Hangup()
+```
+Поскольку мы отправляем звонки на голосовую почту, нам понадобятся почтовые ящики:
+```
 MySQL> INSERT INTO `asterisk`.`voicemail`
-
 (context,mailbox,password,fullname,email)
 
 VALUES
-
 ('queues','610','192837','Queue sales','name@shifteight.org'),
-
 ('queues','611','192837','Queue support','name@shifteight.org'),
-
 ('queues','612','192837','Queue support-priority','name@shifteight.org');
+```
+Конечно, мы могли бы определить другое назначение, но приложение VoiceMail () является общим местом назначения переполнения для очереди. Очевидно, что отправка звонков на голосовую почту не идеальна (они надеялись поговорить с кем-то вживую), поэтому убедитесь, что кто-то регулярно проверяет это и перезванивает вашим клиентам.
 
-Of course, we could define a different destination, but the VoiceMail() application is a common overflow destination for a queue. Obviously, sending callers to voicemail is not ideal (they were hoping to speak to someone live), so make sure someone checks it regularly and calls your customers back.
+Предположим, мы установили наше абсолютное время ожидания равным 10 секундам, наше значение времени ожидания для звонков участникам очереди равным 5 секундам,  а значение тайм-аута для повторной попытки - 4 секунды. В этом случае мы будем звонить участнику очереди в течение 5 секунд, а затем ждать 4 секунды, прежде чем пытаться запустить другого участника очереди. Это дает нам до 9 секунд нашего абсолютного тайм-аута в 10 секунд. Получается, мы должны позвонить второму участнику очереди в течение 1 секунды и затем выйти из очереди, или мы должны позвонить этому участнику в течение полных 5 секунд перед выходом?
 
-Now, let’s say we have set our absolute timeout to 10 seconds, our timeout value for ringing queue members to 5 seconds, and our retry timeout value to 4 seconds. In this scenario, we would ring the queue member for 5 seconds, then wait 4 seconds before attempting another queue member. That brings us up to 9 seconds of our absolute timeout of 10 seconds. At this point, should we ring the second queue member for 1 second and then exit the queue, or should we ring this member for the full 5 seconds before exiting?
-
-We control which timeout value has priority with the timeoutpriority option in the queues table. The available values are app (the default) and conf. If we want the application timeout (the absolute timeout) to take priority, which would cause our caller to be kicked out after exactly 10 seconds (even though it was just starting to ring an agent), we should set the timeoutpriority value to app. If we want the configuration file timeout to take priority and finish ringing the queue member, which will cause the caller to stay in the queue a little longer, we should set timeoutpriority to conf. The default value is app (which is the default behavior in previous versions of Asterisk). Probably in most cases you’ll want to use conf (especially if you want your caller experience to be as non-weird as possible).
-
+Мы контролируем, какое значение тайм-аута имеет приоритет с помощью опции `timeoutpriority` в таблице` queues`. Доступные значения: `app` (по умолчанию) и `conf`. Если мы хотим, чтобы тайм-аут приложения (абсолютный тайм-аут) имел приоритет, что привело бы к тому, что наш абонент был исключен через ровно 10 секунд (даже если он только начинал звонить агенту), мы должны установить значение `timeoutpriority` в `app`. Если мы хотим, чтобы таймаут файла конфигурации имел приоритет и закончил звонить участнику очереди, что заставит абонента оставаться в очереди немного дольше, мы должны установить для `timeoutpriority` значение` conf`. Значением по умолчанию является `app` (по умолчанию в предыдущих версиях Asterisk). Вероятно, в большинстве случаев вы захотите использовать `conf` (особенно если вы хотите, чтобы опыт абонента был как можно менее странным).
+```
 MySQL> update `asterisk`.`queues` set timeoutpriority='conf'
+  where name in ('sales','support','support-priority');
+```
+Цель состоит в том, чтобы доставить абонентов к агентам, да?
 
- where name in ('sales','support','support-priority');
-
-The goal is to get callers to agents, yes?
-
-#### Controlling when to join and leave a queue
+#### Управление временем присоединения и выхода из очереди
 
 Asterisk provides two options that control when callers can join and are forced to leave queues, both based on the statuses of the queue members. The first option, joinempty, is used to control whether callers can enter a queue in the first place. The second option, leavewhenempty, is used to control events that will cause callers already in a queue to be removed from that queue (i.e., if all of the queue members become unavailable). Both options allow for a comma-separated list of values to control this behavior, as listed in [Table 12-5](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/12.%20Automatic%20Call%20Distribution%20Queues%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22options_joinempty).
 
@@ -1002,15 +964,10 @@ Table 12-7. Events in the Asterisk queue log
 
 <ol>
 <li id="sn1"> Это распространенное заблуждение, что очередь может позволить вам обрабатывать больше вызовов. Это не совсем верно: ваши абоненты все равно захотят поговорить с живым человеком, и они будут только ждать так долго. Другими словами, если у вас мало сотрудников, ваша очередь может оказаться не более чем препятствием для ваших абонентов. Это то же самое, говорите ли вы по телефону или на кассе Walmart. Никто не любит ждать в очереди. Идеальная очередь невидима для звонящих, так как на их звонки отвечают сразу, без ожидания.</li>
-
 <li id="sn2"> Существует несколько книг, в которых обсуждаются метрики колл-центра и доступные стратегии организации очередей, например, «Руководство по метрикам колл-центра» Джеймса Эббота (Роберт Хьюстон Смит).</li>
-
 <li id="sn3"> Мы собираемся использовать символ ^ в качестве разделителя. Возможно, вы могли бы использовать вместо этого другой символ, только если он не тот, который синтаксический анализатор Asterisk будет рассматривать как обычный разделитель (и, таким образом, будет сбит с толку). Поэтому избегайте запятых, точек с запятой и так далее.</li>
-
 <li id="sn4"> Похоже на добавление балласта к жокею или гоночному автомобилю.</li>
-
-[5](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178405806600-marker) Just sayin’.
-
+<li id="sn5"> Просто говорю'.</li>
 [6](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178405761096-marker) If the priority n+1 (from where the Queue() application was called) is not defined, the call will be hung up. In other words, don’t use this functionality unless your dialplan does something useful at the step immediately following Queue().
 
 [7](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178405718440-marker) Perhaps we could have used / instead of - as a delimiter, giving us Local/PJSIP/SOFTPHONE_A@localMemberConnector, but we felt that would be more prone to strange syntax errors, and awkward to filter and parse, so we went with -.
