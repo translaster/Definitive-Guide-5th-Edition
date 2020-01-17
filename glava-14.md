@@ -168,7 +168,7 @@ exten => 500,1,Playback(vm-intro)
 
 exten => 501,1,Playback(vm-intro)
    same => n,Record(mainmenu.wav)
-   same => ... etc ... (create dialplan code for each prompt you need to record)
+   same => ... etc ... (создайте код диалплана для каждой подсказки, которую необходимо записать)
 ```
 
 <table border="1" width="100%" cellpadding="5">
@@ -190,8 +190,8 @@ exten => 501,1,Playback(vm-intro)
 exten => _4XX,1,Noop(User Dialed ${EXTEN})
   same => n,Answer()
   same => n,SayDigits(${EXTEN})
-  same => n,Hangup()<br>
-<b>
+  same => n,Hangup()
+<br><b>
 exten => 500,1,GoSub(subRecordPrompt,${EXTEN},1(daygreeting)
 exten => 501,1,GoSub(subRecordPrompt,${EXTEN},1(nightgreeting)
 exten => 502,1,GoSub(subRecordPrompt,${EXTEN},1(mainmenu)
@@ -199,7 +199,8 @@ exten => 503,1,GoSub(subRecordPrompt,${EXTEN},1(holdwhileweconnect)
 exten => 504,1,GoSub(subRecordPrompt,${EXTEN},1(faxandaddress)
 exten => 505,1,GoSub(subRecordPrompt,${EXTEN},1(transfertoreception)
 exten => 506,1,GoSub(subRecordPrompt,${EXTEN},1(invalid)
-exten => 507,1,GoSub(subRecordPrompt,${EXTEN},1(holdwhileweconnect)</b><br>
+exten => 507,1,GoSub(subRecordPrompt,${EXTEN},1(holdwhileweconnect)</b>
+<br>
 exten => _555XXXX,1,Answer()
   same => n,SayDigits(${EXTEN})
 exten => _55512XX,1,Answer()
@@ -226,36 +227,36 @@ exten => s,1,Verbose(1, Caller ${CALLERID(all)} has entered the auto attendant)
 ; wait one second to establish audio
     same => n,Wait(1)
 
-; If Mon-Fri 9-5 goto label daygreeting
+; Если с Пн-Пт с 9-17 переход на метку daygreeting
     same => n,GotoIfTime(9:00-17:00,mon-fri,*,*?daygreeting:afterhoursgreeting)
 
-    same => n(afterhoursgreeting),Background(nightgreeting) ; AFTER HOURS GREETING
+    same => n(afterhoursgreeting),Background(nightgreeting) ; ПРИВЕТСТВИЕ НЕРАБОЧЕГО ВРЕМЕНИ
     same => n,Goto(menuprompt)
 
-    same => n(daygreeting),Background(daygreeting)   ; DAY GREETING
+    same => n(daygreeting),Background(daygreeting)   ; ДНЕВНОЕ ПРИВЕТСТВИЕ
     same => n,Goto(menuprompt)
 
-    same => n(menuprompt),Background(mainmenu) ; MAIN MENU PROMPT
-    same => n,WaitExten(4)                      ; more than 4 seconds is probably
-                                                ; too much
-    same => n,Goto(0,1)                         ; Treat as if caller has pressed '0'
+    same => n(menuprompt),Background(mainmenu)  ; ПОДСКАЗКА ГЛАВНОГО МЕНЮ
+    same => n,WaitExten(4)                      ; более 4 секунд скорее всего
+                                                ; слишком много
+    same => n,Goto(0,1)                         ; Считайте, что вызывающий нажал '0'
 
 exten => 1,1,Verbose(1, Caller ${CALLERID(all)} has entered the sales queue)
-    same => n,Goto(sets,610,1)     ; Sales Queue - see Chapter 13 for details
+    same => n,Goto(sets,610,1)     ; Очередь продаж - смотри [Главу 12](glava-12.md#глава-12-состояния-устройств) для подробностей
 
 exten => 2,1,Verbose(1, Caller ${CALLERID(all)} has entered the service queue)
-    same => n,Goto(sets,611,1)     ; Service Queue - see Chapter 13 for details
+    same => n,Goto(sets,611,1)     ; Очередь сервиса - смотри [Главу 12](glava-12.md#глава-12-состояния-устройств) для подробностей
 
 exten => 3,1,Verbose(1, Caller ${CALLERID(all)} has requested address and fax info)
-    same => n,Background(faxandaddress)            ; Address and fax info
-    same => n,Goto(s,menuprompt)      ; Take caller back to main menu prompt
+    same => n,Background(faxandaddress)            ; Информация об адресе и факсе
+    same => n,Goto(s,menuprompt)      ; Вернуть абонента к подсказке главного меню
 
 exten => #,1,Verbose(1, Caller ${CALLERID(all)} is entering the directory)
-    same => n,Directory(default)   ; Send the caller to the directory.
-                                   ; Use InternalSets as the dialing context
+    same => n,Directory(default)   ; Отправить абонента в каталог.
+                                   ; Использовать InternalSets в качестве контекста набора
 
 exten => 0,1,Verbose(1, Caller ${CALLERID(all)} is calling the operator)
-    same => n,Goto(sets,611,1)     ; Service Queue - see Chapter 13 for details
+    same => n,Goto(sets,611,1)     ; Очередь сервиса - смотри [Главу 12](glava-12.md#глава-13-состояния-устройств) для подробностей
 
 exten => i,1,Verbose(1, Caller ${CALLERID(all)} has entered an invalid selection)
     same => n,Playback(invalid)
@@ -264,13 +265,13 @@ exten => i,1,Verbose(1, Caller ${CALLERID(all)} has entered an invalid selection
 exten => t,1,Verbose(1, Caller ${CALLERID(all)} has timed out)
     same => n,Goto(0,1)
 
-; You will want to have a pattern match for the various extensions
-; that you'll allow external callers to dial
-; BUT DON'T JUST INCLUDE THE LocalSets CONTEXT
-; OR EXTERNAL CALLERS WILL BE ABLE TO MAKE CALLS OUT OF YOUR SYSTEM
+; Вы должны иметь шаблон соответствия для внутренних номеров,
+; которые вы позволите набирать внешним абонентам
+; НО НЕ ПРОСТО ВКЛЮЧИТЬ КОНТЕКСТ LocalSets
+; ИНАЧЕ АБОНЕНТЫ СМОГУТ СОВЕРШАТЬ ЗВОНКИ ИЗ ВАШЕЙ СИСТЕМЫ.
 
-; WHATEVER YOU DO HERE, TEST IT CAREFULLY TO ENSURE EXTERNAL CALLERS
-; WILL NOT BE ABLE TO DO ANYTHING BUT DIAL INTERNAL EXTENSIONS
+; ЧТО БЫ ВЫ НИ ДЕЛАЛИ ЗДЕСЬ, ТЩАТЕЛЬНО ПРОВЕРЬТЕ, ЧТОБЫ УБЕДИТЬСЯ, ЧТО ВНЕШНИЕ АБОНЕНТЫ
+; НЕ СМОГУТ СДЕЛАТЬ НИЧЕГО, КРОМЕ НАБОРА ВНУТРЕННИХ НОМЕРОВ
 
 exten => _1XX,1,Verbose(1,Call to an extension starting with '1')
     same => n,Goto(sets,${EXTEN},1)
