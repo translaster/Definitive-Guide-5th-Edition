@@ -683,36 +683,36 @@ MySQL> update `asterisk`.`queues` set timeoutpriority='conf'
 
 #### Управление временем присоединения и выхода из очереди
 
-Asterisk provides two options that control when callers can join and are forced to leave queues, both based on the statuses of the queue members. The first option, joinempty, is used to control whether callers can enter a queue in the first place. The second option, leavewhenempty, is used to control events that will cause callers already in a queue to be removed from that queue (i.e., if all of the queue members become unavailable). Both options allow for a comma-separated list of values to control this behavior, as listed in [Table 12-5](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/12.%20Automatic%20Call%20Distribution%20Queues%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22options_joinempty).
+Asterisk предоставляет две опции, которые контролируют, когда вызывающие абоненты могут присоединиться и вынуждены покинуть очереди, обе на основе статусов участников очереди. Первая опция, `joinempty`, используется для контроля, могут ли абоненты входить в очередь в первую очередь. Вторая опция, `leftwhenempty`, используется для управления событиями, которые приведут к тому, что вызывающие абоненты, уже находящиеся в очереди, будут удалены из этой очереди (т.е. Если все члены очереди станут недоступными). Оба параметра допускают разделенный запятыми список значений для управления этим поведением, как показано в Таблице 12-5.
 
-Table 12-5. Options that can be set for joinempty or leavewhenempty
+Таблица 12-5. _Параметры, которые можно установить для joinempty или leftwhenempty_
 
-| Value | Description |
+| Значение | Описание|
 | :--- | :--- |
-| paused | Members are considered unavailable if they are paused. |
-| penalty | Members are considered unavailable if their penalties are less than QUEUE_MAX_PENALTY. |
-| inuse | Members are considered unavailable if their device status is InUse. |
-| ringing | Members are considered unavailable if their device status is Ringing. |
-| unavailable | Applies primarily to agent channels; if the agent is not logged in but is a member of the queue, the channel is considered unavailable. |
-| invalid | Members are considered unavailable if their device status is Invalid. This is typically an error condition. |
-| unknown | Members are considered unavailable if device status is unknown. |
-| wrapup | Members are considered unavailable if they are currently in the wrapup time after the completion of a call. |
+| paused | Участники считаются недоступными, если они приостановлены. |
+| penalty | Участники считаются недоступными, если их пенальти меньше, чем` QUEUE_MAX_PENALTY`. |
+| inuse | Участники считаются недоступными, если состояние их устройства `InUse`. |
+| ringing | Участники считаются недоступными, если состояние их устройства `Ringing`. |
+| unavailable | Применяется главным образом к каналам агента; если агент не вошел в систему, но является участником очереди, канал считается недоступным. |
+| invalid | Участники считаются недоступными, если их статус устройства является `Invalid`. Это типичное условие ошибки. |
+| unknown | Участники считаются недоступными, если состояние устройства `unknown`. |
+| wrapup | Члены считаются недоступными, если они в настоящее время находятся в состоянии завершения после завершения вызова. |
 
-For joinempty, prior to placing a caller into the queue, all the members are checked for availability using the factors you list as criteria. If all members are deemed to be unavailable, the caller will not be permitted to enter the queue, and dialplan execution will continue at the next priority.[6](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178405761096) For the leavewhenempty option, the members’ statuses are checked periodically against the listed conditions; if it is determined that no members are available to take calls, the caller is removed from the queue, with dialplan execution continuing at the next priority.
+Для `joinempty`, перед помещением вызывающего абонента в очередь, все участники проверяются на доступность, используя факторы, перечисленные в качестве критериев. Если все участники считаются недоступными, вызывающему абоненту не будет разрешено войти в очередь, и выполнение диалплана будет продолжено со следующим приоритетом.<sup><a href="#sn6">6</a></sup> Для опции `leavewhenempty` статусы участников периодически проверяются на соответствие перечисленным условиям; если выясняется, что ни один участник не доступен для приема вызовов, абонент удаляется из очереди, а выполнение диалплана продолжается со следующим приоритетом.
 
-An example use of joinempty could be:
-
+Примером использования `joinempty` может быть:
+```
 joinempty=unavailable,invalid,unknown
+```
+В этой конфигурации до того, как вызывающий абонент войдет в очередь, будут проверены состояния всех участников очереди, и вызывающему не будет разрешено войти в очередь, если по крайней мере один участник очереди не будет найден со статусом, который не является unavailable, invalid или unknown.
 
-With this configuration, prior to a caller entering the queue the statuses of all queue members will be checked, and the caller will not be permitted to enter the queue unless at least one queue member is found to have a status that is not unavailable, invalid, or unknown.
-
-The leavewhenempty example could be something like:
-
+Примером `leavewhenempty` может быть что-то вроде:
+```
 leavewhenempty=unavailable,invalid,unknown
-
+```
 In this case, the queue members’ statuses will be checked periodically, and callers will be removed from the queue if no queue members can be found who do not have a status of unavailable, invalid, or unknown.
 
-Previous versions of Asterisk used the values yes, no, strict, and loose as the available values to be assigned. The mapping of those values is shown in [Table 12-6](Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition/12.%20Automatic%20Call%20Distribution%20Queues%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22mapping_old_new_id001).
+Previous versions of Asterisk used the values yes, no, strict, and loose as the available values to be assigned. The mapping of those values is shown in Table 12-6
 
 Table 12-6. Mapping between old and new values for controlling when callers join and leave queues
 
@@ -968,11 +968,11 @@ Table 12-7. Events in the Asterisk queue log
 <li id="sn3"> Мы собираемся использовать символ ^ в качестве разделителя. Возможно, вы могли бы использовать вместо этого другой символ, только если он не тот, который синтаксический анализатор Asterisk будет рассматривать как обычный разделитель (и, таким образом, будет сбит с толку). Поэтому избегайте запятых, точек с запятой и так далее.</li>
 <li id="sn4"> Похоже на добавление балласта к жокею или гоночному автомобилю.</li>
 <li id="sn5"> Просто говорю'.</li>
-[6](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178405761096-marker) If the priority n+1 (from where the Queue() application was called) is not defined, the call will be hung up. In other words, don’t use this functionality unless your dialplan does something useful at the step immediately following Queue().
+<li id="sn6"> Если приоритет <code>n+1</code> (откуда было вызвано приложение <code>Queue()</code>) не определен, вызов будет прерван. Другими словами, не используйте эту функцию, если ваш диалплан не делает что-то полезное на шаге, следующем сразу за <code>Queue()</code>.</li>
 
-[7](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178405718440-marker) Perhaps we could have used / instead of - as a delimiter, giving us Local/PJSIP/SOFTPHONE_A@localMemberConnector, but we felt that would be more prone to strange syntax errors, and awkward to filter and parse, so we went with -.
+[7](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178405718440-marker) Perhaps we could have used / instead of - as a delimiter, giving us Local/PJSIP/SOFTPHONE_A@localMemberConnector, but we felt that would be more prone to strange syntax errors, and awkward to filter and parse, so we went with -.</li>
 
-[8](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178405708120-marker) Obviously, don’t use any dialplan code in your local channel that will answer, such as Answer(), Playback(), and so forth.
+[8](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch12.html%22%20/l%20%22idm46178405708120-marker) Obviously, don’t use any dialplan code in your local channel that will answer, such as Answer(), Playback(), and so forth.</li>
 
 <li id="sn9"> Обратите внимание, что при передаче вызывающего абонента с использованием SIP-передач (а не встроенных передач, запускаемых DTMF и настраиваемых в <i>features.conf</i>), событие TRANSFER может не записываться.</li>
 </ol>
