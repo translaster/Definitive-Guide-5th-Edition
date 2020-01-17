@@ -242,10 +242,10 @@ exten => s,1,Verbose(1, Caller ${CALLERID(all)} has entered the auto attendant)
     same => n,Goto(0,1)                         ; Считайте, что вызывающий нажал '0'
 
 exten => 1,1,Verbose(1, Caller ${CALLERID(all)} has entered the sales queue)
-    same => n,Goto(sets,610,1)     ; Очередь продаж - смотри [Главу 12](glava-12.md#глава-12-состояния-устройств) для подробностей
+    same => n,Goto(sets,610,1)     ; Очередь продаж - смотри Главу 12 для подробностей
 
 exten => 2,1,Verbose(1, Caller ${CALLERID(all)} has entered the service queue)
-    same => n,Goto(sets,611,1)     ; Очередь сервиса - смотри [Главу 12](glava-12.md#глава-12-состояния-устройств) для подробностей
+    same => n,Goto(sets,611,1)     ; Очередь сервиса - смотри Главу 12 для подробностей
 
 exten => 3,1,Verbose(1, Caller ${CALLERID(all)} has requested address and fax info)
     same => n,Background(faxandaddress)            ; Информация об адресе и факсе
@@ -256,7 +256,7 @@ exten => #,1,Verbose(1, Caller ${CALLERID(all)} is entering the directory)
                                    ; Использовать InternalSets в качестве контекста набора
 
 exten => 0,1,Verbose(1, Caller ${CALLERID(all)} is calling the operator)
-    same => n,Goto(sets,611,1)     ; Очередь сервиса - смотри [Главу 12](glava-12.md#глава-13-состояния-устройств) для подробностей
+    same => n,Goto(sets,611,1)     ; Очередь сервиса - смотри Главу 12 для подробностей
 
 exten => i,1,Verbose(1, Caller ${CALLERID(all)} has entered an invalid selection)
     same => n,Playback(invalid)
