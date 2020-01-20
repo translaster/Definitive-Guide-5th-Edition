@@ -1,84 +1,47 @@
 # Глава 16. Введение в интерактивное голосовое меню
 
-One day Alice came to a fork in the road and saw a Cheshire cat in a tree. “Which road do I take?” she asked.
+> _Однажды Алиса подошла к развилке и увидела на дереве Чеширского кота. - По какой дороге мне пойти?- спросила она._
+> _“Куда ты хочешь пойти?- был его ответ._
+> _“Не знаю, - ответила Алиса._
+> _“Тогда, - сказал кот, - это не имеет значения.”_
+> - Льюис Кэролл
 
-“Where do you want to go?” was his response.
+Термин интерактивое голосовое меню (на самом деле ответ) (IVR) часто неправильно используется для обозначения автосекретаря, но это очень разные вещи. Цель системы IVR состоит в том, чтобы принять входные данные от абонента, выполнить действие, основанное на этих входных данных (обычно, поиск данных во внешней системе, такой как база данных), и сообщить результат абоненту. Назначение автосекретаря (о котором мы говорили в [Главе 14](glava-14.md)) - маршрутизация вызовов. Первоначально IVR даже не должен был быть телефонной системой. Все, что принимало информацию от человека и выдавало на запрос результат, падало вместе с областью IVR. Традиционно системы IVR были сложными, дорогими и раздражающими в реализации. Asterisk все это изменил.
 
-“I don’t know,” Alice answered.
+## Компоненты IVR
 
-“Then,” said the cat, “it doesn’t matter.”
+Самые основные элементы IVR очень похожи на элементы автосекретаря, хотя цель и отличается. Нам нужно по крайней мере одно приветствие чтобы сообщить вызывающему, что ожидает IVR, метод получения входных данных от вызывающего, логику для проверки что ответ вызывающего является допустимым вводом, логику определения следующего шага IVR, и, наконец, механизм хранения ответов, если это применимо. Мы могли бы думать об IVR как о дереве решений, хотя оно не должно иметь никаких ветвей. Например, опрос может представлять точно такой же набор подсказок для каждого вызывающего абонента, независимо от того, какой выбор делают абоненты и единственная логика маршрутизации, включенная в опрос, заключается в том, являются ли полученные ответы допустимыми для вопросов.
 
-Lewis Carroll
+С точки зрения вызывающего абонента, каждый IVR должен начинаться с подсказки. Этот первоначальный запрос будет сообщать абоненту что он попал на IVR и попросит собеседника ввести первые данные. Мы обсуждали подсказки в автосекретаре в Главе 14. Позже мы создадим диалплан, который позволит вам лучше управлять несколькими голосовыми подсказками.
 
-The term Interactive Voice Response \(IVR\) is often misused to refer to an automated voice attendant, but the two are very different things. The purpose of an IVR system is to take input from a caller, perform an action based on that input \(commonly, looking up data in an external system such as a database\), and speak a result to the caller. The purpose of an automated attendant \(which we covered in [Chapter 14](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch14.html%22%20/l%20%22asterisk-AA)\) is to route calls. Originally, an IVR didn’t even need to be a telephone system. Anything that took input from a human and spoke back a result fell with the realm of an IVR. Traditionally, IVR systems have been complex, expensive, and annoying to implement. Asterisk changes all that.
+Второй компонент IVR - это метод получения входных данных от вызывающего абонента. Напомним, что в Главе 14 мы обсуждали `Background()` и `WaitExten()` как метод получения нового расширения. Хотя вы можете создать IVR с помощью `Background()` и `WaitExten()` обычно проще и практичнее использовать приложение `Read()`, которое обрабатывает как приглашение, так и захват ответа. Приложение `Read()` было разработано специально для использования с системами IVR. Его синтаксис выглядит следующим образом:
 
-## Components of an IVR
+```
+Read(variable[,filename[&filename2...]][,maxdigits][,option][,attempts][,timeout])
+```
 
-The most basic elements of an IVR are quite similar to those of an automated attendant, though the goal is different. We need at least one prompt to tell the caller what the IVR expects, a method of receiving input from the caller, logic to verify that the caller’s response is valid input, logic to determine what the next step of the IVR should be, and finally, a storage mechanism for the responses, if applicable. We might think of an IVR as a decision tree, although it need not have any branches. For example, a survey may present exactly the same set of prompts to each caller, regardless of what choices the callers make, and the only routing logic involved is whether the responses given are valid for the questions.
+Аргументы описаны в Таблице 16-1.
 
-From the caller’s perspective, every IVR needs to start with a prompt. This initial prompt will tell the caller what the IVR is for and ask the caller to provide the first input. We discussed prompts in the automated attendant in [Chapter 14](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch14.html%22%20/l%20%22asterisk-AA). Later, we’ll create a dialplan that will allow you to better manage multiple voice prompts.
+_Таблица 16-1. Приложение Read()_
 
-The second component of an IVR is a method for receiving input from the caller. Recall that in [Chapter 14](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch14.html%22%20/l%20%22asterisk-AA) we discussed the Background\(\) and WaitExten\(\) applications for receiving a new extension. While you could create an IVR using Background\(\) and WaitExten\(\), it is generally easier and more practical to use the Read\(\) application, which handles both the prompt and the capture of the response. The Read\(\) application was designed specifically for use with IVR systems. Its syntax is as follows:
+| Аргумент | Цель |
+| :------- | :--- |
+| `variable` | The variable into which the caller’s response is stored. It is best practice to give each variable in your IVR a name that is similar to the prompt associated with that variable. This will help later if, for business reasons or ease of use, you need to reorder the steps of the IVR. Naming your variables var1, var2, etc., may seem easy in the short term, but later in your life cycle it will make fixing bugs more difficult. |
+| `prompt` | A file (or list of files, joined together with the & character) to play for the caller, requesting input. Remember to omit the format extension on the end of each filename. |
+| `maxdigits` | The maximum number of characters to allow as input. In the case of yes/no and multiple-choice questions, it’s best practice to limit this value to 1. In the case of longer lengths, the caller may always terminate input by pressing the # key. |
+| `options` | s (skip)    Exit immediately if the channel has not been answered.i (indication)
+    Rather than playing a prompt, play an indication tone of some sort (such as the dialtone).
+n (no answer)
 
-Read\(variable\[,filename\[&filename2...\]\]\[,maxdigits\]\[,option\]\[,attempts\]\[,timeout\]\)
+    Read digits from the caller, even if the line is not yet answered.
+attempts
 
-The arguments are described in [Table 16-1](16.%20Introduction%20to%20Interactive%20Voice%20Response%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22IVR_id245719).
+    The number of times to play the prompt. If the caller fails to enter anything, the Read() application can automatically reprompt the user. The default is one attempt.
+timeout
 
-Table 16-1. The Read\(\) application
+    The number of seconds the caller has to enter his input. The default value in Asterisk is 10 seconds, although it can be altered for a single prompt using this option, or for the entire session by assigning a value using the dialplan function TIMEOUT(response). |
 
-<table>
-  <thead>
-    <tr>
-      <th style="text-align:left">Argument</th>
-      <th style="text-align:left">Purpose</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align:left">variable</td>
-      <td style="text-align:left">The variable into which the caller&#x2019;s response is stored. It is
-        best practice to give each variable in your IVR a name that is similar
-        to the prompt associated with that variable. This will help later if, for
-        business reasons or ease of use, you need to reorder the steps of the IVR.
-        Naming your variables var1, var2, etc., may seem easy in the short term,
-        but later in your life cycle it will make fixing bugs more difficult.</td>
-    </tr>
-    <tr>
-      <td style="text-align:left">prompt</td>
-      <td style="text-align:left">A file (or list of files, joined together with the &amp; character) to
-        play for the caller, requesting input. Remember to omit the format extension
-        on the end of each filename.</td>
-    </tr>
-    <tr>
-      <td style="text-align:left">maxdigits</td>
-      <td style="text-align:left">The maximum number of characters to allow as input. In the case of yes/no
-        and multiple-choice questions, it&#x2019;s best practice to limit this
-        value to 1. In the case of longer lengths, the caller may always terminate
-        input by pressing the # key.</td>
-    </tr>
-    <tr>
-      <td style="text-align:left">options</td>
-      <td style="text-align:left">
-        <p>s (skip)</p>
-        <p>Exit immediately if the channel has not been answered.</p>
-        <p>i (indication)</p>
-        <p>Rather than playing a prompt, play an indication tone of some sort (such
-          as the dialtone).</p>
-        <p>n (no answer)</p>
-        <p>Read digits from the caller, even if the line is not yet answered.</p>
-        <p>attempts</p>
-        <p>The number of times to play the prompt. If the caller fails to enter anything,
-          the Read() application can automatically reprompt the user. The default
-          is one attempt.</p>
-        <p>timeout</p>
-        <p>The number of seconds the caller has to enter his input. The default value
-          in Asterisk is 10 seconds, although it can be altered for a single prompt
-          using this option, or for the entire session by assigning a value using
-          the dialplan function TIMEOUT(response).</p>
-      </td>
-    </tr>
-  </tbody>
-</table>Once the input is received, it must be validated. If you do not validate the input, you are more likely to find your callers complaining of an unstable application. It is not enough to handle the inputs you are expecting; you also need to handle inputs you do not expect. For example, callers may get frustrated and dial 0 when in your IVR; if you’ve done a good job, you will handle this gracefully and connect them to somebody who can help them, or provide a useful alternative. A well-designed IVR \(just like any program\) will try to anticipate every possible input and provide mechanisms to gracefully handle that input.
+Once the input is received, it must be validated. If you do not validate the input, you are more likely to find your callers complaining of an unstable application. It is not enough to handle the inputs you are expecting; you also need to handle inputs you do not expect. For example, callers may get frustrated and dial 0 when in your IVR; if you’ve done a good job, you will handle this gracefully and connect them to somebody who can help them, or provide a useful alternative. A well-designed IVR \(just like any program\) will try to anticipate every possible input and provide mechanisms to gracefully handle that input.
 
 Once the input is validated, you can submit it to an external resource for processing. This could be done via a database query, a submission to a URI, an AGI program, or many other things. This external application should produce a result, which you will want to relay back to the caller. This could be a detailed result, such as “Your account balance is…” or a simple confirmation, such as “Your account has been updated.” We can’t think of any real-world case where some sort of result returned to the caller is not required.
 
@@ -118,13 +81,13 @@ Don’t
 
 The “frontend” of the IVR \(the parts that interact with the callers\) can be handled in the dialplan. It is possible to build an IVR system using the dialplan alone \(perhaps with the astdb to store and retrieve data\); however, you will typically need to communicate with something external to Asterisk \(the “backend” of the IVR\).
 
-### CURL\(\)
+### CURL()
 
 The CURL\(\) dialplan function in Asterisk allows you to span entire web applications with a single line of dialplan code. We’ll use it in our sample IVR later in this chapter.
 
 While you’ll find CURL\(\) itself to be quite simple to use, the creation of the web application will require experience with web development.
 
-### func\_odbc
+### func_odbc
 
 Using func\_odbc, it is possible to develop extremely complex applications in Asterisk using nothing more than dialplan code and database lookups. If you are not a strong programmer but are very adept with Asterisk dialplans and databases, you’ll love func\_odbc just as much as we do. Check it out in [Chapter 15](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22asterisk-DB).
 
@@ -140,21 +103,21 @@ The Asterisk Manager Interface is a socket interface that you can use to get con
 
 Asterisk’s REST interface builds on knowledge gained over the years about how to integrate Asterisk with current-generation web-centric applications. It is so important, that yes, once again, there is a complete chapter dedicated to it. If you’re looking to build complex IVRs using Asterisk, take a closer look at ARI in [Chapter 19](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch19.html%22%20/l%20%22asteriskRESTch).
 
-## A Simple IVR Using CURL\(\)
+## A Simple IVR Using CURL()
 
-Before we go running off writing an external program to handle something, we always give some careful thought about whether there’s a way to do the work in the dialplan. One powerful way that Asterisk can interact with external data is through a URL, which the GNU/Linux program cURL does very well. In Asterisk, CURL\(\) is a dialplan function.
+Before we go running off writing an external program to handle something, we always give some careful thought about whether there’s a way to do the work in the dialplan. One powerful way that Asterisk can interact with external data is through a URL, which the GNU/Linux program cURL does very well. In Asterisk, CURL() is a dialplan function.
 
-We’re going to use CURL\(\) as an example of what an extremely simple IVR can look like. We’re going to request our external IP address from [https://ipinfo.io/ip](https://ipinfo.io/ip).[2](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch16.html%22%20/l%20%22idm46178404755736)
+We’re going to use CURL() as an example of what an extremely simple IVR can look like. We’re going to request our external IP address from [https://ipinfo.io/ip](https://ipinfo.io/ip).[2](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch16.html%22%20/l%20%22idm46178404755736)
 
 **Note**
 
 In reality, most IVR applications are going to be far more complex. Even most uses of CURL\(\) will tend to be complex, since a URI can return a massive and highly variable amount of data, the vast majority of which will be incomprehensible to Asterisk. The point being that an IVR is not just about the dialplan; it is also very much about the external applications that are triggered by the dialplan, which are doing the real work of the IVR.
 
-The CURL\(\) module was installed during our installation process several chapters ago.
+The CURL() module was installed during our installation process several chapters ago.
 
 ### The Dialplan
 
-The dialplan for our example IVR is very simple. The CURL\(\) function will retrieve our IP address from [https://ipinfo.io/ip](https://ipinfo.io/ip), and then SayAlpha\(\) will speak the results to the caller:
+The dialplan for our example IVR is very simple. The CURL() function will retrieve our IP address from [https://ipinfo.io/ip](https://ipinfo.io/ip), and then SayAlpha() will speak the results to the caller:
 
 exten =&gt; \*764,1,Verbose\(2, Run CURL to get IP address from whatismyip.org\)
 
