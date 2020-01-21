@@ -24,30 +24,45 @@ Read(variable[,filename[&filename2...]][,maxdigits][,option][,attempts][,timeout
 
 _Таблица 16-1. Приложение Read()_
 
-| Аргумент | Цель |
-| :------- | :--- |
-| `variable` | The variable into which the caller’s response is stored. It is best practice to give each variable in your IVR a name that is similar to the prompt associated with that variable. This will help later if, for business reasons or ease of use, you need to reorder the steps of the IVR. Naming your variables var1, var2, etc., may seem easy in the short term, but later in your life cycle it will make fixing bugs more difficult. |
-| `prompt` | A file (or list of files, joined together with the & character) to play for the caller, requesting input. Remember to omit the format extension on the end of each filename. |
-| `maxdigits` | The maximum number of characters to allow as input. In the case of yes/no and multiple-choice questions, it’s best practice to limit this value to 1. In the case of longer lengths, the caller may always terminate input by pressing the # key. |
-| `options` | s (skip)    Exit immediately if the channel has not been answered.i (indication)
-    Rather than playing a prompt, play an indication tone of some sort (such as the dialtone).
-n (no answer)
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td><p align="left"><b>Аргумент</b></p></td>
+    <td><p align="left"><b>Цель</b></p></td>
+  </tr>
+  <tr>
+    <td><code>variable</code></td>
+    <td>Переменная, в которой хранится ответ абонента. Рекомендуется присвоить каждой переменной в IVR имя, аналогичное приглашению, связанному с этой переменной. Это поможет позже, если по деловым соображениям или простоте использования вам потребуется изменить порядок шагов IVR. Присвоение имен переменным <code>var1</code>, <code>var2</code> и т.д. может показаться более простым в краткосрочной перспективе, но позже в вашем жизненном цикле это сделает исправление ошибок более трудным.</td>
+  </tr>
+  <tr>
+    <td><code>prompt</code></td>
+    <td>Файл (или список файлов, соединенных вместе с символом <code>&</code>) для воспроизведения вызывающему абоненту, запрашивающий ввод. Не забудьте опустить расширение в конце каждого имени файла.</td>
+  </tr>
+  <tr>
+    <td><code>maxdigits</code></td>
+    <td>Максимальное количество символов, которые можно использовать в качестве входных данных. В случае вопросов "Да/нет" и "множественный выбор" рекомендуется ограничить это значение <doe>1</code>. В случае более длинных значений вызывающий абонент всегда может прервать ввод, нажав клавишу <code>#</code>.</td>
+  </tr>
+  <tr>
+    <td><code>options</code></td>
+    <td><p><code>s</code>(skip)</p>
+    <p>Немедленно выйти, если канал не отвечает.</p>
+    <p><code>i</code>(indication)</p>
+    <p>Вместо того чтобы воспроизводить подсказку, воспроизведите какой-либо сигнал индикации (например, сигнал набора номера).</p>
+    <p><code>n</code>(no answer)</p>
+    <p>Считывание цифр от абонента, даже если на линию еще не ответили.</p>
+    <p><code>attempts</code></p>
+    <p>Количество раз для воспроизведения подсказки. Если вызывающий не вводит ничего, приложение <code>Read()</code> может автоматически запросить пользователя. По умолчанию используется одна попытка.</p>
+    <p><code>timeout</code></p>
+    <p>Количество секунд, в течение которых вызывающий должен совершить свой ввод. Значение по умолчанию в Asterisk равно 10 секундам, хотя его можно изменить для одного приглашения с помощью этой опции или для всего сеанса, назначив значение с помощью функции диалплана <code>TIMEOUT(response)</code>.</p></td>
+  </tr>
+</table>
 
-    Read digits from the caller, even if the line is not yet answered.
-attempts
+Как только входные данные получены, они должны быть проверены. Если вы не проверите входные данные, то с большей вероятностью обнаружите, что ваши абоненты жалуются на нестабильное приложение. Недостаточно обрабатывать ожидаемые входные данные; вам также нужно обрабатывать входные данные, которых вы не ожидаете. Например, абоненты могут быть разочарованы и набрать 0 в вашем IVR; если вы сделали хорошую работу, вы будете обращаться с этим деликатно и соедините их с кем-то, кто может помочь им или предоставить полезную альтернативу. Хорошо спроектированный IVR (как и любая программа) будет пытаться предвидеть все возможные входные данные и предоставлять механизмы для изящной их обработки.
 
-    The number of times to play the prompt. If the caller fails to enter anything, the Read() application can automatically reprompt the user. The default is one attempt.
-timeout
+После проверки входных данных вы можете отправить их на внешний ресурс для обработки. Это может быть сделано с помощью запроса в базу данных, отправки в URI, программы AGI или многих других вещей. Это внешнее приложение должно выдать результат, который вы сможете передать обратно абоненту. Это может быть подробный результат такой как "Баланс вашего счета..." или простое подтверждение такое как "ваш счет был обновлен". Мы не можем придумать ни одного реального случая, когда не будет требоваться какой-то результат, возвращаемый звонящему.
 
-    The number of seconds the caller has to enter his input. The default value in Asterisk is 10 seconds, although it can be altered for a single prompt using this option, or for the entire session by assigning a value using the dialplan function TIMEOUT(response). |
+Иногда IVR может иметь несколько шагов, и поэтому результат может включать запрос дополнительной информации от вызывающего абонента для перехода к следующему шагу приложения IVR.
 
-Once the input is received, it must be validated. If you do not validate the input, you are more likely to find your callers complaining of an unstable application. It is not enough to handle the inputs you are expecting; you also need to handle inputs you do not expect. For example, callers may get frustrated and dial 0 when in your IVR; if you’ve done a good job, you will handle this gracefully and connect them to somebody who can help them, or provide a useful alternative. A well-designed IVR \(just like any program\) will try to anticipate every possible input and provide mechanisms to gracefully handle that input.
-
-Once the input is validated, you can submit it to an external resource for processing. This could be done via a database query, a submission to a URI, an AGI program, or many other things. This external application should produce a result, which you will want to relay back to the caller. This could be a detailed result, such as “Your account balance is…” or a simple confirmation, such as “Your account has been updated.” We can’t think of any real-world case where some sort of result returned to the caller is not required.
-
-Sometimes the IVR may have multiple steps, and therefore a result might include a request for more information from the caller in order to move to the next step of the IVR application.
-
-It is possible to design very complex IVR systems, with dozens or even hundreds of possible paths. We’ve said it before and we’ll say it again: people don’t like talking to your phone system, regardless of how clever it is. Keep your IVR simple for your callers, and they are much more likely to get some benefit from it.
+Можно проектировать очень сложные системы IVR с десятками или даже сотнями возможных путей. Мы уже говорили об этом раньше и повторим еще раз: люди не любят разговаривать с вашей телефонной системой независимо от того насколько она умна. Держите ваше IVR простым для ваших абонентов и они гораздо более вероятно получат некоторую выгоду от него.
 
 #### A Perfectly Tasty IVR
 
@@ -55,7 +70,7 @@ An excellent example of an IVR that people love to use is one that many pizza de
 
 That’s all it does, and it’s perfect.
 
-Obviously, these companies could design massively complex IVRs that would allow you to select each and every detail of your pie \(“for seven-grain crust, press 7”\), but how many inebriated, starving customers could successfully navigate something like that at 3 A.M.?
+Obviously, these companies could design massively complex IVRs that would allow you to select each and every detail of your pie (“for seven-grain crust, press 7”), but how many inebriated, starving customers could successfully navigate something like that at 3 A.M.?
 
 The best IVRs are the ones that require the least input from the caller. Mash that 1 button and your ’za is on its way! Woo hoo!
 
@@ -74,12 +89,12 @@ Don’t
 * Think that an IVR can completely replace people.
 * Use your IVR to show people how clever you are.
 * Try to replicate your website with an IVR.
-* Bother building an IVR if you can’t take numeric or spoken input. Nobody wants to have to spell their name on the dialpad of a phone.[1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch16.html%22%20/l%20%22idm46178404791016)
+* Bother building an IVR if you can’t take numeric or spoken input. Nobody wants to have to spell their name on the dialpad of a phone.<sup><a href="#sn1">1</a></sup>
 * Force your callers to listen to advertising. Remember that they can hang up at any moment they wish.
 
 ## Asterisk Modules for Building IVRs
 
-The “frontend” of the IVR \(the parts that interact with the callers\) can be handled in the dialplan. It is possible to build an IVR system using the dialplan alone \(perhaps with the astdb to store and retrieve data\); however, you will typically need to communicate with something external to Asterisk \(the “backend” of the IVR\).
+The “frontend” of the IVR (the parts that interact with the callers) can be handled in the dialplan. It is possible to build an IVR system using the dialplan alone \(perhaps with the astdb to store and retrieve data\); however, you will typically need to communicate with something external to Asterisk \(the “backend” of the IVR).
 
 ### CURL()
 
@@ -89,11 +104,11 @@ While you’ll find CURL\(\) itself to be quite simple to use, the creation of t
 
 ### func_odbc
 
-Using func\_odbc, it is possible to develop extremely complex applications in Asterisk using nothing more than dialplan code and database lookups. If you are not a strong programmer but are very adept with Asterisk dialplans and databases, you’ll love func\_odbc just as much as we do. Check it out in [Chapter 15](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22asterisk-DB).
+Using func\_odbc, it is possible to develop extremely complex applications in Asterisk using nothing more than dialplan code and database lookups. If you are not a strong programmer but are very adept with Asterisk dialplans and databases, you’ll love func\_odbc just as much as we do. Check it out in [Chapter 15](glava-15.md).
 
 ### AGI
 
-The Asterisk Gateway Interface is such an important part of integrating external applications with Asterisk that we gave it its own chapter. You can find more information in [Chapter 18](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch18.html%22%20/l%20%22AGI).
+The Asterisk Gateway Interface is such an important part of integrating external applications with Asterisk that we gave it its own chapter. You can find more information in [Chapter 18](glava-18.md).
 
 ### AMI
 
@@ -107,11 +122,11 @@ Asterisk’s REST interface builds on knowledge gained over the years about how 
 
 Before we go running off writing an external program to handle something, we always give some careful thought about whether there’s a way to do the work in the dialplan. One powerful way that Asterisk can interact with external data is through a URL, which the GNU/Linux program cURL does very well. In Asterisk, CURL() is a dialplan function.
 
-We’re going to use CURL() as an example of what an extremely simple IVR can look like. We’re going to request our external IP address from [https://ipinfo.io/ip](https://ipinfo.io/ip).[2](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch16.html%22%20/l%20%22idm46178404755736)
+We’re going to use CURL() as an example of what an extremely simple IVR can look like. We’re going to request our external IP address from [https://ipinfo.io/ip](https://ipinfo.io/ip).<sup><a href="#sn2">2</a></sup>
 
 **Note**
 
-In reality, most IVR applications are going to be far more complex. Even most uses of CURL\(\) will tend to be complex, since a URI can return a massive and highly variable amount of data, the vast majority of which will be incomprehensible to Asterisk. The point being that an IVR is not just about the dialplan; it is also very much about the external applications that are triggered by the dialplan, which are doing the real work of the IVR.
+In reality, most IVR applications are going to be far more complex. Even most uses of CURL() will tend to be complex, since a URI can return a massive and highly variable amount of data, the vast majority of which will be incomprehensible to Asterisk. The point being that an IVR is not just about the dialplan; it is also very much about the external applications that are triggered by the dialplan, which are doing the real work of the IVR.
 
 The CURL() module was installed during our installation process several chapters ago.
 
@@ -119,15 +134,13 @@ The CURL() module was installed during our installation process several chapters
 
 The dialplan for our example IVR is very simple. The CURL() function will retrieve our IP address from [https://ipinfo.io/ip](https://ipinfo.io/ip), and then SayAlpha() will speak the results to the caller:
 
-exten =&gt; \*764,1,Verbose\(2, Run CURL to get IP address from whatismyip.org\)
-
- same =&gt; n,Answer\(\)
-
- same =&gt; n,Set\(MyIPAddressIs=${CURL\(https://ipinfo.io/ip\)}\)
-
- same =&gt; n,SayAlpha\(${MyIPAddressIs}\)
-
- same =&gt; n,Hangup\(\)
+```
+exten => *764,1,Verbose(2, Run CURL to get IP address from whatismyip.org)
+    same => n,Answer()
+    same => n,Set(MyIPAddressIs=${CURL(https://ipinfo.io/ip)})
+    same => n,SayAlpha(${MyIPAddressIs})
+    same => n,Hangup()
+```
 
 The simplicity of this is impossibly cool. In a traditional IVR system, this sort of thing could take days to program, assuming it would be possible at all.
 
@@ -135,91 +148,62 @@ The simplicity of this is impossibly cool. In a traditional IVR system, this sor
 
 In [Chapter 14](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch14.html%22%20/l%20%22asterisk-AA), we created a simple bit of dialplan to record prompts. It was fairly limited in that it only recorded one filename, and thus for each prompt a separate extension was needed. Here, we expand upon that to create a complete menu for recording prompts. Since this is a complex bit of dialplan, but it’s not a subroutine or a local channel, we’re going to create a new section of dialplan for various features, and put things like this there:
 
+```
 ;FEATURES
-
-\[prompts\]
-
-exten =&gt; s,1,Answer
-
-exten =&gt; s,n,Set\(step1count=0\) ; Initialize counters
+[prompts]
+exten => s,1,Answer
+exten => s,n,Set(step1count=0) ; Initialize counters
 
 ; If we get no response after 3 times, we stop asking
-
- same =&gt; n\(beginning\),GotoIf\($\[${step1count} &gt; 2\]?end\)
-
- same =&gt; n,Read\(which,prompt-instructions,3\)
-
- same =&gt; n,Set\(step1count=$\[${step1count} + 1\]\)
+   same => n(beginning),GotoIf($[${step1count} > 2]?end)
+   same => n,Read(which,prompt-instructions,3)
+   same => n,Set(step1count=$[${step1count} + 1])
 
 ; All prompts must be 3 digits in length
+   same => n,GotoIf($[${LEN(${which})} != 3]?beginning)
+   same => n,Set(step1count=0) ; Successful response; reset counters
+   same => n,Set(step2count=0)
 
- same =&gt; n,GotoIf\($\[${LEN\(${which}\)} != 3\]?beginning\)
-
- same =&gt; n,Set\(step1count=0\) ; Successful response; reset counters
-
- same =&gt; n,Set\(step2count=0\)
-
- same =&gt; n\(step2\),Set\(step2count=$\[${step2count} + 1\]\)
-
- same =&gt; n,GotoIf\($\[${step2count} &gt; 2\]?beginning\) ; No response after 3 tries
+   same => n(step2),Set(step2count=$[${step2count} + 1])
+   same => n,GotoIf($[${step2count} > 2]?beginning) ; No response after 3 tries
 
 ; If the file doesn't exist, then don't ask whether to play it
+   same => n,GotoIf($[${STAT(f,/var/lib/asterisk/sounds/${which}.wav)} = 0]?recordonly)
+   same => n,Background(prompt-tolisten)
 
- same =&gt; n,GotoIf\($\[${STAT\(f,/var/lib/asterisk/sounds/${which}.wav\)} = 0\]?recordonly\)
+   same => n(recordonly),Background(prompt-torecord)
+   same => n,WaitExten(10) ; Wait 10 seconds for a response
+   same => n,Goto(step2)
 
- same =&gt; n,Background\(prompt-tolisten\)
+   same => n(end),Playback(goodbye)
+   same => n,Hangup()
 
- same =&gt; n\(recordonly\),Background\(prompt-torecord\)
+exten => 1,1,Set(step2count=0)
+   same => n,Background(/var/lib/asterisk/sounds/${which})
+   same => n,Goto(s,step2)
 
- same =&gt; n,WaitExten\(10\) ; Wait 10 seconds for a response
+exten => 2,1,Set(step2count=0)
+   same => n,Playback(prompt-waitforbeep)
+   same => n,Record(${CHANNEL(uniqueid)}.wav)
 
- same =&gt; n,Goto\(step2\)
+   same => n(listen),Playback(${CHANNEL(uniqueid)})
+   same => n,Set(step3count=0)
+   same => n,Read(saveornot,prompt-1tolisten-2tosave-3todiscard,1,,2,3)
+   same => n,GotoIf($["${saveornot}" = "1"]?listen)
+   same => n,GotoIf($["${saveornot}" = "2"]?saveit)
+   same => n,GotoIf($["${saveornot}" = "3"]?tossit)
+   same => n,Goto(listen)
 
- same =&gt; n\(end\),Playback\(goodbye\)
+   same => n(tossit),System(rm -f /var/lib/asterisk/sounds/${CHANNEL(uniqueid)}.wav)
+   same => n,Goto(s,beginning)
 
- same =&gt; n,Hangup\(\)
-
-exten =&gt; 1,1,Set\(step2count=0\)
-
- same =&gt; n,Background\(/var/lib/asterisk/sounds/${which}\)
-
- same =&gt; n,Goto\(s,step2\)
-
-exten =&gt; 2,1,Set\(step2count=0\)
-
- same =&gt; n,Playback\(prompt-waitforbeep\)
-
- same =&gt; n,Record\(${CHANNEL\(uniqueid\)}.wav\)
-
- same =&gt; n\(listen\),Playback\(${CHANNEL\(uniqueid\)}\)
-
- same =&gt; n,Set\(step3count=0\)
-
- same =&gt; n,Read\(saveornot,prompt-1tolisten-2tosave-3todiscard,1,,2,3\)
-
- same =&gt; n,GotoIf\($\["${saveornot}" = "1"\]?listen\)
-
- same =&gt; n,GotoIf\($\["${saveornot}" = "2"\]?saveit\)
-
- same =&gt; n,GotoIf\($\["${saveornot}" = "3"\]?tossit\)
-
- same =&gt; n,Goto\(listen\)
-
- same =&gt; n\(tossit\),System\(rm -f /var/lib/asterisk/sounds/${CHANNEL\(uniqueid\)}.wav\)
-
- same =&gt; n,Goto\(s,beginning\)
-
- same =&gt; n\(saveit\),Noop\('Set' app used to shorten example\)
-
- same =&gt; n,Set\(PromptToSave=/var/lib/asterisk/sounds/${CHANNEL\(uniqueid\)}.wav
-
- same =&gt; n,Set\(WhereToSave=/var/lib/asterisk/sounds/${which}.wav
-
- same =&gt; n,System\(mv -f ${PromptToSave} ${WhereToSave}\)
-
- same =&gt; n,Playback\(prompt-saved\)
-
- same =&gt; n,Goto\(s,beginning\)
+   same => n(saveit),Noop('Set' app used to shorten example)
+   same => n,Set(PromptToSave=/var/lib/asterisk/sounds/${CHANNEL(uniqueid)}.wav
+   same => n,Set(WhereToSave=/var/lib/asterisk/sounds/${which}.wav
+   same => n,System(mv -f ${PromptToSave} ${WhereToSave})
+   same => n,Playback(prompt-saved)
+   same => n,Goto(s,beginning)
+```
 
 In this system, the name of the prompt is no longer descriptive; instead, it is a number. This means that you can record a far greater variety of prompts using the same mechanism, but the trade-off is that your prompts will no longer have descriptive names.
 
@@ -227,33 +211,30 @@ If you want to test this, you’ll need to record the prompts this IVR function 
 
 Drop this into your dialplan:
 
-exten =&gt; 510,1,GoSub\(subRecordPrompt,${EXTEN},1\(prompt-tolisten\)\) ; press 1
-
-exten =&gt; 511,1,GoSub\(subRecordPrompt,${EXTEN},1\(prompt-torecord\)\) ; press 2
-
-exten =&gt; 512,1,GoSub\(subRecordPrompt,${EXTEN},1\(prompt-instructions\)\) ;3-digit \(000 to 999\)
-
-exten =&gt; 513,1,GoSub\(subRecordPrompt,${EXTEN},1\(prompt-waitforbeep\)\) ; wait for beep
-
-exten =&gt; 514,1,GoSub\(subRecordPrompt,${EXTEN},1\(prompt-1tolisten-2tosave-3todiscard\)\)
-
-exten =&gt; 515,1,GoSub\(subRecordPrompt,${EXTEN},1\(prompt-saved\)\)
+```
+exten => 510,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-tolisten))     ; press 1
+exten => 511,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-torecord))     ; press 2
+exten => 512,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-instructions)) ;3-digit (000 to 999)
+exten => 513,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-waitforbeep))  ; wait for beep
+exten => 514,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-1tolisten-2tosave-3todiscard))
+exten => 515,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-saved))
+```
 
 Then phone them one by one and record as required.
 
 Once you’ve recorded the prompts your prompt recorder needs, you should be able to test it out.
 
-exten =&gt; \*742,1,Noop\(Prompts\)
-
- same =&gt; n,Goto\(prompts,s,1\)
-
- same =&gt; n,Hangup\(\)
+```
+exten => *742,1,Noop(Prompts)
+    same => n,Goto(prompts,s,1)
+    same => n,Hangup()
+```
 
 From this point forward, you can record prompts using just a numeric identifier. You’ll need a way to keep track of what prompt says what, but from a recording perspective you shouldn’t need to write more dialplan every time you need a prompt.
 
 ## Speech Recognition and Text-to-Speech
 
-Although traditionally and still in most cases today, an IVR system presents prerecorded prompts to the caller and accepts input by way of the dialpad, it is also possible to: a\) generate prompts artificially, popularly known as text-to-speech; and b\) accept verbal inputs through a speech recognition engine.
+Although traditionally and still in most cases today, an IVR system presents prerecorded prompts to the caller and accepts input by way of the dialpad, it is also possible to: a) generate prompts artificially, popularly known as text-to-speech; and b\) accept verbal inputs through a speech recognition engine.
 
 While the concept of being able to have an intelligent conversation with a machine is something sci-fi authors have been promising us for many long years, the actual science of this remains complex and error-prone. Despite their amazing capabilities, computers are ill-suited to the task of appreciating the subtle nuances of human speech.
 
@@ -267,20 +248,20 @@ There are now excellent APIs available from Google \(and others\), that will do 
 
 ### Speech Recognition
 
-Since we’ve managed to convince our computers to talk to us, we naturally want to be able to talk to them as well.[3](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch16.html%22%20/l%20%22idm46178404720856)
+Since we’ve managed to convince our computers to talk to us, we naturally want to be able to talk to them as well.<sup><a href="#sn3">3</a></sup>
 
 Speech recognition was previously complex and expensive, but Google has recently released an API that allows the enormous power of their speech recognition capabilities to be available to external applications.
 
-## Conclusion
+## Вывод
 
-Asterisk is an excellent IVR platform. This entire book, in many ways, is teaching you skills that can be applied to IVR development. While the mainstream media only really pays attention to Asterisk as a “free PBX,” the reality is that Asterisk is at its most potent when used as an IVR. Within any respectable-sized organization, it is very likely that the Linux system administrators are using Asterisk to solve telecom problems that previously were either unsolvable or impossibly expensive to solve. This is a stealthy revolution, but no less significant for its relative obscurity.
+Asterisk является отличной платформой IVR. Вся эта книга, во многом, учит вас навыкам, которые могут быть применены для развития IVR. В то время как основные СМИ действительно уделяют внимание Asterisk только как “свободной УАТС”, реальность такова, что Asterisk является наиболее мощной, когда используется в качестве IVR. В любой солидной организации очень вероятно, что системные администраторы Linux используют Asterisk для решения телекоммуникационных проблем, которые ранее были либо неразрешимыми, либо невероятно дорогими для решения. Это скрытая революция, но не менее значимая из-за своей относительной неизвестности.
 
-If you are in the IVR business, you need to get to know Asterisk.
+Если вы занимаетесь IVR-бизнесом, вам обязательно нужно познакомиться с Asterisk.
 
-[1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch16.html%22%20/l%20%22idm46178404791016-marker) Especially if it’s something like Van Meggelen.
-
-[2](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch16.html%22%20/l%20%22idm46178404755736-marker) These free IP lookup websites seem to get bought out all the time, and turned into advertising gateways, so what might have worked at this writing may no longer work. What you need is a website that will return your IP address, and nothing else. Today, that seems to be [https://ipinfo.io/ip](https://ipinfo.io/ip). By the time you read this, it may be something else.
-
-[3](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch16.html%22%20/l%20%22idm46178404720856-marker) Actually, most of us talk to our computers, but this is seldom polite.
+<ol>
+  <li id="sn1">Especially if it’s something like Van Meggelen.</li>
+  <li id="sn2">These free IP lookup websites seem to get bought out all the time, and turned into advertising gateways, so what might have worked at this writing may no longer work. What you need is a website that will return your IP address, and nothing else. Today, that seems to be <a href="https://ipinfo.io/ip">https://ipinfo.io/ip</a>. By the time you read this, it may be something else.</li>
+  <li id="sn3">Actually, most of us talk to our computers, but this is seldom polite.</li>
+</ol>
 
 [Глава 15. Интеграция реляционной базы данных](glava-15.md) | [Содержание](SUMMARY.md) | [Глава 17. AMI и файлы вызовов](glava-17.md)
