@@ -22,7 +22,7 @@ Read(variable[,filename[&filename2...]][,maxdigits][,option][,attempts][,timeout
 
 Аргументы описаны в Таблице 16-1.
 
-_Таблица 16-1. Приложение Read()_
+Таблица 16-1. _Приложение Read()_
 
 <table border="1" width="100%" cellpadding="5">
   <tr>
@@ -39,7 +39,7 @@ _Таблица 16-1. Приложение Read()_
   </tr>
   <tr>
     <td><code>maxdigits</code></td>
-    <td>Максимальное количество символов, которые можно использовать в качестве входных данных. В случае вопросов "Да/нет" и "множественный выбор" рекомендуется ограничить это значение <doe>1</code>. В случае более длинных значений вызывающий абонент всегда может прервать ввод, нажав клавишу <code>#</code>.</td>
+    <td>Максимальное количество символов, которые можно использовать в качестве входных данных. В случае вопросов "Да/нет" и "множественный выбор" рекомендуется ограничить это значение <code>1</code>. В случае более длинных значений вызывающий абонент всегда может прервать ввод, нажав клавишу <code>#</code>.</td>
   </tr>
   <tr>
     <td><code>options</code></td>
@@ -124,13 +124,18 @@ Before we go running off writing an external program to handle something, we alw
 
 We’re going to use CURL() as an example of what an extremely simple IVR can look like. We’re going to request our external IP address from [https://ipinfo.io/ip](https://ipinfo.io/ip).<sup><a href="#sn2">2</a></sup>
 
-**Note**
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="right"><b>Примечание</b></p>
+      <p>На самом деле, большинство приложений IVR будут намного сложнее. Даже большинство применений `CURL()` будет сложным, так как URI может возвращать массивный и сильно изменяющийся объем данных, подавляющее большинство из которых будет непонятно Asterisk. Дело в том, что IVR - это не только диалплан; это также очень много о внешних приложениях, которые запускаются диалпланом, которые выполняют реальную работу IVR.</p>
+    </td>
+  </tr>
+</table>
 
-In reality, most IVR applications are going to be far more complex. Even most uses of CURL() will tend to be complex, since a URI can return a massive and highly variable amount of data, the vast majority of which will be incomprehensible to Asterisk. The point being that an IVR is not just about the dialplan; it is also very much about the external applications that are triggered by the dialplan, which are doing the real work of the IVR.
+Модуль `CURL()` был установлен во время нашего процесса установки несколько глав назад.
 
-The CURL() module was installed during our installation process several chapters ago.
-
-### The Dialplan
+### Диалплан
 
 The dialplan for our example IVR is very simple. The CURL() function will retrieve our IP address from [https://ipinfo.io/ip](https://ipinfo.io/ip), and then SayAlpha() will speak the results to the caller:
 
@@ -146,7 +151,7 @@ The simplicity of this is impossibly cool. In a traditional IVR system, this sor
 
 ## A Prompt-Recording IVR Function
 
-In [Chapter 14](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch14.html%22%20/l%20%22asterisk-AA), we created a simple bit of dialplan to record prompts. It was fairly limited in that it only recorded one filename, and thus for each prompt a separate extension was needed. Here, we expand upon that to create a complete menu for recording prompts. Since this is a complex bit of dialplan, but it’s not a subroutine or a local channel, we’re going to create a new section of dialplan for various features, and put things like this there:
+In [Chapter 14](glava-14.md), we created a simple bit of dialplan to record prompts. It was fairly limited in that it only recorded one filename, and thus for each prompt a separate extension was needed. Here, we expand upon that to create a complete menu for recording prompts. Since this is a complex bit of dialplan, but it’s not a subroutine or a local channel, we’re going to create a new section of dialplan for various features, and put things like this there:
 
 ```
 ;FEATURES
@@ -207,7 +212,7 @@ exten => 2,1,Set(step2count=0)
 
 In this system, the name of the prompt is no longer descriptive; instead, it is a number. This means that you can record a far greater variety of prompts using the same mechanism, but the trade-off is that your prompts will no longer have descriptive names.
 
-If you want to test this, you’ll need to record the prompts this IVR function uses \(it’s kinda meta, but yup, our prompt creator needs prompts\).
+If you want to test this, you’ll need to record the prompts this IVR function uses (it’s kinda meta, but yup, our prompt creator needs prompts).
 
 Drop this into your dialplan:
 
@@ -246,17 +251,19 @@ Text-to-speech \(also known as speech synthesis\) requires that a system be able
 
 There are now excellent APIs available from Google \(and others\), that will do a very good job of reading back what has been written. As of this writing, it’s still very obvious that it’s a computer speaking, but it is nevertheless possible to generate system prompts on the fly from text, rather than having to record all prompts in advance. The usefulness of this is difficult to evaluate, since humans are still not interested in talking to your machines; they phoned because they want to talk to you.
 
-### Speech Recognition
+### Распознавание речи
 
-Since we’ve managed to convince our computers to talk to us, we naturally want to be able to talk to them as well.<sup><a href="#sn3">3</a></sup>
+Поскольку нам удалось убедить наши компьютеры говорить с нами, мы, естественно, хотим иметь возможность говорить и с ними.<sup><a href="#sn3">3</a></sup>
 
-Speech recognition was previously complex and expensive, but Google has recently released an API that allows the enormous power of their speech recognition capabilities to be available to external applications.
+Распознавание речи раньше было сложным и дорогостоящим, но недавно Google выпустила API, который позволяет огромной мощности их возможностей распознавания речи быть доступной для внешних приложений.
 
 ## Вывод
 
 Asterisk является отличной платформой IVR. Вся эта книга, во многом, учит вас навыкам, которые могут быть применены для развития IVR. В то время как основные СМИ действительно уделяют внимание Asterisk только как “свободной УАТС”, реальность такова, что Asterisk является наиболее мощной, когда используется в качестве IVR. В любой солидной организации очень вероятно, что системные администраторы Linux используют Asterisk для решения телекоммуникационных проблем, которые ранее были либо неразрешимыми, либо невероятно дорогими для решения. Это скрытая революция, но не менее значимая из-за своей относительной неизвестности.
 
 Если вы занимаетесь IVR-бизнесом, вам обязательно нужно познакомиться с Asterisk.
+
+---
 
 <ol>
   <li id="sn1">Especially if it’s something like Van Meggelen.</li>
