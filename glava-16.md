@@ -64,71 +64,72 @@ Read(variable[,filename[&filename2...]][,maxdigits][,option][,attempts][,timeout
 
 Можно проектировать очень сложные системы IVR с десятками или даже сотнями возможных путей. Мы уже говорили об этом раньше и повторим еще раз: люди не любят разговаривать с вашей телефонной системой независимо от того насколько она умна. Держите ваше IVR простым для ваших абонентов и они гораздо более вероятно получат некоторую выгоду от него.
 
-#### A Perfectly Tasty IVR
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="center"><b>Безупречно вкусное IVR</b></p>
+      <p>Отличный пример IVR, который любят использовать люди - это тот, который используют многие компании по доставке пиццы: когда вы звоните, чтобы сделать заказ, IVR смотрит на Ваш CallerID и говорит: "Если вы хотите точно такой же заказ, как в прошлый раз, нажмите 1."</p>
+      <p>Это все, что оно делает, и это прекрасно.</p>
+      <p>Очевидно, что эти компании могли бы разработать массивно сложные IVR, которые позволили бы Вам выбрать каждую деталь вашего пирога ("для семизерновой корочки, нажмите 7"), но сколько нетрезвых, голодных клиентов могли бы успешно перемещаться по чему-то подобному в 3 часа ночи?</p>
+      <p>Лучшее IVR - это те, которые требуют наименьшего количества входных данных от вызывающего абонента. Жми эту кнопку 1 и Ваша'ца уже в пути! Ура!</p>
+    </td>
+  </tr>
+</table>
 
-An excellent example of an IVR that people love to use is one that many pizza delivery outfits use: when you call to place your order, an IVR looks up your caller ID and says “If you would like the exact same order as last time, press 1.”
+## Конструктивные соображения IVR
 
-That’s all it does, and it’s perfect.
+При разработке вашего собственного IVR, есть некоторые важные вещи, которые следует иметь в виду. Мы составили этот список вещей, которые нужно и не нужно делать в вашем IVR.
 
-Obviously, these companies could design massively complex IVRs that would allow you to select each and every detail of your pie (“for seven-grain crust, press 7”), but how many inebriated, starving customers could successfully navigate something like that at 3 A.M.?
+Делать
+        - Держать его простым.
+        - Должна быть возможность набрать 0, чтобы связаться с живым человеком.
+        - Корректно обрабатывать ошибки.
 
-The best IVRs are the ones that require the least input from the caller. Mash that 1 button and your ’za is on its way! Woo hoo!
+Не делать
 
-## IVR Design Considerations
+        - Подумать что IVR может полностью заменить людей.
+        - Использовать ваше IVR, чтобы показать людям насколько вы умны.
+        - Попробовать воспроизвести ваш сайт с помощью IVR.
+        - Постараться построить IVR когда не можете принять числовой или устный ввод. Никто не хочет писать свое имя на клавиатуре телефона.<sup><a href="#sn1">1</a></sup>
+        - Заставлять своих абонентов слушать рекламу. Помните, что они могут повесить трубку в любой момент, когда пожелают.
 
-When designing your own IVR, there are some important things to keep in mind. We’ve put together this list of things to do and things not to do in your IVR.
+## Модули Asterisk для создания IVR
 
-Do
-
-* Keep it simple.
-* Have an option to dial 0 to reach a live person.
-* Handle errors gracefully.
-
-Don’t
-
-* Think that an IVR can completely replace people.
-* Use your IVR to show people how clever you are.
-* Try to replicate your website with an IVR.
-* Bother building an IVR if you can’t take numeric or spoken input. Nobody wants to have to spell their name on the dialpad of a phone.<sup><a href="#sn1">1</a></sup>
-* Force your callers to listen to advertising. Remember that they can hang up at any moment they wish.
-
-## Asterisk Modules for Building IVRs
-
-The “frontend” of the IVR (the parts that interact with the callers) can be handled in the dialplan. It is possible to build an IVR system using the dialplan alone \(perhaps with the astdb to store and retrieve data\); however, you will typically need to communicate with something external to Asterisk \(the “backend” of the IVR).
+"Фронтенд" IVR (части, которые взаимодействуют с абонентами) может обрабатываться в диалплане. Можно построить систему IVR, используя только диалплан (возможно, с использованием astdb для хранения и извлечения данных); однако, как правило, вам нужно будет взаимодействовать с чем-то внешним по отношению к Asterisk (“бэкенд” IVR).
 
 ### CURL()
 
-The CURL\(\) dialplan function in Asterisk allows you to span entire web applications with a single line of dialplan code. We’ll use it in our sample IVR later in this chapter.
+Функция диалплана `CURL()` в Asterisk позволяет охватить все веб-приложения одной строкой кода диалплана. Мы будем использовать его в нашем примере IVR в этой главе позже.
 
-While you’ll find CURL\(\) itself to be quite simple to use, the creation of the web application will require experience with web development.
+Возможно вы найдете `CURL()` довольно простым в использовании, создание веб-приложения потребует опыта работы с веб-разработкой.
 
 ### func_odbc
 
-Using func\_odbc, it is possible to develop extremely complex applications in Asterisk using nothing more than dialplan code and database lookups. If you are not a strong programmer but are very adept with Asterisk dialplans and databases, you’ll love func\_odbc just as much as we do. Check it out in [Chapter 15](glava-15.md).
+Используя `func_odbc` можно разрабатывать чрезвычайно сложные приложения в Asterisk, используя только код диалплана и поиск по базе данных. Если вы не являетесь сильным программистом, но очень хорошо разбираетесь в диалпланах Asterisk и базах данных, вы полюбите `func_odbc` так же, как и мы. Проверьте это в [Главе 15](glava-15.md).
 
 ### AGI
 
-The Asterisk Gateway Interface is such an important part of integrating external applications with Asterisk that we gave it its own chapter. You can find more information in [Chapter 18](glava-18.md).
+Интерфейс Asterisk Gateway является настолько важной частью интеграции внешних приложений с Asterisk, что мы посвятили ему отдельную главу. Дополнительную информацию вы найдете в [Главе 18](glava-18.md).
 
 ### AMI
 
-The Asterisk Manager Interface is a socket interface that you can use to get configuration and status information, request actions to be performed, and be notified about things happening to calls. We’ve written an entire chapter on AMI as well. You can find more information in [Chapter 17](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch17.html%22%20/l%20%22asterisk-AMI).
+Интерфейс Asterisk Manager - это интерфейс сокета, который можно использовать для получения информации о конфигурации и состоянии, запроса выполняемых действий и уведомления о событиях происходящих с вызовами. Мы также написали целую главу об АМИ. Дополнительную информацию вы найдете в [Главе 17](glava-17.md).
 
 ### ARI
 
-Asterisk’s REST interface builds on knowledge gained over the years about how to integrate Asterisk with current-generation web-centric applications. It is so important, that yes, once again, there is a complete chapter dedicated to it. If you’re looking to build complex IVRs using Asterisk, take a closer look at ARI in [Chapter 19](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch19.html%22%20/l%20%22asteriskRESTch).
+Интерфейс Asterisk REST основан на знаниях, полученных в течение многих лет о том, как интегрировать Asterisk с веб-приложениями текущего поколения. Это настолько важно, что да, еще раз, есть целая глава, посвященная ему. Если вы хотите построить сложное IVR с помощью Asterisk, более подробно рассмотрите ARI в [Главе 19](glava-19.md).
 
-## A Simple IVR Using CURL()
+## Простое IVR с использованием CURL()
 
-Before we go running off writing an external program to handle something, we always give some careful thought about whether there’s a way to do the work in the dialplan. One powerful way that Asterisk can interact with external data is through a URL, which the GNU/Linux program cURL does very well. In Asterisk, CURL() is a dialplan function.
+Прежде чем приступить к написанию внешней программы для обработки чего-либо, мы всегда тщательно обдумываем, есть ли способ выполнить работу в диалплане. Один из мощных способов, которым Asterisk может взаимодействовать с внешними данными - это URL-адрес, что очень хорошо делает программа GNU/Linux cURL. В Asterisk функция `CURL()` является функцией диалплана.
 
-We’re going to use CURL() as an example of what an extremely simple IVR can look like. We’re going to request our external IP address from [https://ipinfo.io/ip](https://ipinfo.io/ip).<sup><a href="#sn2">2</a></sup>
+Мы собираемся использовать `CURL()` в качестве примера того, как может выглядеть чрезвычайно простое IVR. Мы запросим наш внешний IP-адрес у [https://ipinfo.io/ip](https://ipinfo.io/ip).<sup><a href="#sn2">2</a></sup>
 
 <table border="1" width="100%" cellpadding="5">
   <tr>
     <td>
-      <p align="right"><b>Примечание</b></p>
-      <p>На самом деле, большинство приложений IVR будут намного сложнее. Даже большинство применений `CURL()` будет сложным, так как URI может возвращать массивный и сильно изменяющийся объем данных, подавляющее большинство из которых будет непонятно Asterisk. Дело в том, что IVR - это не только диалплан; это также очень много о внешних приложениях, которые запускаются диалпланом, которые выполняют реальную работу IVR.</p>
+      <p align="left"><b>Примечание</b></p>
+      <p>На самом деле, большинство приложений IVR будут намного сложнее. Даже большинство применений <code>CURL()</code> будет сложным, так как URI может возвращать массивный и сильно изменяющийся объем данных, подавляющее большинство из которых будет непонятно Asterisk. Дело в том, что IVR - это не только диалплан; это также очень много о внешних приложениях, которые запускаются диалпланом, которые выполняют реальную работу IVR.</p>
     </td>
   </tr>
 </table>
@@ -137,7 +138,7 @@ We’re going to use CURL() as an example of what an extremely simple IVR can lo
 
 ### Диалплан
 
-The dialplan for our example IVR is very simple. The CURL() function will retrieve our IP address from [https://ipinfo.io/ip](https://ipinfo.io/ip), and then SayAlpha() will speak the results to the caller:
+Диалплан для нашего примера IVR очень прост. Функция `CURL()` извлекает ваш IP-адрес из [https://ipinfo.io/ip](https://ipinfo.io/ip), а затем `SayAlpha()` озвучит результат вызывающему абоненту:
 
 ```
 exten => *764,1,Verbose(2, Run CURL to get IP address from whatismyip.org)
@@ -147,17 +148,17 @@ exten => *764,1,Verbose(2, Run CURL to get IP address from whatismyip.org)
     same => n,Hangup()
 ```
 
-The simplicity of this is impossibly cool. In a traditional IVR system, this sort of thing could take days to program, assuming it would be possible at all.
+Простота этого до невозможности крута. В традиционной системе IVR на программирование такого рода может уйти несколько дней, если предположить, что это вообще возможно.
 
 ## A Prompt-Recording IVR Function
 
-In [Chapter 14](glava-14.md), we created a simple bit of dialplan to record prompts. It was fairly limited in that it only recorded one filename, and thus for each prompt a separate extension was needed. Here, we expand upon that to create a complete menu for recording prompts. Since this is a complex bit of dialplan, but it’s not a subroutine or a local channel, we’re going to create a new section of dialplan for various features, and put things like this there:
+В [Главе 14](glava-14.md) мы создали простой диалплан для записи подсказок. Он был довольно ограничен в том, что записывал только одно имя файла, и поэтому для каждого запроса требовалось отдельное расширение. Здесь мы расширим его чтобы создать полноценное меню для записи подсказок. Поскольку это сложная часть диалплана, а не подпрограмма или локальный канал, мы создадим новый раздел диалплана для различных функций и поместим туда такие вещи:
 
 ```
 ;FEATURES
 [prompts]
 exten => s,1,Answer
-exten => s,n,Set(step1count=0) ; Initialize counters
+exten => s,n,Set(step1count=0) ; Инициализация счетчиков
 
 ; If we get no response after 3 times, we stop asking
    same => n(beginning),GotoIf($[${step1count} > 2]?end)
@@ -166,7 +167,7 @@ exten => s,n,Set(step1count=0) ; Initialize counters
 
 ; All prompts must be 3 digits in length
    same => n,GotoIf($[${LEN(${which})} != 3]?beginning)
-   same => n,Set(step1count=0) ; Successful response; reset counters
+   same => n,Set(step1count=0) ; Запрос успешен; сброс счетчиков
    same => n,Set(step2count=0)
 
    same => n(step2),Set(step2count=$[${step2count} + 1])
@@ -210,24 +211,24 @@ exten => 2,1,Set(step2count=0)
    same => n,Goto(s,beginning)
 ```
 
-In this system, the name of the prompt is no longer descriptive; instead, it is a number. This means that you can record a far greater variety of prompts using the same mechanism, but the trade-off is that your prompts will no longer have descriptive names.
+В этой системе имя запроса больше не является описательным; вместо этого оно является числом. Это означает, что вы можете записывать гораздо большее разнообразие приглашений, используя один и тот же механизм, но компромисс заключается в том, что ваши приглашения больше не будут иметь описательных имен.
 
-If you want to test this, you’ll need to record the prompts this IVR function uses (it’s kinda meta, but yup, our prompt creator needs prompts).
+Если вы хотите проверить его, вам нужно будет записать подсказки, которые использует эта функция IVR (это своего рода мета, но да, нашему создателю подсказок нужны подсказки).
 
-Drop this into your dialplan:
+Поместите это в свой диалплан:
 
 ```
-exten => 510,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-tolisten))     ; press 1
-exten => 511,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-torecord))     ; press 2
-exten => 512,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-instructions)) ;3-digit (000 to 999)
+exten => 510,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-tolisten))     ; нажмите 1
+exten => 511,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-torecord))     ; нажмите 2
+exten => 512,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-instructions)) ;3-цифры (000 to 999)
 exten => 513,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-waitforbeep))  ; wait for beep
 exten => 514,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-1tolisten-2tosave-3todiscard))
 exten => 515,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-saved))
 ```
 
-Then phone them one by one and record as required.
+Затем позвоните им по одному и запишите по мере необходимости.
 
-Once you’ve recorded the prompts your prompt recorder needs, you should be able to test it out.
+После того, как вы записали подсказки, необходимые вашему создателю подсказок, вы должны быть в состоянии проверить их.
 
 ```
 exten => *742,1,Noop(Prompts)
@@ -235,7 +236,7 @@ exten => *742,1,Noop(Prompts)
     same => n,Hangup()
 ```
 
-From this point forward, you can record prompts using just a numeric identifier. You’ll need a way to keep track of what prompt says what, but from a recording perspective you shouldn’t need to write more dialplan every time you need a prompt.
+С этого момента вы можете записывать приглашения, используя только числовой идентификатор. Вам понадобится способ отслеживать что говорит подсказка, но с точки зрения записи вам не нужно больше писать диалплан каждый раз, когда нужна подсказка.
 
 ## Speech Recognition and Text-to-Speech
 
@@ -266,9 +267,9 @@ Asterisk является отличной платформой IVR. Вся эт
 ---
 
 <ol>
-  <li id="sn1">Especially if it’s something like Van Meggelen.</li>
-  <li id="sn2">These free IP lookup websites seem to get bought out all the time, and turned into advertising gateways, so what might have worked at this writing may no longer work. What you need is a website that will return your IP address, and nothing else. Today, that seems to be <a href="https://ipinfo.io/ip">https://ipinfo.io/ip</a>. By the time you read this, it may be something else.</li>
-  <li id="sn3">Actually, most of us talk to our computers, but this is seldom polite.</li>
+  <li id="sn1">Особенно если это что-то вроде Ван Меггелена.</li>
+  <li id="sn2"> Эти бесплатные сайты поиска IP-адресов, похоже, все время покупаются и превращаются в рекламные шлюзы, поэтому то, что работало при написании этой книги, может больше не работать. Вам нужен сайт который вернет ваш IP-адрес и ничего больше. Сегодня, например <a href="https://ipinfo.io/ip">https://ipinfo.io/ip</a> К тому времени, когда вы прочтете это может быть что-то другое.</li>
+  <li id="sn3">Вообще-то, большинство из нас разговаривает с компьютерами, но это редко бывает вежливо.</li>
 </ol>
 
 [Глава 15. Интеграция реляционной базы данных](glava-15.md) | [Содержание](SUMMARY.md) | [Глава 17. AMI и файлы вызовов](glava-17.md)
