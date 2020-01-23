@@ -171,7 +171,7 @@ exten => s,n,Set(step1count=0) ; Инициализация счетчиков
    same => n,Set(step2count=0)
 
    same => n(step2),Set(step2count=$[${step2count} + 1])
-   same => n,GotoIf($[${step2count} > 2]?beginning) ; No response after 3 tries
+   same => n,GotoIf($[${step2count} > 2]?beginning) ; Нет ответа после 3 попыток
 
 ; If the file doesn't exist, then don't ask whether to play it
    same => n,GotoIf($[${STAT(f,/var/lib/asterisk/sounds/${which}.wav)} = 0]?recordonly)
@@ -221,7 +221,7 @@ exten => 2,1,Set(step2count=0)
 exten => 510,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-tolisten))     ; нажмите 1
 exten => 511,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-torecord))     ; нажмите 2
 exten => 512,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-instructions)) ;3-цифры (000 to 999)
-exten => 513,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-waitforbeep))  ; wait for beep
+exten => 513,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-waitforbeep))  ; ждите сигнала
 exten => 514,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-1tolisten-2tosave-3todiscard))
 exten => 515,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-saved))
 ```
@@ -238,19 +238,19 @@ exten => *742,1,Noop(Prompts)
 
 С этого момента вы можете записывать приглашения, используя только числовой идентификатор. Вам понадобится способ отслеживать что говорит подсказка, но с точки зрения записи вам не нужно больше писать диалплан каждый раз, когда нужна подсказка.
 
-## Speech Recognition and Text-to-Speech
+## Распознавание речи и преобразование текста-в-речь
 
-Although traditionally and still in most cases today, an IVR system presents prerecorded prompts to the caller and accepts input by way of the dialpad, it is also possible to: a) generate prompts artificially, popularly known as text-to-speech; and b\) accept verbal inputs through a speech recognition engine.
+Хотя традиционно и по-прежнему в большинстве случаев сегодня система IVR представляет предварительно записанные подсказки вызывающему абоненту и принимает ввод через панель набора номера, также возможно: а) искусственно генерировать подсказки, широко известные как преобразование текста-в-речь; и б) принимать устный ввод через механизм распознавания речи.
 
-While the concept of being able to have an intelligent conversation with a machine is something sci-fi authors have been promising us for many long years, the actual science of this remains complex and error-prone. Despite their amazing capabilities, computers are ill-suited to the task of appreciating the subtle nuances of human speech.
+В то время как концепция возможности вести интеллектуальный разговор с машиной - это то, что авторы научной фантастики обещают нам в течение многих лет, реальная наука об этом остается сложной и подверженной ошибкам. Несмотря на свои удивительные возможности, компьютеры плохо приспособлены к задаче оценки тонких нюансов человеческой речи.
 
-Having said that, it should be noted that companies such as Google have achieved amazing advances in both text-to-speech and speech recognition. There are now APIs available that can do a remarkable job of making sense out of what is being said to them. Google of course benefits from having a massive backend that can perform near-miraculous feats of processing; something your IVR might not be able to fully harness.
+Тем не менее, следует отметить, что такие компании, как Google, достигли удивительных успехов как в преобразовании текста-в-речь так и в распознавании речи. Уже доступны API, которые могут проделать замечательную работу по осмыслению того, что им говорят. Google, конечно, выигрывает от наличия массивного бэкенда, который может выполнять почти чудесные трюки обработки; то, что ваш IVR не сможет полностью использовать.
 
-### Text-to-Speech
+### Преобразование текста-в-речь
 
-Text-to-speech \(also known as speech synthesis\) requires that a system be able to artificially construct speech from stored data. While it would be nice if we could simply assign a sound to a letter and have the computer produce each sound as it reads the letters, written language is often not phonetic, and seldom reflects the nuances of speech \(English is arguably one of the worst languages in this regard\).
+Преобразование текста-в-речь (также известное как синтез речи) требует, чтобы система была способна искусственно создавать фразы из сохраненных данных. Хотя было бы неплохо, если бы мы могли просто назначить звук букве и заставить компьютер воспроизводить каждый звук, когда он читает буквы, письменный язык часто не фонетичен и редко отражает нюансы речи (английский, возможно, один из худших языков в этом отношении).
 
-There are now excellent APIs available from Google \(and others\), that will do a very good job of reading back what has been written. As of this writing, it’s still very obvious that it’s a computer speaking, but it is nevertheless possible to generate system prompts on the fly from text, rather than having to record all prompts in advance. The usefulness of this is difficult to evaluate, since humans are still not interested in talking to your machines; they phoned because they want to talk to you.
+Существуют отличные API, доступные от Google (и других), которые сделают очень хорошую работу по чтению того, что было написано. На момент написания этой книги все еще очень очевидно, что речь идет о компьютере, но тем не менее можно генерировать системные подсказки на лету из текста, а не записывать их заранее. Полезность этого трудно оценить, так как люди все еще не заинтересованы в разговоре с вашими машинами; они позвонили потому что хотят поговорить с вами.
 
 ### Распознавание речи
 
