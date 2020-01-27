@@ -1,64 +1,75 @@
 # Глава 17. AMI и файлы вызовов
 
-John Malkovich: I have seen a world that NO man should see!
+> Джон Малкович: я видел мир, который не должен видеть ни один человек!
+> Крейг Шварц: Правда? Потому что для большинства людей это довольно приятный опыт.
+> -- Быть Джоном Малковичем
 
-Craig Schwartz: Really? Because for most people it’s a rather enjoyable experience.
+Интерфейс Asterisk Manager (Asterisk Manager Interface - AMI) - это интерфейс мониторинга и управления системой, предоставляемый Asterisk. Он позволяет в реальном времени отслеживать события, происходящие в системе, а также позволяет запрашивать Asterisk выполнение некоторых действий. Доступные действия имеют широкий диапазон и включают такие вещи, как возврат информации о состоянии или инициирование новых вызовов. На Asterisk было разработано много интересных приложений, использующих AMI в качестве основного интерфейса для Asterisk.
 
-Being John Malkovich
+Эта глава также включает документацию по использованию файлов вызовов. Файлы вызовов Asterisk - это простой способ инициировать несколько вызовов. Как только объем исходящих вызовов увеличивается или ваши потребности становятся более сложными, вы можете перейти к использованию AMI. На самом деле, мы находим файлы вызовов достаточно полезными, так что сначала поговорим о них.
 
-The Asterisk Manager Interface \(AMI\) is a system monitoring and management interface provided by Asterisk. It allows live monitoring of events that occur in the system, as well as enabling requests for Asterisk to perform some action. The available actions are wide-ranging and include things such as returning status information or originating new calls. Many interesting applications have been developed on top of Asterisk that use the AMI as their primary interface to Asterisk.
+## Файлы вызовов
 
-This chapter also includes documentation on the use of call files. Asterisk’s call files are an easy way to originate a few calls. Once call origination volume increases or your needs become otherwise more complex, you can move on to using the AMI. In fact, we find call files to be useful enough that we’re going to talk about them first.
+Обычно для инициализации вызовов используется AMI, но во многих ситуациях проще использовать файлы вызовов. Файл вызова - это простой текстовый файл, описывающий вызов, который вы хотите совершить через Asterisk. Когда файл вызова помещается в каталог _/var/spool/asterisk/outgoing_, Asterisk немедленно обнаружит, что файл был помещен туда, и обработает вызов.
 
-## Call Files
+Asterisk поставляется с образцом файла вызова, который вы найдете в _~/src/asterisk-15.\<TAB\>/sample.call_ (или там, где находится корневой каталог исходников Asterisk).
 
-It is common to use AMI for originating calls, but in many situations it’s easier to use call files. A call file is a simple text file that describes the call that you would like Asterisk to originate. When a call file is placed into the /var/spool/asterisk/outgoing directory, Asterisk will immediately detect that a file has been placed there and process the call.
+### Ваш первый файл вызова
 
-Asterisk comes with a sample call file, which you will find at ~/src/asterisk-15.&lt;TAB&gt;/sample.call \(or wherever the root directory of your Asterisk source is located\).
+Для вашего первого файла вызова давайте создадим вызов между двумя вашими телефонами. Убедитесь, что хотя бы два ваших телефона зарегистрированы и работают. Для этого примера мы будем использовать `SOFTPHONE_A` и `SOFTPHONE_B`.
 
-### Your First Call File
+Создайте в домашнем каталоге следующий файл:
 
-For your first call file, let’s create a call between two of your telephones. Make sure you have at least two of your phones registered and working. For this example we’ll be using SOFTPHONE\_A and SOFTPHONE\_B.
-
-Create the following file in your home directory:
-
+```
 $ vim ~/call-file
 
 Channel: PJSIP/SOFTPHONE_A
-
 Extension: 103
-
 Context: sets
+```
 
-Make a copy of this file \(so that you don’t have to re-create it every time you want to run it\):
+Сделайте копию этого файла (так что вам не придется заново создавать его каждый раз, когда захотите запустить его):
 
+```
 $ cp ~/call-file docall
+```
 
-Change the ownership of the docall file to asterisk:
+Измените владельца файла docall на `asterisk`:
 
+```
 $ chown asterisk:asterisk docall
+```
 
-Move the docall file into Asterisk’s outgoing folder.
+Переместите файл _docall_ в каталог _outgoing_ Asterisk.
 
+```
 $ sudo mv docall /var/spool/asterisk/outgoing
+```
 
-Sometimes, the easiest way is the best way.
+Иногда самый простой способ - лучший способ.
 
-You’ll probably find yourself doing multiple edits on your source call file. You could just move that file you created, rather than making a copy of it first, but then you’d have to re-create it each time you make an edit, and this gets annoying. All that typing can be saved as a one-liner, and run like this:
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p>Вы, вероятно, обнаружите, что делаете несколько правок в исходном файле вызова. Вы можете просто переместить созданный файл, а не делать его копию, но тогда вам придется заново создавать его каждый раз, когда вы его редактируете, и это раздражает. Весь этот набор можно сохранить как однострочный и запустить следующим образом:</p>
+<p><pre><code>$ cp ~/call-file docall \
+sudo chown asterisk:asterisk docall \
+sudo mv docall /var/spool/asterisk/outgoing/</code></pre></p>
+      <p>Попробуйте, и вы увидите, насколько это проще, чем каждый раз создавать и перемещать новый файл вызова.</p>
+    </td>
+  </tr>
+</table>
 
-$ cp ~/call-file docall \
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="left"><b>Предупреждение<b></p>
+      <p>Использование <code>mv</code> вместо <code>cp</code> здесь важно. Asterisk следит за тем, чтобы содержимое отображалось в каталоге <i>spool</i>. Если вы используете копирование - Asterisk может попытаться прочитать новый файл до того, как содержимое будет скопировано в него. Создание файла, а затем его перемещение позволяет избежать этой проблемы.</p>
+    </td>
+  </tr>
+</table>
 
- sudo chown asterisk:asterisk docall \
-
- sudo mv docall /var/spool/asterisk/outgoing/
-
-Try it and you’ll see how much easier this is than creating and moving a new call file every time.
-
-**Warning**
-
-The use of mv instead of cp here is important. Asterisk is watching for contents to show up in the spool directory. If you use copy, Asterisk may try to read the new file before the contents have been copied into it. Creating a file and then moving it avoids this problem.
-
-Get comfortable with using call files, and you may find them solving problems you’d otherwise have to perform far more work to achieve.
+Освойтесь с использованием файлов вызовов и вы обнаружите что они решают проблемы, которые в противном случае вам пришлось бы решать гораздо большим объемом работ.
 
 ### Notes About Call Files
 
