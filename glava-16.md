@@ -178,7 +178,7 @@ exten => s,n,Set(step1count=0) ; Инициализация счетчиков
    same => n,Background(prompt-tolisten)
 
    same => n(recordonly),Background(prompt-torecord)
-   same => n,WaitExten(10) ; Wait 10 seconds for a response
+   same => n,WaitExten(10) ; Ожидаем 10 секунд ответа
    same => n,Goto(step2)
 
    same => n(end),Playback(goodbye)
@@ -220,7 +220,7 @@ exten => 2,1,Set(step2count=0)
 ```
 exten => 510,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-tolisten))     ; нажмите 1
 exten => 511,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-torecord))     ; нажмите 2
-exten => 512,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-instructions)) ;3-цифры (000 to 999)
+exten => 512,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-instructions)) ;3-цифры (от 000 до 999)
 exten => 513,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-waitforbeep))  ; ждите сигнала
 exten => 514,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-1tolisten-2tosave-3todiscard))
 exten => 515,1,GoSub(subRecordPrompt,${EXTEN},1(prompt-saved))
