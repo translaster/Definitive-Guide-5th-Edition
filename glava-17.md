@@ -71,59 +71,59 @@ sudo mv docall /var/spool/asterisk/outgoing/</code></pre></p>
 
 Освойтесь с использованием файлов вызовов и вы обнаружите что они решают проблемы, которые в противном случае вам пришлось бы решать гораздо большим объемом работ.
 
-### Notes About Call Files
+### Заметки о файлах вызова
 
-The Channel component of the call file is required. Normally, a call coming into Asterisk is initiated by the endpoint \(for example, you make a call from your phone\). In a call file, that connection has to happen the other way around—Asterisk reaches out to the endpoint, and only when it answers can the call start. Plan accordingly.
+Компонент `Channel` файла вызова является обязательным. Обычно вызов, поступающий в Asterisk, инициируется конечной точкой (например, вы делаете вызов со своего телефона). В файле вызова это соединение должно происходить наоборот - Asterisk обращается к конечной точке, и только когда она отвечает, вызов может начаться. Планируйте соответственно.
 
-You also must specify the Context where the call will begin once the initial channel has answered. This can be useful, since it means you can connect the call through a context that wouldn’t normally be accessible to that channel, but in practice we’d suggest you simply provide the same context that channel would have entered the dialplan through if it had initiated the call normally.
+Вы также должны указать `Context`, в котором вызов начнется, как только первоначальный канал ответит. Это может быть полезно, так как это означает, что вы можете подключить вызов через контекст, который обычно недоступен для этого канала, но на практике мы бы предложили вам просто использовать тот же контекст, через который канал вошел бы в диалплан, если бы он инициировал вызов как обычно.
 
-The Extension must of course also be specified. This would typically be the phone number that is to be called, but of course it could be any valid extension within the Context.
+Расширение, конечно, также должно быть указано. Обычно это номер телефона, по которому нужно позвонить, но, конечно, это может быть любой допустимый добавочный номер в `Context`.
 
-The rest of the parameters of the call file are optional, and are detailed both in the ~/src/asterisk-15.&lt;TAB&gt;/sample.call file, and on the Asterisk wiki website.
+Остальные параметры файла вызова являются необязательными и подробно описаны в файле _~/src/asterisk-15.<TAB>/sample.call_ и на веб-сайте Asterisk wiki.
 
-## AMI Quick Start
+## AMI Быстрый старт
 
-This section is for getting your hands dirty with the AMI as quickly as possible. First, put the following configuration in /etc/asterisk/manager.conf:
+Этот раздел предназначен для того, чтобы как можно быстрее испачкать руки с помощью AMI. Во-первых, поместите следующую конфигурацию в _/etc/asterisk/manager.conf_:
 
-; Turn on the AMI and ask it to only accept connections from localhost.
-
-\[general\]
-
+```
+; Включить AMI и указать ему принимать соединения только от localhost.
+[general]
 enabled = yes
-
 webenabled = yes
-
 bindaddr = 127.0.0.1
 
-; Create an account called "hello", with a password of "world"
-
-\[hello\]
-
+; Создайть аккаунт с именем "hello" и паролем "world"
+[hello]
 secret=world
+read=all     ; Получать все типы событий
+write=all    ; Разрешить этому пользователю выполнять все действия
+```
 
-read=all ; Receive all types of events
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="left"><b>Примечание</b></p>
+      <p>Этот пример конфигурации настроен так, чтобы разрешить только локальные подключения к AMI. Если вы собираетесь сделать этот интерфейс доступным по сети, настоятельно рекомендуется использовать только протокол TLS. Использование TLS более подробно рассматривается далее в этой главе.</p>
+    </td>
+  </tr>
+</table>
 
-write=all ; Allow this user to execute all actions
+Как только конфигурация AMI готова, включите встроенный HTTP-сервер, поместив следующее содержимое в _/etc/asterisk/http.conf_:
 
-**Note**
-
-This sample configuration is set up to allow only local connections to the AMI. If you intend to make this interface available over a network, it is strongly recommended that you only do so using TLS. The use of TLS is discussed in more detail later in this chapter.
-
-Once the AMI configuration is ready, enable the built-in HTTP server by putting the following contents in /etc/asterisk/http.conf:
-
+```
 ; Enable the built-in HTTP server, and only listen for connections on localhost.
-
-\[general\]
-
+[general]
 enabled = yes
-
 bindaddr = 127.0.0.1
+```
 
-Reload the manager and http servers from the Asterisk CLI:
+Перезагрузите диспетчер и http-серверы из Asterisk CLI:
 
-\*CLI&gt; manager reload
+```
+*CLI> manager reload
 
-\*CLI&gt; module reload http
+*CLI> module reload http
+```
 
 ### AMI over TCP
 
