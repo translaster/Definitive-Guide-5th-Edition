@@ -79,7 +79,7 @@ sudo mv docall /var/spool/asterisk/outgoing/</code></pre></p>
 
 Расширение, конечно, также должно быть указано. Обычно это номер телефона, по которому нужно позвонить, но, конечно, это может быть любой допустимый добавочный номер в `Context`.
 
-Остальные параметры файла вызова являются необязательными и подробно описаны в файле _~/src/asterisk-15.<TAB>/sample.call_ и на веб-сайте Asterisk wiki.
+Остальные параметры файла вызова являются необязательными и подробно описаны в файле _~/src/asterisk-15.\<TAB\>/sample.call_ и на веб-сайте Asterisk wiki.
 
 ## AMI Быстрый старт
 
@@ -111,7 +111,7 @@ write=all    ; Разрешить этому пользователю выпол
 Как только конфигурация AMI готова, включите встроенный HTTP-сервер, поместив следующее содержимое в _/etc/asterisk/http.conf_:
 
 ```
-; Enable the built-in HTTP server, and only listen for connections on localhost.
+; Включить встроенный HTTP-сервер и слушайть только соединения на localhost.
 [general]
 enabled = yes
 bindaddr = 127.0.0.1
@@ -125,106 +125,118 @@ bindaddr = 127.0.0.1
 *CLI> module reload http
 ```
 
-### AMI over TCP
+### AMI через TCP
 
-There are multiple ways to connect to the AMI, but a TCP socket is the most common. We will use telnet to demonstrate AMI connectivity. We’ll need to install telnet for this:
+Существует несколько способов подключения к AMI, но наиболее распространенным является TCP-сокет. Мы будем использовать `telnet` для демонстрации подключения AMI. Для этого нам нужно будет установить `telnet`:
 
+```
 $ sudo yum -y install telnet
+```
 
-This example shows these steps:
+В этом примере показаны следующие шаги:
+* Подключение к AMI через TCP-сокет на порту 5038.
+* Вход в систему, используя действие `Login`.
+* Выполнение действия `Ping`.
+* Выход из системы с помощью действия `Logoff`.
 
-1. Connect to the AMI over a TCP socket on port 5038.
-2. Log in using the Login action.
-3. Execute the Ping action.
-4. Log off using the Logoff action.
+Вот как это сделать с помощью `telnet`:
 
-Here’s how to do that using telnet:
-
+```
 $ telnet localhost 5038
 
 Trying 127.0.0.1...
-
 Connected to localhost.
-
 Escape character is '^]'.
-
 Asterisk Call Manager/4.0.3
+```
 
-You’ve connected, but it’s going to hang up on you unless you authenticate yourself. Paste the following into the telnet window:
+Вы подключились, но он будет висеть на вас, если вы не подтвердите свою подлинность. Вставьте в окно `telnet` следующее:
 
+```
 Action: Login
-
 Username: hello
-
 Secret: world
+```
 
-Note there needs to be a blank line after the commands \(press Enter after you paste everything if nothing happens\).
+Обратите внимание, что после команд должна быть пустая строка (нажмите Enter после вставки всего, если ничего не происходит).
 
+```
 Response: Success
-
 Message: Authentication accepted
+```
 
-OK, it likes us. Let’s run a simple command just to verify it’s really talking to us:
+Ладно, мы ему нравимся. Давайте выполним простую команду, чтобы убедиться, что он действительно говорит с нами:
 
+```
 Action: Ping
+```
 
+```
 Response: Success
-
 Ping: Pong
+```
 
-So far, so good. We’ll just tidy up and log off now.
+Все идет нормально. Мы просто уберемся и выйдем сейчас.
 
+```
 Action: Logoff
+```
 
+```
 Response: Goodbye
-
 Message: Thanks for all the fish.
-
 Connection closed by foreign host.
+```
 
-You have verified that AMI is accepting connections via a TCP connection.
+Вы убедились что AMI принимает соединения через TCP-соединение.
 
-### AMI over HTTP
+### AMI через HTTP
 
-It is also possible to use the AMI over HTTP. We will perform the same actions as before, but over HTTP instead of the native TCP interface to the AMI. AMI over HTTP is covered in more detail in [“AMI over HTTP”](17.%20Asterisk%20Manager%20Interface%20and%20Call%20Files%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AMI-HTTP).
+Также можно использовать AMI через HTTP. Мы будем выполнять те же действия что и раньше, но через HTTP вместо собственного TCP-интерфейса к AMI. АMI через HTTP подробно описаны в [“AMI через HTTP”](#AMI-HTTP).
 
-**Note**
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="center"><b>Примечание</b></p>
+      <p>Учетные записи, используемые для подключения к AMI через HTTP, являются теми же учетными записями, настроенными в файле _/etc/asterisk/manager.conf_.</p>
+    </td>
+  </tr>
+</table>
 
-Accounts used for connecting to the AMI over HTTP are the same accounts configured in /etc/asterisk/manager.conf.
+В этом примере показано, как получить доступ к AMI по протоколу HTTP, войти в систему, выполнить действие `Ping` и выйти из системы:
 
-This example demonstrates how to access the AMI over HTTP, log in, execute the Ping action, and log off:
-
+```
 $ curl "http://localhost:8088/rawman?action=login&username=hello&secret=world" \
-
 -c /tmp/tempcookie
 
 Response: Success
-
 Message: Authentication accepted
+```
 
+```
 $ curl "http://localhost:8088/rawman?action=ping" -b /tmp/tempcookie
 
 Response: Success
-
 Ping: Pong
-
 Timestamp: 1538871944.474131
+```
 
+```
 $ curl "http://localhost:8088/rawman?action=logoff" -b /tmp/tempcookie
 
 Response: Goodbye
-
 Message: Thanks for all the fish.
+```
 
-The HTTP interface to AMI lets you integrate Asterisk call control into a web service.
+Интерфейс HTTP для AMI позволяет интегрировать управление вызовами Asterisk в веб-службу.
 
-## Configuration
+## Конфигурация
 
-The section [“AMI Quick Start”](17.%20Asterisk%20Manager%20Interface%20and%20Call%20Files%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AMI-quickstart) showed a very basic set of configuration files to get you started. There are many ways you can fine-tune the configuration of the AMI.
+Раздел ["AMI быстрый старт"](glava-17.md#ami-быстрый-старт) показал очень простой набор конфигурационных файлов для начала работы. Существует много способов тонкой настройки конфигурации AMI.
 
 ### manager.conf
 
-The main configuration file for the AMI is /etc/asterisk/manager.conf. The \[general\] section contains options that control the overall operation of the AMI. Any other sections in the manager.conf file will define accounts for logging in and using the AMI. The sample file contains detailed explanations of the various parameters, and can be found in ~/src/asterisk-15&lt;TAB&gt;/configs/samples/manager.conf.sample.
+The main configuration file for the AMI is /etc/asterisk/manager.conf. The [general] section contains options that control the overall operation of the AMI. Any other sections in the manager.conf file will define accounts for logging in and using the AMI. The sample file contains detailed explanations of the various parameters, and can be found in ~/src/asterisk-15&lt;TAB&gt;/configs/samples/manager.conf.sample.
 
 **Warning**
 
@@ -326,7 +338,7 @@ Response: Success
 
 Message: Authentication accepted
 
-### AMI over HTTP
+### AMI через HTTP <a name="AMI-HTTP"></a>
 
 In addition to the native TCP interface, it is also possible to access the Asterisk Manager Interface over HTTP. Programmers with previous experience writing applications that use web APIs will likely prefer this over the native TCP connectivity. While the TCP interface only offers a single type of message structure, AMI over HTTP offers a few encoding options. You can receive responses in the same format as the TCP interface, in XML, or as a basic HTML page. The encoding type is chosen based on a field in the request URL. The encoding options are discussed in more detail later in this section.
 
