@@ -198,7 +198,7 @@ Connection closed by foreign host.
   <tr>
     <td>
       <p align="center"><b>Примечание</b></p>
-      <p>Учетные записи, используемые для подключения к AMI через HTTP, являются теми же учетными записями, настроенными в файле _/etc/asterisk/manager.conf_.</p>
+      <p>Учетные записи, используемые для подключения к AMI через HTTP, являются теми же учетными записями, настроенными в файле <i>/etc/asterisk/manager.conf</i>.</p>
     </td>
   </tr>
 </table>
@@ -236,19 +236,29 @@ Message: Thanks for all the fish.
 
 ### manager.conf
 
-The main configuration file for the AMI is /etc/asterisk/manager.conf. The [general] section contains options that control the overall operation of the AMI. Any other sections in the manager.conf file will define accounts for logging in and using the AMI. The sample file contains detailed explanations of the various parameters, and can be found in ~/src/asterisk-15&lt;TAB&gt;/configs/samples/manager.conf.sample.
+Основной конфигурационный файл для AMI - это _/etc/asterisk/manager.conf_. Раздел `[general]` содержит параметры, управляющие общей работой AMI. Любые другие разделы в _manager.conf_ определяют учетные записи для входа в систему и использования AMI. Пример файла содержит подробные объяснения различных параметров и может быть найден в  _~/src/asterisk-15\<TAB\>/configs/samples/manager.conf.sample_.
 
-**Warning**
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="left"><b>Предупреждение</b></p>
+      <p>Если вы собираетесь выставить свой AMI за пределы машины, на которой он работает, вам потребуется настроить подключение TLS.</p>
+    </td>
+  </tr>
+</table>
 
-If you are going to expose your AMI outside the machine it is running on, you will want to configure TLS connectivity.
+Конфигурационный файл _manager.conf_ также содержит конфигурацию учетных записей пользователей AMI. Вы создаете учетную запись, добавляя раздел с именем пользователя в квадратных скобках. В каждом разделе `[username]` есть параметры, которые могут быть установлены, которые будут применяться только к этой учетной записи. Файл _~/src/asterisk-15\<TAB\>/configs/samples/manager.conf.sample_ также содержит подробные объяснения каждого из этих параметров. Наш пользователь по имени `[hello]`, имеет простейшую конфигурацию, которая позволяет все операции чтения и записи. Обычно следует создавать пользователей AMI, которые ограничены только действиями, необходимыми для их функционирования.
 
-The manager.conf configuration file also contains the configuration of AMI user accounts. You create an account by adding a section with the username inside square brackets. Within each \[username\] section there are options that can be set that will apply only to that account. The ~/src/asterisk-15&lt;TAB&gt;/configs/samples/manager.conf.sample file also contains detailed explanations of each of these parameters. Our user named \[hello\], has the simplest configuration, which is to allow all read and write actions. You should normally create AMI users that are restricted to only the actions necessary to their functioning.
+В разделе `[username]` параметры `read` и `write` определяют к каким действиям и событиям диспетчера имеет доступ конкретный пользователь. На данный момент есть 20 из них: `all`, `system`, `call`, `log`, `verbose`, `agent`, `user`, `config`, `command`, `dtmf`, `reporting`, `cdr`, `dialplan`, `originate`, `agi`, `cc`, `aoc`, `test`, `security` и `message`. Вы увидите что файл _manager.conf.sample_ содержит ссылку на каждый из них, относящийся к вашему выпуску (и, если какие-либо из них добавлены, которые не были перечислены здесь, они будут в файле примера).
 
-Within the \[username\] section, the read and write options set which manager actions and manager events a particular user has access to. At this writing there are 20 of them: all, system, call, log, verbose, agent, user, config, command, dtmf, reporting, cdr, dialplan, originate, agi, cc, aoc, test, security, and message. You will find the manager.conf.sample file contains a reference for each of these that is relevant to your release \(and, if any are added that have not been listed here, they will be in the sample file\).
-
-**Warning**
-
-Take special notice of the system, command, and originate permissions. These permissions grant significant power to any applications that are authorized to use them. Only grant these permissions to applications that you have full control over \(and ideally are running on the same box\).
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="left"><b>Предупреждение</b></p>
+      <p>Обратите особое внимание на разрешения `system`, `command` и `originate`. Эти разрешения предоставляют значительные полномочия всем приложениям, которые имеют право их использовать. Предоставляйте эти разрешения только приложениям, над которыми у вас есть полный контроль (и в идеале они работают в одном окне).</p>
+    </td>
+  </tr>
+</table>
 
 ### http.conf
 
