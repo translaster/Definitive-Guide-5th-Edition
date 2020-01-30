@@ -376,89 +376,78 @@ curl -v "http://localhost:8088/rawman?action=login&username=hello&secret=world"
 curl -v --digest -u hello:world http://127.0.0.1:8088/arawman?action=ping
 ```
 
-#### /manager (/amanager) encoding
+#### Кодирование /manager (/amanager)
 
-The manager encoding type provides a response in simple HTML form. This interface is primarily useful for experimenting with the AMI:
+Тип кодировки `manager` предоставляет ответ в простой HTML-форме. Этот интерфейс в первую очередь полезен для экспериментов с AMI:
 
+```
 $ curl -v "http://localhost:8088/manager?action=login&username=hello&secret=world"
 
 $ curl -v --digest -u hello:world http://localhost:8088/amanager?action=ping
+```
 
-#### /mxml (/amxml) encoding
+#### Кодирование /mxml (/amxml)
 
-The mxml encoding type provides responses to manager actions encoded in XML:
+Тип кодировки `mxml` предоставляет ответы на действия закодированные в XML:
 
+```
 $ curl -v "http://localhost:8088/mxml?action=login&username=hello&secret=world"
 
 $ curl -v --digest -u hello:world http://localhost:8088/amxml?action=ping
+```
 
-#### Manager events
+#### События диспетчера
 
-When connected to the native TCP interface for the AMI, manager events are delivered asynchronously. When using the AMI over HTTP, you must retrieve events by polling for them. You retrieve events over HTTP by executing the WaitEvent manager action. The following example shows how events can be retrieved using the WaitEvent manager action. The steps are:
+При подключении к собственному интерфейсу TCP для AMI события доставляются асинхронно. При использовании AMI через HTTP необходимо получить события путем опроса для них. Вы получаете события по протоколу HTTP, выполняя действие `WaitEvent`. В следующем примере показано, как события могут быть извлечены с помощью действия `WaitEvent`. Шаги такие:
 
-1. Start an HTTP AMI session using the Login action.
-2. Register a SIP phone to Asterisk to generate a manager event.
-3. Retrieve the manager event using the WaitEvent action.
+1. Запустите сеанс HTTP AMI с помощью действия `Login`.
+2. Зарегистрируйте SIP-телефон на Asterisk, чтобы создать событие.
+3. Извлеките событие с помощью действия `WaitEvent`.
 
-The interaction looks like this:
+Взаимодействие выглядит следующим образом:
 
+```
 $ wget --save-cookies cookies.txt \
+> "http://localhost:8088/mxml?action=login&username=hello&secret=world" -O -
 
-&gt; "http://localhost:8088/mxml?action=login&username=hello&secret=world" -O -
+<ajax-response>
+<response type='object' id='unknown'>
+    <generic response='Success' message='Authentication accepted' />
+</response>
+</ajax-response>
 
-&lt;ajax-response&gt;
-
-&lt;response type='object' id='unknown'&gt;
-
- &lt;generic response='Success' message='Authentication accepted' /&gt;
-
-&lt;/response&gt;
-
-&lt;/ajax-response&gt;
 
 $ wget --load-cookies cookies.txt \
+< "http://localhost:8088/mxml?action=waitevent" -O -
 
-&lt; "http://localhost:8088/mxml?action=waitevent" -O -
+<ajax-response>
+<response type='object' id='unknown'>
+    <generic response='Success' message='Waiting for Event completed.' />
+</response>
+<response type='object' id='unknown'>
+    <generic event='PeerStatus' privilege='system,all'
+             channeltype='SIP' peer='SIP/0000FFFF0004'
+             peerstatus='Registered' address='172.16.0.160:5060' />
+</response>
+<response type='object' id='unknown'>
+    <generic event='WaitEventComplete' />
+</response>
+</ajax-response>
+```
 
-&lt;ajax-response&gt;
+Вам потребуется разработать механизмы в вашем приложении чтобы гарантировать что буферизованные события часто опрашиваются.
 
-&lt;response type='object' id='unknown'&gt;
+## Пример использования
 
- &lt;generic response='Success' message='Waiting for Event completed.' /&gt;
+Большая часть этой главы до сих пор обсуждала концепции и конфигурацию, связанные с AMI. В этом разделе приведены некоторые примеры использования.
 
-&lt;/response&gt;
+### Инициирование вызова
 
-&lt;response type='object' id='unknown'&gt;
+AMI имеет действие `Originate`, которое можно использовать для инициирования вызова. Многие из принятых заголовков совпадают с параметрами, размещенными в файлах вызовов. В Таблице 17-1 перечислены заголовки, принятые действием `Originate`.
 
- &lt;generic event='PeerStatus' privilege='system,all'
+Таблица 17-1. Заголовки для действия Originate
 
- channeltype='SIP' peer='SIP/0000FFFF0004'
-
- peerstatus='Registered' address='172.16.0.160:5060' /&gt;
-
-&lt;/response&gt;
-
-&lt;response type='object' id='unknown'&gt;
-
- &lt;generic event='WaitEventComplete' /&gt;
-
-&lt;/response&gt;
-
-&lt;/ajax-response&gt;
-
-You’ll need to develop mechanisms in your application to ensure that buffered events are frequently polled.
-
-## Example Usage
-
-Most of this chapter so far discussed the concepts and configuration related to the AMI. This section will provide some example usage.
-
-### Originating a Call
-
-The AMI has the Originate manager action that can be used to originate a call. Many of the accepted headers are the same as the options placed in call files. [Table 17-1](17.%20Asterisk%20Manager%20Interface%20and%20Call%20Files%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AMI_originate_headers) lists the headers accepted by the Originate action.
-
-Table 17-1. Headers for the Originate action
-
-| Option | Example value | Description |
+| Параметр | Пример значения | Описание |
 | :--- | :--- | :--- |
 | ActionID | a3a58876-f7c9-4c28-aa97-50d8166f658d | This header is accepted by most AMI actions. It is used to provide a unique identifier that will also be included in all responses to the action. It gives you a way to identify which request a response is associated with. This is important since all actions, their responses, and events are all transmitted over the same connection \(unless using AMI over HTTP\). |
 | Channel | SIP/myphone | This header is critical and must be specified. This describes the outbound call that will be originated. The value is the same syntax that would be used for the channel argument to the Dial\(\) application in the dialplan. |
@@ -477,51 +466,51 @@ Table 17-1. Headers for the Originate action
 
 The simplest example of using the Originate action is via telnet:
 
+```
 $ telnet localhost 5038
 
 Trying 127.0.0.1...
-
 Connected to localhost.
-
-Escape character is '^\]'.
-
+Escape character is '^]'.
 Asterisk Call Manager/4.0.3
+```
 
 Once the connection is established, you need to log in.
 
+```
 Action: Login
-
 Username: hello
-
 Secret: world
+```
 
+```
 Response: Success
-
 Message: Authentication accepted
+```
 
 Now you’re ready to originate your call. We’re doing essentially the same thing we did with the call file, only this time using the AMI:
 
+```
 Action: Originate
-
-Channel: PJSIP/SOFTPHONE\_A
-
+Channel: PJSIP/SOFTPHONE_A
 Context: sets
-
 Exten: 103
-
 Priority: 1
+```
 
 You should hear SOFTPHONE\_A ringing. As soon as you answer it, a call will be placed to SOFTPHONE\_B.
 
 AMI is no longer involved in what’s going on. You can disconnect and the call will continue \(leave the call up for now, as we’re going to work with the in-progress call next\).
 
+```
 Action: Logoff
+```
 
+```
 Response: Goodbye
-
 Message: Thanks for all the fish.
-
 Connection closed by foreign host.
+```
 
 If you’ve already hung up the call, that’s no problem. You’ll just need to re-establish the call, which of course you can do simply by calling one extension from the other \(101 to 103, or whatever you want\).
 
