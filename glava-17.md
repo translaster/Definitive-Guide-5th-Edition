@@ -63,7 +63,7 @@ sudo mv docall /var/spool/asterisk/outgoing/</code></pre></p>
 <table border="1" width="100%" cellpadding="5">
   <tr>
     <td>
-      <p align="left"><b>Предупреждение<b></p>
+      <p align="left"><b>Предупреждение</b></p>
       <p>Использование <code>mv</code> вместо <code>cp</code> здесь важно. Asterisk следит за тем, чтобы содержимое отображалось в каталоге <i>spool</i>. Если вы используете копирование - Asterisk может попытаться прочитать новый файл до того, как содержимое будет скопировано в него. Создание файла, а затем его перемещение позволяет избежать этой проблемы.</p>
     </td>
   </tr>
@@ -197,7 +197,7 @@ Connection closed by foreign host.
 <table border="1" width="100%" cellpadding="5">
   <tr>
     <td>
-      <p align="center"><b>Примечание</b></p>
+      <p align="left"><b>Примечание</b></p>
       <p>Учетные записи, используемые для подключения к AMI через HTTP, являются теми же учетными записями, настроенными в файле <i>/etc/asterisk/manager.conf</i>.</p>
     </td>
   </tr>
@@ -255,42 +255,47 @@ Message: Thanks for all the fish.
   <tr>
     <td>
       <p align="left"><b>Предупреждение</b></p>
-      <p>Обратите особое внимание на разрешения `system`, `command` и `originate`. Эти разрешения предоставляют значительные полномочия всем приложениям, которые имеют право их использовать. Предоставляйте эти разрешения только приложениям, над которыми у вас есть полный контроль (и в идеале они работают в одном окне).</p>
+      <p>Обратите особое внимание на разрешения <code>system</code>, <code>command</code> и <code>originate</code>. Эти разрешения предоставляют значительные полномочия всем приложениям, которые имеют право их использовать. Предоставляйте эти разрешения только приложениям, над которыми у вас есть полный контроль (и в идеале они работают в одном окне).</p>
     </td>
   </tr>
 </table>
 
 ### http.conf
 
-As we’ve seen, the Asterisk Manager Interface can be accessed over HTTP as well as TCP. To make that work, a very simple HTTP server is embedded in Asterisk. All of the options relevant to the AMI go in the \[general\] section of /etc/asterisk/http.conf.
+Как мы уже видели, интерфейс Asterisk Manager может быть доступен как по протоколу HTTP, так и по протоколу TCP. Для этого в Asterisk встроен очень простой HTTP-сервер. Все параметры, относящиеся к AMI, находятся в разделе [general] файла _/etc/asterisk/http.conf_.
 
-**Note**
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="center"><b>Примечание</b></p>
+      <p>Включение доступа к AMI по протоколу HTTP требует наличия <i>/etc/asterisk/manager.conf</i> и <i>/etc/asterisk/http.conf</i>. AMI должен быть включен в <i>manager.conf</i> с параметром <code>enabled</code>, установленным в <code>yes</code> и <code>webenabled</code> должен быть установлен в значение <code>yes</code> чтобы разрешить доступ по протоколу HTTP. Наконец, опция <code>enabled</code> в <i>http.conf</i> должна быть установлена в <code>yes</code> чтобы включить сам HTTP-сервер.</p>
+    </td>
+  </tr>
+</table>
 
-Enabling access to the AMI over HTTP requires both /etc/asterisk/manager.conf and /etc/asterisk/http.conf. The AMI must be enabled in manager.conf with the enabled option set to yes, and the manager.conf option webenabled must be set to yes to allow access over HTTP. Finally, the enabled option in http.conf must be set to yes to turn on the HTTP server itself.
+Доступные опции будут найдены в вашем файле _~/src/asterisk-15\<TAB\>/configs/samples/http.conf.sample_.
 
-The available options will be found in your ~/src/asterisk-15&lt;TAB&gt;/configs/samples/http.conf.sample file.
+## Обзор протокола
 
-## Protocol Overview
+В AMI есть два основных типа сообщений: события диспетчера и действия диспетчера.
 
-There are two main types of messages on the Asterisk Manager Interface: manager events and manager actions.
+_События диспетчера_ - это односторонние сообщения, посылаемые Asterisk клиентам AMI для сообщения о том, что произошло в системе (Рисунок 17-1).
 
-Manager events are one-way messages sent from Asterisk to AMI clients to report something that has occurred on the system \([Figure 17-1](17.%20Asterisk%20Manager%20Interface%20and%20Call%20Files%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AMI-fig-events)\).
+![Рисунок 17-1. События диспетчера](/pics/pic17-1.png)
 
-![](/pics/pic17-1.png)
+_Рисунок 17-1. События диспетчера_
 
-**Figure 17-1. Manager events**
+_Действия диспетчера_ - это запросы от клиента к Asterisk для выполнения некоторого действия и возврата результата (Рисунок 17-2). Например, действие AMI инициирует запросы, чтобы Asterisk создал новый вызов, и, естественно, клиентскому приложению потребуются ответы от Asterisk, чтобы указать ход выполнения этого действия.
 
-Manager actions are requests from a client to Asterisk to perform some action and return the result \([Figure 17-2](17.%20Asterisk%20Manager%20Interface%20and%20Call%20Files%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AMI-fig-actions)\). For example, the AMI action Originate requests that Asterisk create a new call, and naturally the client application will need responses from Asterisk to indicate the progress of that activity.
+![Рисунок 17-2. Действия диспетчера](/pics/pic17-2.png)
 
-![](/pics/pic17-2.png)
+_Рисунок 17-2. Действия диспетчера_
 
-**Figure 17-2. Manager actions**
+Другие действия менеджера - это запросы данных. Например, есть действие - получить список всех активных каналов в системе: сведения о каждом канале доставляются как событие. Когда список результатов будет завершен, будет отправлено окончательное сообщение о том, что цель достигнута. См. Рисунок 17-3 для графического представления клиента, отправляющего этот тип управляющего действия и получающего список ответов.
 
-Other manager actions are requests for data. For example, there is a manager action to get a list of all active channels on the system: the details about each channel are delivered as a manager event. When the list of results is complete, a final message will be sent to indicate that the end has been reached. See [Figure 17-3](17.%20Asterisk%20Manager%20Interface%20and%20Call%20Files%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AMI-fig-actions2) for a graphical representation of a client sending this type of manager action and receiving a list of responses.
+![Рисунок 17-3. Действия диспетчера возвращающие список данных](/pics/pic17-3.png)
 
-![](/pics/pic17-3.png)
-
-**Figure 17-3. Manager actions that return a list of data**
+_Рисунок 17-3. Действия диспетчера возвращающие список данных_
 
 ### Message Encoding
 
