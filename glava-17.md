@@ -297,87 +297,86 @@ _Рисунок 17-2. Действия диспетчера_
 
 _Рисунок 17-3. Действия диспетчера возвращающие список данных_
 
-### Message Encoding
+### Кодировка сообщений
 
-All AMI messages, including manager events, manager actions, and manager action responses, are encoded the same way. The messages are text-based, with lines terminated by a carriage return and a line-feed character. A message is terminated by a blank line:
+Все сообщения AMI, включая события, действия и ответы на действия, кодируются одинаково. Сообщения являются текстовыми, со строками, заканчивающимися возвратом каретки и символом перевода строки. Сообщение завершается пустой строкой:
 
-Header1: This is the first header&lt;CR&gt;&lt;LF&gt;
+```
+Header1: This is the first header<CR><LF>
+Header2: This is the second header<CR><LF>
+Header3: This is the last header of this message<CR><LF>
+<CR><LF>
+```
+Если вы запускаете тесты из telnet-клиента - это означает, что после последней строки инструкций вам нужно будет дважды нажать клавишу Enter.
 
-Header2: This is the second header&lt;CR&gt;&lt;LF&gt;
 
-Header3: This is the last header of this message&lt;CR&gt;&lt;LF&gt;
+#### События
 
-&lt;CR&gt;&lt;LF&gt;
+События всегда имеют заголовок `Event` и заголовок `Privilege`. В заголовке `Event` указывается имя события, а в заголовке `Privilege` - уровни разрешений, связанные с данным событием. Любые другие заголовки, включенные в событие, являются специфичными для данного типа события. Вот вам пример:
 
-If you are running tests from a telnet client, what this means is that after the last line of instructions, you’ll need to press the Enter key twice.
-
-#### Events
-
-Manager events always have an Event header and a Privilege header. The Event header gives the name of the event, while the Privilege header lists the permission levels associated with the event. Any other headers included with the event are specific to the event type. Here’s an example:
-
+```
 Event: Hangup
-
 Privilege: call,all
-
 Channel: SIP/0004F2060EB4-00000000
-
 Uniqueid: 1283174108.0
-
 CallerIDNum: 2565551212
-
 CallerIDName: Russell Bryant
-
 Cause: 16
-
 Cause-txt: Normal Clearing
+```
 
-The Asterisk CLI includes the commands manager show events and manager show event &lt;event&gt;. Run these commands at the Asterisk CLI to get a list of events or to find out the details of a specific event.
+CLI Asterisk включает в себя `manager show events` и `manager show event <event>`. Выполните эти команды в CLI Asterisk, чтобы получить список событий или узнать подробности конкретного события.
 
-Don’t forget that an excellent reference for all things Asterisk, including the AMI, is the official [Asterisk wiki](https://wiki.asterisk.org/).
+Не забывайте, что отличным справочником для всех вещей Asterisk, включая AMI, является официальная [Asterisk wiki](https://wiki.asterisk.org/).
 
-#### Actions
+#### Действия
 
-When executing a manager action, you must include the Action header. The Action header identifies which manager action is being executed. The rest of the headers are arguments to the manager action, and may or may not be required depending on the action.
+При выполнении действия _необходимо_ включить заголовок `Action`. Заголовок `Action` определяет, какое действие выполняется. Остальные заголовки являются аргументами для действия и могут потребоваться или не потребоваться в зависимости от действия.
 
-To get a list of the headers associated with a particular manager action, type manager show command &lt;Action&gt; at the Asterisk CLI. To get a full list of manager actions supported by the version of Asterisk you are running, enter manager show commands at the Asterisk CLI.
+Чтобы получить список заголовков, связанных с определенным действием, введите в CLI Asterisk команду `manager show command <Action>`. Чтобы получить полный список действий, поддерживаемых используемой версией Asterisk, введите `manager show commands`.
 
-The final response to a manager action is typically a message that includes the Response header. The value of the Response header will be Success if the manager action was successfully executed. If the manager action was not successfully executed, the value of the Response header will be Error. For example:
+Окончательный ответ на действие обычно представляет собой сообщение, содержащее заголовок `Response`. Значение заголовка `Response` будет `Success`, если действие было выполнено успешно. Если действие не было успешно выполнено, то значение заголовка ответа будет `Error`. Например:
 
+```
 Action: Login
-
 Username: hello
-
 Secret: world
 
 Response: Success
-
 Message: Authentication accepted
+```
 
 ### AMI через HTTP <a name="AMI-HTTP"></a>
 
-In addition to the native TCP interface, it is also possible to access the Asterisk Manager Interface over HTTP. Programmers with previous experience writing applications that use web APIs will likely prefer this over the native TCP connectivity. While the TCP interface only offers a single type of message structure, AMI over HTTP offers a few encoding options. You can receive responses in the same format as the TCP interface, in XML, or as a basic HTML page. The encoding type is chosen based on a field in the request URL. The encoding options are discussed in more detail later in this section.
+Помимо собственного TCP-интерфейса, можно также получить доступ к AMI по протоколу HTTP. Программисты с имеющимся опытом написания приложений, использующие веб-API, скорее всего предпочтут его по сравнению с подключением TCP. В то время как интерфейс TCP предлагает только один тип структуры сообщений, AMI через HTTP предлагает несколько вариантов кодирования. Вы можете получать ответы в том же формате что и в TCP, в формате XML или в виде базовой HTML-страницы. Тип кодировки выбирается на основе поля в URL запросе. Варианты кодирования рассматриваются более подробно далее в этом разделе.
 
-#### Authentication and session handling
+#### Аутентификация и обработка сессии
 
-There are two methods of performing authentication against the AMI over HTTP. The first is to use the Login action, similar to authentication with the native TCP interface. This is the method that was used in the quick-start example, as seen in [“AMI over HTTP”](17.%20Asterisk%20Manager%20Interface%20and%20Call%20Files%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AMI-quickstart-HTTP).
+Существует два метода выполнения аутентификации против AMI через HTTP. Первый - это использование действия `Login`, аналогичного аутентификации с помощью собственного интерфейса TCP. Это метод, который использовался в Примере быстрого запуска, как показано в [AMI через HTTP](glava17.md#ami-через-http).
 
-Once successfully authenticated, Asterisk will provide a cookie that identifies the authenticated session. Here is an example response to the Login action that includes a session cookie from Asterisk:
+После успешной аутентификации Asterisk предоставит файл cookie, который идентифицирует аутентифицированный сеанс. Вот пример ответа на действие `Login`, которое включает в себя файл cookie сеанса от Asterisk:
 
+```
 $ curl -v "http://localhost:8088/rawman?action=login&username=hello&secret=world"
+```
 
-The second authentication option is HTTP digest authentication. In this example, the requested encoding type based on the request URL is rawman. To indicate that HTTP digest authentication should be used, prefix the encoding type in the request URL with an a:
+Второй вариант аутентификации - это HTTP-дайджест аутентификации. В этом примере запрошенный тип кодировки, основанный на URL-запросе, является `rawman`. Чтобы указать, что следует использовать дайджест аутентификацию HTTP, префикс типа кодировки в URL-адресе запроса должен содержать `a`:
 
+```
 $ curl -v --digest -u hello:world http://127.0.0.1:8088/arawman?action=ping
+```
 
-#### /rawman \(/arawman\) encoding
+#### Кодирование /rawman (/arawman)
 
-The rawman encoding type is what has been used in all the AMI over HTTP examples in this chapter so far. The responses received from requests using rawman are formatted in the exact same way that they would be if the requests were sent over a direct TCP connection to the AMI.
+Тип кодирования `rawman` - это то, что до сих пор использовалось во всех примерах AMI через HTTP в этой главе. Ответы, полученные от запросов, использующих `rawman`, форматируются точно так же, как они были бы, если бы запросы были отправлены по прямому TCP-соединению к AMI.
 
+```
 curl -v "http://localhost:8088/rawman?action=login&username=hello&secret=world"
 
 curl -v --digest -u hello:world http://127.0.0.1:8088/arawman?action=ping
+```
 
-#### /manager \(/amanager\) encoding
+#### /manager (/amanager) encoding
 
 The manager encoding type provides a response in simple HTML form. This interface is primarily useful for experimenting with the AMI:
 
@@ -385,7 +384,7 @@ $ curl -v "http://localhost:8088/manager?action=login&username=hello&secret=worl
 
 $ curl -v --digest -u hello:world http://localhost:8088/amanager?action=ping
 
-#### /mxml \(/amxml\) encoding
+#### /mxml (/amxml) encoding
 
 The mxml encoding type provides responses to manager actions encoded in XML:
 
