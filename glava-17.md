@@ -514,15 +514,15 @@ Connection closed by foreign host.
 
 Если вы уже повесили трубку - это не проблема. Вам просто нужно будет восстановить вызов, что, конечно же, вы можете сделать, просто позвонив по одному номеру с другого (101-103 или как пожелаете).
 
-### Redirecting a Call
+### Перенаправление вызова
 
-Redirecting (or transferring) a call from the AMI is another feature worth mentioning. The Redirect AMI action can be used to send one or two channels to any other extension in the Asterisk dialplan. If you need to redirect two channels that are bridged together, do them both at the same time. Otherwise, once one channel has been redirected, the other will be hung up.
+Перенаправление (или transferring - передача) вызова из AMI - еще одна функция, заслуживающая упоминания. Действие AMI `Redirect` можно использовать для отправки одного или двух каналов на любой другой модуль в диалплане Asterisk. Если вам нужно перенаправить два канала, которые соединены вместе, сделайте это с обоими одновременно. В противном случае, как только один канал будет перенаправлен, другой будет отключен.
 
 <table border="1" width="100%" cellpadding="5">
   <tr>
     <td>
-<p>An important thing to understand about Asterisk channels is that they don’t exist until a call is in progress. The name we all think of as the channel name (e.g., SOFTPHONE_A) is not in fact the channel name, but merely a reference to data that is used to create a channel. The naming of a channel takes place when a call is originated (which is when the channel is actually created). What all this means is that you have to determine the full name of the channel before you can act on it.<p>
-<p>Originate a call, and then review the Event: Newchannel and you will see the channel name under the Channel: header.</p>
+<p>Важно понимать, что каналы Asterisk не существуют до тех пор, пока не будет выполнен вызов. Имя, которое мы все считаем именем канала (например, <code>SOFTPHONE_A</code>), на самом деле не является именем канала, а просто ссылкой на данные, которые используются для создания канала. Присвоение имени каналу происходит при возникновении вызова (то есть, когда канал фактически создан). Все это означает, что вы должны определить полное название канала, прежде чем сможете действовать на нем.</p>
+<p>Инициируйте вызов, а затем просмотрите <code>Event: Newchannel</code>, и вы увидите имя канала под заголовком <code>Channel:</code>:
 <p><pre><code>
 Action: Originate
 Channel: PJSIP/SOFTPHONE_A
@@ -532,7 +532,8 @@ Priority: 1
 </code></pre></p>
 <p><pre><code>
 Response: Success
-Message: Originate successfully queued<br>
+Message: Originate successfully queued
+
 Event: Newchannel
 Privilege: call,all
 Channel: PJSIP/SOFTPHONE_A-00000013
@@ -550,13 +551,13 @@ Priority: 1
 Uniqueid: 1538939479.29
 Linkedid: 1538939479.29
 </code></pre></p>
-<p>The Newchannel event will provide the name of the created channel, which in this example is <code>PJSIP/SOFTPHONE_A-00000013</code>.</p>
-<p>You will need to keep track of these channel names if you wish to properly perform actions on calls in progress. Once the call ends, the channel is destroyed. A new call using the same endpoint will be assigned a different channel name. One channel definition can support multiple calls (for example, multiple calls to a phone are possible), and this is why the channel name is different from the channel definition.</p>
+<p>Событие <code>Newchannel</code> предоставит имя созданного канала, которое в данном примере является <code>PJSIP/SOFTPHONE_A-00000013</code>.</p>
+<p>Вам нужно будет отслеживать эти имена каналов, если хотите правильно выполнять действия по текущим вызовам. Как только вызов заканчивается, канал уничтожается. Новому вызову, использующему ту же конечную точку, будет присвоено другое имя канала. Одно определение канала может поддерживать несколько вызовов (например, возможны несколько вызовов на телефон), и именно поэтому имя канала отличается от определения канала.</p>
 </td>
 </tr>
 </table>
 
-You can redirect a single channel (the other channel will be disconnected):
+Вы можете перенаправить один канал (другой будет отключен):
 
 ```
 Action: Redirect
@@ -566,7 +567,7 @@ Context: sets
 Priority: 1
 ```
 
-Or you can redirect two channels:
+Или можете перенаправить два канала:
 
 ```
 Action: Redirect
@@ -580,33 +581,33 @@ ExtraExten: 209
 ExtraPriority: 1
 ```
 
-The redirect function allows you to create powerful external applications that can control calls in progress.
+Функция перенаправления позволяет создавать мощные внешние приложения, которые могут управлять текущими вызовами.
 
-## Development Frameworks
+## Разработка фреймворков
 
-Many application developers write code that directly interfaces with the AMI. However, there are a number of frameworks that have been created with the purpose of making AMI application development easier. If you search for Asterisk frameworks in the popular programming language of your choice, you are likely to find one. The onus is on you to determine the suitability of the framework you are interested in. Some things you should look for in a framework include:
+Многие разработчики приложений пишут код, который напрямую взаимодействует с AMI. Однако существует ряд фреймворков, которые были созданы с целью облегчить разработку приложений AMI. Если вы ищете фреймворки Asterisk на популярном языке программирования по вашему выбору, вы, скорее всего, найдете один. На вас лежит ответственность за определение пригодности структуры, в которой вы заинтересованы. Некоторые вещи, которые вы должны искать в рамках включают в себя:
 
-Maturity
+**Зрелость**
 
-Has this project been around for a few years? A mature project is far less likely to have serious bugs in it.
+    Этот проект существует уже несколько лет? Зрелый проект гораздо менее вероятно будет иметь серьезные ошибки в нем.
 
-Maintenance
+**Поддержка**
 
-Check the age of the latest update. If the project hasn’t been updated in five years, there’s a strong possibility it has been abandoned. It might still be usable, but you’ll be on your own. Similarly, what does the bug tracker look like? Are there a lot of important bugs being ignored? \(Be discerning here, since often the realities of maintaining a free project require disciplined triage—not everybody’s features are going to get added.\)
+    Проверьте возраст последнего обновления. Если проект не обновлялся в течение пяти лет - есть большая вероятность, что он был заброшен. Возможно, он еще пригодится, но вы будете предоставлены сами себе. Аналогично, как выглядит баг-трекер? Есть ли много важных ошибок, которые игнорируются? (Будьте проницательны здесь, так как часто реалии поддержки свободного проекта требуют дисциплинированной сортировки - не все функции будут добавлены.)
 
-Quality of the code
+**Качество кода**
 
-Is this a well-written framework? If it was not engineered well, you should be aware of that when deciding whether to trust your project to it.
+    Это хорошо написанная структура? Если он не был хорошо спроектирован, вы должны знать об этом, когда решаете, стоит ли доверять ему свой проект.
 
-Community
+**Сообщество**
 
-Is there an active community of developers using this project? It’s likely you’ll need help; will it be available when you need it?
+    Есть ли активное сообщество разработчиков, использующих этот проект? Вероятно, вам понадобится помощь; будет ли она доступна, когда вы в ней будете нуждаться?
 
-Documentation
+**Документация**
 
-The code should be well commented, but ideally, a wiki or other official documentation to support the library is essential.
+    Код должен быть хорошо прокомментирован, но в идеале необходима вики или другая официальная документация для поддержки библиотеки.
 
-Table 17-2 lists some frameworks we have found that, as of this writing, met the preceding criteria. There may be others out there.
+В Таблице 17-2 перечислены некоторые структуры, которые, как мы обнаружили, на момент написания данной статьи соответствовали предыдущим критериям. Там могут быть и другие.
 
 _Таблица 17-2. Разработка фреймворков AMI_
 
@@ -619,7 +620,7 @@ _Таблица 17-2. Разработка фреймворков AMI_
 | ami-io | Node.js |
 | panoramisk | Python |
 
-## Conclusion
+## Вывод
 
 AMI предоставляет API для мониторинга событий из системы Asterisk, а также запрашивает Asterisk выполнять широкий спектр действий. Был предоставлен интерфейс HTTP, и был разработан ряд фреймворков, которые облегчают разработку приложений.
 
