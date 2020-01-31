@@ -533,7 +533,8 @@ Priority: 1
 <br>
 <pre><code>
 Response: Success
-Message: Originate successfully queued<br>
+Message: Originate successfully queued
+<br>
 Event: Newchannel
 Privilege: call,all
 Channel: PJSIP/SOFTPHONE_A-00000013
