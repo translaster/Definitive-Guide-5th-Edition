@@ -539,10 +539,10 @@ Privilege: call,all
 Channel: PJSIP/SOFTPHONE_A-00000013
 ChannelState: 0
 ChannelStateDesc: Down
-CallerIDNum: \<unknown>
-CallerIDName: \<unknown>
-ConnectedLineNum: \<unknown>
-ConnectedLineName: \<unknown>
+CallerIDNum: \<unknown\>
+CallerIDName: \<unknown\>
+ConnectedLineNum: \<unknown\>
+ConnectedLineName: \<unknown\>
 Language: en
 AccountCode:
 Context: sets
