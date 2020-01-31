@@ -445,26 +445,26 @@ $ wget --load-cookies cookies.txt \
 
 AMI имеет действие `Originate`, которое можно использовать для инициирования вызова. Многие из принятых заголовков совпадают с параметрами, размещенными в файлах вызовов. В Таблице 17-1 перечислены заголовки, принятые действием `Originate`.
 
-Таблица 17-1. Заголовки для действия Originate
+_Таблица 17-1. Заголовки для действия Originate_
 
 | Параметр | Пример значения | Описание |
 | :--- | :--- | :--- |
-| ActionID | a3a58876-f7c9-4c28-aa97-50d8166f658d | This header is accepted by most AMI actions. It is used to provide a unique identifier that will also be included in all responses to the action. It gives you a way to identify which request a response is associated with. This is important since all actions, their responses, and events are all transmitted over the same connection \(unless using AMI over HTTP\). |
-| Channel | SIP/myphone | This header is critical and must be specified. This describes the outbound call that will be originated. The value is the same syntax that would be used for the channel argument to the Dial\(\) application in the dialplan. |
-| Context | default | This header is used to specify a location in the dialplan to start executing once the outbound call has answered. The Context, Exten, and Priority headers must be used together. When using these headers, the Application and Data headers should not be used. |
-| Exten | s | See the documentation for the Context header. |
-| Priority | 1 | See the documentation for the Context header. |
-| Application | ConfBridge | The Application and Data headers can be used instead of the Context, Exten, and Priority headers. In this case, the outbound call is directly connected to a single application once the call has been answered. |
-| Data | 500 | See the documentation for the Application header. |
-| Timeout | 30000 | This header specifies how long to wait in milliseconds for an answer before giving up on an outbound call. The default is 30000 milliseconds \(30 seconds\). |
-| CallerID | Matthew Jordan &lt;\(555\) 867-5309&gt; | This header can be used to specify the caller ID used for the outbound call. |
-| Account | someaccount | This header sets the CDR account code for the outbound call. |
-| Variable | VARIABLE=VALUE or FUNCTION\(arguments\)=VALUE | The Variable header can be used to set both channel variables or channel functions on the outbound channel. It can be specified multiple times. |
-| Codecs | ulaw,alaw | This option can be used to limit which codecs are allowed for the outbound call. If not specified, the set of codecs configured in the channel driver configuration file will still be honored. |
-| EarlyMedia | true | If this header is specified and set to true, the outbound call will get connected to the specified extension or application as soon as there is any early media. |
-| Async | true | If this header is specified and set to true, this call will be originated asynchronously. This will allow you to continue executing other actions on the AMI connection while the call is being processed. |
+| `ActionID` | `a3a58876-f7c9-4c28-aa97-50d8166f658d` | Этот заголовок принимается большинством действий AMI. Он используется для предоставления уникального идентификатора, который также будет включен во все ответы на действие. Это дает вам возможность определить с каким запросом связан ответ. Он важен, так как все действия, их ответы и события передаются по одному и тому же соединению (если только не используется AMI через HTTP). |
+| `Channel` | `SIP/myphone` | Этот заголовок является критическим и обязательно должен быть указан. Он описывает исходящий вызов, который будет инициирован. Значение имеет тот же синтаксис, что и аргумент канала для приложения `Dial()` в диалплане. |
+| `Context` | `default` | Этот заголовок используется для указания положения в диалплане, которое будет запущено после ответа на исходящий вызов. Заголовки `Context`, `Exten` и `Priority` должны быть использованы вместе. При использовании этих заголовков не следует использовать заголовки `Application` и `Data`. |
+| `Exten` | `s` | Смотри документацию по заголовку `Context`. |
+| `Priority` | `1` | Смотри документацию по заголовку `Context`. |
+| `Application` | `ConfBridge` | Заголовки `Application` и `Data` можно использовать вместо заголовков `Context`, `Exten` и `Priority`. В этом случае исходящий вызов напрямую соединяется с одним приложением после ответа на вызов. |
+| `Data` | `500` | Смотри документацию по заголовку `Application`. |
+| `Timeout` | `30000` | Этот заголовок определяет, как долго (в миллисекундах) ждать ответа, прежде чем отказаться от исходящего вызова. Значение по умолчанию - 30000 миллисекунд (30 секунд). |
+| `CallerID` | `Matthew Jordan <(555) 867-5309>` | Этот заголовок можно использовать для указания идентификатора вызывающего абонента, используемого для исходящего вызова. |
+| `Account` | `someaccount` | Этот заголовок задает код учетной записи CDR для исходящего вызова. |
+| `Variable` | `VARIABLE=VALUE` или `FUNCTION(arguments)=VALUE` | Заголовок `Variable` может использоваться для задания как переменных канала, так и функций канала на исходящем канале. Его можно задать несколько раз. |
+| `Codecs` | `ulaw,alaw` | Этот параметр можно использовать для ограничения количества кодеков, разрешенных для исходящего вызова. Если этот параметр не указан, то набор кодеков, настроенных в файле конфигурации драйвера канала, будет по-прежнему учитываться. |
+| `EarlyMedia` | `true` | Если этот заголовок указан и установлен в `true`, исходящий вызов будет подключен к указанному добавочному номеру или приложению, как только появится какой-либо медиапоток. |
+| `Async` | `true` | Если этот заголовок задан и имеет значение `true`, то этот вызов будет инициирован асинхронно. Это позволит вам продолжить выполнение других действий на AMI-соединении во время обработки вызова. |
 
-The simplest example of using the Originate action is via telnet:
+Самый простой пример использования действия `Originate` через `telnet`:
 
 ```
 $ telnet localhost 5038
@@ -475,7 +475,7 @@ Escape character is '^]'.
 Asterisk Call Manager/4.0.3
 ```
 
-Once the connection is established, you need to log in.
+Как только соединение установлено Вам необходимо войти в систему.
 
 ```
 Action: Login
@@ -488,7 +488,7 @@ Response: Success
 Message: Authentication accepted
 ```
 
-Now you’re ready to originate your call. We’re doing essentially the same thing we did with the call file, only this time using the AMI:
+Теперь вы готовы инициировать свой звонок. Мы делаем практически то же самое что и с файлом вызова, только на этот раз с помощью AMI:
 
 ```
 Action: Originate
@@ -498,9 +498,9 @@ Exten: 103
 Priority: 1
 ```
 
-You should hear SOFTPHONE\_A ringing. As soon as you answer it, a call will be placed to SOFTPHONE\_B.
+Вы должны услышать звонок `SOFTPHONE_A`. Как только вы ответите на него, вызов будет сделан на `SOFTPHONE_B`.
 
-AMI is no longer involved in what’s going on. You can disconnect and the call will continue \(leave the call up for now, as we’re going to work with the in-progress call next\).
+AMI больше не участвует в том что происходит. Вы можете отключиться, и вызов будет продолжен (оставьте его в данный момент, так как мы собираемся работать с текущим вызовом далее).
 
 ```
 Action: Logoff
@@ -512,97 +512,73 @@ Message: Thanks for all the fish.
 Connection closed by foreign host.
 ```
 
-If you’ve already hung up the call, that’s no problem. You’ll just need to re-establish the call, which of course you can do simply by calling one extension from the other \(101 to 103, or whatever you want\).
+Если вы уже повесили трубку - это не проблема. Вам просто нужно будет восстановить вызов, что, конечно же, вы можете сделать, просто позвонив по одному номеру с другого (101-103 или как пожелаете).
 
 ### Redirecting a Call
 
-Redirecting \(or transferring\) a call from the AMI is another feature worth mentioning. The Redirect AMI action can be used to send one or two channels to any other extension in the Asterisk dialplan. If you need to redirect two channels that are bridged together, do them both at the same time. Otherwise, once one channel has been redirected, the other will be hung up.
+Redirecting (or transferring) a call from the AMI is another feature worth mentioning. The Redirect AMI action can be used to send one or two channels to any other extension in the Asterisk dialplan. If you need to redirect two channels that are bridged together, do them both at the same time. Otherwise, once one channel has been redirected, the other will be hung up.
 
-An important thing to understand about Asterisk channels is that they don’t exist until a call is in progress. The name we all think of as the channel name \(e.g., SOFTPHONE\_A\) is not in fact the channel name, but merely a reference to data that is used to create a channel. The naming of a channel takes place when a call is originated \(which is when the channel is actually created\). What all this means is that you have to determine the full name of the channel before you can act on it.
-
-Originate a call, and then review the Event: Newchannel and you will see the channel name under the Channel: header.
-
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+<p>An important thing to understand about Asterisk channels is that they don’t exist until a call is in progress. The name we all think of as the channel name (e.g., SOFTPHONE_A) is not in fact the channel name, but merely a reference to data that is used to create a channel. The naming of a channel takes place when a call is originated (which is when the channel is actually created). What all this means is that you have to determine the full name of the channel before you can act on it.<p>
+<p>Originate a call, and then review the Event: Newchannel and you will see the channel name under the Channel: header.</p>
+<p><pre><code>
 Action: Originate
-
-Channel: PJSIP/SOFTPHONE\_A
-
+Channel: PJSIP/SOFTPHONE_A
 Context: sets
-
 Exten: 103
-
 Priority: 1
-
+</code></pre></p>
+<p><pre><code>
 Response: Success
-
-Message: Originate successfully queued
-
+Message: Originate successfully queued<br>
 Event: Newchannel
-
 Privilege: call,all
-
-Channel: PJSIP/SOFTPHONE\_A-00000013
-
+Channel: PJSIP/SOFTPHONE_A-00000013
 ChannelState: 0
-
 ChannelStateDesc: Down
-
-CallerIDNum: &lt;unknown&gt;
-
-CallerIDName: &lt;unknown&gt;
-
-ConnectedLineNum: &lt;unknown&gt;
-
-ConnectedLineName: &lt;unknown&gt;
-
+CallerIDNum: <unknown>
+CallerIDName: <unknown>
+ConnectedLineNum: <unknown>
+ConnectedLineName: <unknown>
 Language: en
-
 AccountCode:
-
 Context: sets
-
 Exten: s
-
 Priority: 1
-
 Uniqueid: 1538939479.29
-
 Linkedid: 1538939479.29
+</code></pre></p>
+<p>The Newchannel event will provide the name of the created channel, which in this example is <code>PJSIP/SOFTPHONE_A-00000013</code>.</p>
+<p>You will need to keep track of these channel names if you wish to properly perform actions on calls in progress. Once the call ends, the channel is destroyed. A new call using the same endpoint will be assigned a different channel name. One channel definition can support multiple calls (for example, multiple calls to a phone are possible), and this is why the channel name is different from the channel definition.</p>
+</td>
+</tr>
+</table>
 
-The Newchannel event will provide the name of the created channel, which in this example is PJSIP/SOFTPHONE\_A-00000013.
+You can redirect a single channel (the other channel will be disconnected):
 
-You will need to keep track of these channel names if you wish to properly perform actions on calls in progress. Once the call ends, the channel is destroyed. A new call using the same endpoint will be assigned a different channel name. One channel definition can support multiple calls \(for example, multiple calls to a phone are possible\), and this is why the channel name is different from the channel definition.
-
-You can redirect a single channel \(the other channel will be disconnected\):
-
+```
 Action: Redirect
-
-Channel: PJSIP/SOFTPHONE\_A-00000013
-
+Channel: PJSIP/SOFTPHONE_A-00000013
 Exten: 209
-
 Context: sets
-
 Priority: 1
+```
 
 Or you can redirect two channels:
 
+```
 Action: Redirect
-
-Channel: PJSIP/SOFTPHONE\_A-00000015
-
+Channel: PJSIP/SOFTPHONE_A-00000015
 Context: sets
-
 Exten: 209
-
 Priority: 1
-
-ExtraChannel: PJSIP/SOFTPHONE\_B-00000016
-
+ExtraChannel: PJSIP/SOFTPHONE_B-00000016
 ExtraContext: sets
-
 ExtraExten: 209
-
 ExtraPriority: 1
+```
 
 The redirect function allows you to create powerful external applications that can control calls in progress.
 
@@ -630,11 +606,11 @@ Documentation
 
 The code should be well commented, but ideally, a wiki or other official documentation to support the library is essential.
 
-[Table 17-2](17.%20Asterisk%20Manager%20Interface%20and%20Call%20Files%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AMI-frameworks) lists some frameworks we have found that, as of this writing, met the preceding criteria. There may be others out there.
+Table 17-2 lists some frameworks we have found that, as of this writing, met the preceding criteria. There may be others out there.
 
-Table 17-2. AMI development frameworks
+_Таблица 17-2. Разработка фреймворков AMI_
 
-| Framework | Language |
+| Фреймворк | Язык |
 | :--- | :--- |
 | Adhearsion | Ruby |
 | StarPy | Python |
@@ -645,6 +621,6 @@ Table 17-2. AMI development frameworks
 
 ## Conclusion
 
-The Asterisk Manager Interface provides an API for monitoring events from an Asterisk system, as well as requesting that Asterisk perform a wide range of actions. An HTTP interface has been provided, and a number of frameworks have been developed, that make it easier to develop applications.
+AMI предоставляет API для мониторинга событий из системы Asterisk, а также запрашивает Asterisk выполнять широкий спектр действий. Был предоставлен интерфейс HTTP, и был разработан ряд фреймворков, которые облегчают разработку приложений.
 
 [Глава 16. Введение в интерактивное голосовое меню](glava-16.md) | [Содержание](SUMMARY.md) | [Глава 18. AGI](glava-18.md)
