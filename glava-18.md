@@ -43,7 +43,7 @@ exten => 237,1,AGI(hello-world.sh)
 
 ### Process-Based AGI
 
-Process-based AGI \(AGI на основе процесса\) является простейшим вариантом AGI. Пример быстрого запуска в начале этой главы является примером сценария Process-based AGI. Скрипт вызывается с помощью приложения `AGI()` из диалплана Asterisk. Запускаемое приложение указывается в качестве первого аргумента функции `AGI()`. Если не указан полный путь, приложение должно находиться в каталоге _/var/lib/asterisk/agi-bin_. Аргументы, передаваемые приложению AGI, могут быть указаны в качестве дополнительных аргументов приложения `AGI()` в диалплане Asterisk. Синтаксис такой:
+Process-based AGI (AGI на основе процесса) является простейшим вариантом AGI. Пример быстрого запуска в начале этой главы является примером сценария Process-based AGI. Скрипт вызывается с помощью приложения `AGI()` из диалплана Asterisk. Запускаемое приложение указывается в качестве первого аргумента функции `AGI()`. Если не указан полный путь, приложение должно находиться в каталоге _/var/lib/asterisk/agi-bin_. Аргументы, передаваемые приложению AGI, могут быть указаны в качестве дополнительных аргументов приложения `AGI()` в диалплане Asterisk. Синтаксис такой:
 
 ```text
 AGI(command[,arg1[,arg2[,...]]])
@@ -57,67 +57,84 @@ AGI(command[,arg1[,arg2[,...]]])
 
 ---
 
-Once Asterisk executes your AGI application, communication between Asterisk and your application will take place over stdin and stdout. More details about this communication will be covered in [“AGI Communication Overview”](18.%20Asterisk%20Gateway%20Interface%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AGI-communication). For more details about invoking AGI\(\) from the dialplan, check the documentation built into Asterisk:
+Как только Asterisk выполнит ваше приложение AGI, связь между Asterisk и вашим приложением будет осуществляться через `stdin` и `stdout`. Более подробно об этом сообщении будет рассказано в разделе [“Обзор коммуникаций AGI”](#обзор-коммуникаций-agi). Для получения более подробной информации о вызове `AGI()` из диалплана проверьте документацию, встроенную в Asterisk:
 
-*CLI&gt; core show application AGI
+```
+*CLI> core show application AGI
+```
 
-Pros of process-based AGI
+**Плюсы Process-Based AGI (на основе процессов)**
 
-It is the simplest form of AGI to implement.
+Это самая простая форма реализации аги.
 
-Cons of process-based AGI
+**Минусы AGI на основе процессов**
 
-It is the least efficient form of AGI with regard to resource consumption. Systems with high load should consider FastAGI, discussed in [“FastAGI—AGI over TCP”](18.%20Asterisk%20Gateway%20Interface%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22FastAGI), instead.
+Это наименее эффективная форма AGI с точки зрения потребления ресурсов. Вместо этого системы с высокой нагрузкой должны рассматривать FastAGI, описанные в разделе ["FastAGI - AGI через TCP"](#fastagi-agi-через-tcp).
 
 #### EAGI
 
-EAGI \(Enhanced AGI\) is a slight variant on AGI\(\). It is invoked in the Asterisk dialplan as EAGI\(\). The difference is that in addition to the communication on stdin and stdout, Asterisk also provides a unidirectional stream of audio coming from the channel on file descriptor 3. For more details on how to invoke EAGI\(\) from the Asterisk dialplan, check the documentation built into Asterisk:
+EAGI (Enhanced AGI - расширенный AGI) является легким вариантом на `AGI()`. Он вызывается в диалплане Asterisk как `EAGI()`. Разница в том, что в дополнение к связи на `stdin` и `stdout`, Asterisk также обеспечивает однонаправленный аудиопоток, поступающий из канала на файловый дескриптор 3. Для получения более подробной информации о том, как вызвать `EAGI()` из диалплана Asterisk, проверьте документацию, встроенную в Asterisk:
 
-\*CLI&gt; core show application EAGI
+```
+*CLI> core show application EAGI
+```
 
-Pros of Enhanced AGI
+**Плюсы расширенного AGI**
 
-It has the simplicity of process-based AGI, with the addition of a simple read-only stream of the channel’s audio. This is the only variant that offers this feature.
+Он проще Process-based AGI, с добавлением простого канала аудиопотока только для чтения. Это единственный вариант, который предлагает эту функцию.
 
-Cons of Enhanced AGI
+**Минусы расширенного AGI**
 
-Since a new process must be spawned to run your application for every call, it has the same efficiency concerns as regular, process-based AGI.
+Поскольку для запуска приложения для каждого вызова необходимо создать новый процесс, он имеет те же проблемы эффективности, что и обычный, Process-Based AGI.
 
-**Tip**
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="left"><b>Подсказка</b></p>
+      <p>Для альтернативного способа получения доступа к аудио вне Asterisk, рассмотрите возможность использования <a href=https://jackaudio.org/>JACK</a>. Asterisk имеет модуль для интеграции JACK, называемый <code>app_jack</code>. Он предоставляет приложение <code>Jack()</code> и функцию диалплана <code>JACK_HOOK()</code>.
+    </td>
+  </tr>
+</table>
 
-For an alternative way of gaining access to the audio outside Asterisk, consider using [JACK](http://jackaudio.org/). Asterisk has a module for JACK integration, called app\_jack. It provides the JACK\(\) dialplan application and the JACK\_HOOK\(\) dialplan function.
+### FastAGI—AGI через TCP
 
-### FastAGI—AGI over TCP
+_FastAGI_ - это термин, используемый для управления вызовами AGI через TCP-соединение. При использовании AGI на основе процессов экземпляр приложения AGI выполняется в системе для каждого вызова и связь с этим приложением осуществляется через `stdin` и `stdout`. С помощью FastAGI осуществляется TCP-соединение с сервером FastAGI. Управление вызовами осуществляется с использованием того же протокола AGI, но связь осуществляется через TCP-соединение и не требует запуска нового процесса для каждого вызова. Протокол AGI более подробно рассматривается в разделе ["Обзор коммуникаций AGI"](обзор-коммуникаций-agi). Использование FastAGI гораздо более масштабируемо, чем Process-Based AGI, хотя и более сложно в реализации.
 
-FastAGI is the term used for AGI call control over a TCP connection. With process-based AGI, an instance of an AGI application is executed on the system for every call, and communication with that application is done over stdin and stdout. With FastAGI, a TCP connection is made to a FastAGI server. Call control is done using the same AGI protocol, but the communication is over the TCP connection and does not require a new process to be started for every call. The AGI protocol is discussed in more detail in [“AGI Communication Overview”](18.%20Asterisk%20Gateway%20Interface%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AGI-communication). Using FastAGI is much more scalable than process-based AGI, though it is also more complex to implement.
+Чтобы использовать FastAGI, вы вызываете приложение `AGI()` в диалплане Asterisk, но вместо имени приложения, которое нужно выполнить, вы предоставляете URL-адрес `agi://``. Например:
 
-To use FastAGI you invoke the AGI\(\) application in the Asterisk dialplan, but instead of providing the name of the application to execute, you provide an agi:// URL. For example:
+```
+exten => 238,1,AGI(agi://127.0.0.1)
+```
 
-exten =&gt; 238,1,AGI\(agi://127.0.0.1\)
+Номер порта по умолчанию для соединения FastAGI - `4573`. После двоеточия к URL-адресу можно добавить другой номер порта. Например:
 
-The default port number for a FastAGI connection is 4573. A different port number can be appended to the URL after a colon. For example:
+```
+exten => 238,1,AGI(agi://127.0.0.1:4574)
+```
 
-exten =&gt; 238,1,AGI\(agi://127.0.0.1:4574\)
+Так же, как и в случае AGI на основе процессов, аргументы могут передаваться в приложение FastAGI. Для этого добавьте их в качестве дополнительных аргументов в приложение `AGI()`, разделенных запятыми:
 
-Just as with process-based AGI, arguments can be passed to a FastAGI application. To do so, add them as additional arguments to the AGI\(\) application, delimited by commas:
+```
+exten => 238,1,AGI(agi://192.168.1.199,arg1,arg2,arg3)
+```
 
-exten =&gt; 238,1,AGI\(agi://192.168.1.199,arg1,arg2,arg3\)
+FastAGI также поддерживает использование записей DNS SRV, если вы предоставляете URL в виде `hagi://`. Используя записи SRV, DNS-серверы могут возвращать несколько узлов, к которым Asterisk может попытаться подключиться. Это может быть использовано для обеспечения высокой доступности и балансировки нагрузки. В следующем примере, чтобы найти сервер FastAGI для подключения, Asterisk выполнит поиск DNS для `_agi._tcp.shifteight.org`:
 
-FastAGI also supports the usage of DNS SRV records, if you provide a URL in the form of hagi://. By using SRV records, your DNS servers can return multiple hosts that Asterisk can attempt to connect to. This can be used for high availability and load balancing. In the following example, to find a FastAGI server to connect to, Asterisk will perform a DNS lookup for \_agi.\_tcp.shifteight.org:
+```
+exten => 238,1,AGI(hagi://shifteight.org)
+```
 
-exten =&gt; 238,1,AGI\(hagi://shifteight.org\)
+В этом примере DNS-серверы для домена `shifteight.org` потребуется хотя бы одна SRV-запись, настроенная для `_agi._tcp.shifteight.org`.
 
-In this example, the DNS servers for the shifteight.org domain would need at least one SRV record configured for \_agi.\_tcp.shifteight.org.
+**Плюсы FastAGI**
 
-Pros of FastAGI
+Более эффективен, чем process-based AGI. Вместо того, чтобы порождать новый процесс на вызов, можно построить сервер FastAGI для обработки нескольких вызовов.
 
-It’s more efficient than process-based AGI. Rather than spawning a process per call, a FastAGI server can be built to handle many calls.
+DNS может использоваться для достижения высокой доступности и балансировки нагрузки между серверами FastAGI для дальнейшего повышения масштабируемости.
 
-DNS can be used to achieve high availability and load balancing among FastAGI servers to further enhance scalability.
+**Минусы FastAGI**
 
-Cons of FastAGI
-
-It is more complex to implement a FastAGI server than to implement a process-based AGI application.
+Он является более сложным для реализации сервера FastAGI, чем реализация приложения AGI на основе процессов.
 
 ### Async AGI—AMI-Controlled AGI
 
@@ -127,9 +144,9 @@ Async AGI allows an application that uses the Asterisk Manager Interface \(AMI\)
 
 More information on the Asterisk Manager Interface can be found in [Chapter 17](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch17.html%22%20/l%20%22asterisk-AMI).
 
-Async AGI is invoked by the AGI\(\) application in the Asterisk dialplan. The argument to AGI\(\) should be agi:async, as shown in the following example:
+Async AGI is invoked by the AGI() application in the Asterisk dialplan. The argument to AGI() should be agi:async, as shown in the following example:
 
-exten =&gt; 239,AGI\(agi:async\)
+exten => 239,AGI(agi:async)
 
 Additional information on how to use async AGI over the AMI can be found in the next section.
 
@@ -143,25 +160,21 @@ It is the most complex way to implement AGI.
 
 **Setting Up /etc/asterisk/manager.conf for Async AGI**
 
-To make use of async AGI, an AMI account must have the agi permission for both read and write. For example, the following user defined in manager.conf would be able to both a\) execute AGI manager actions, and b\) receive AGI manager events:
+To make use of async AGI, an AMI account must have the agi permission for both read and write. For example, the following user defined in manager.conf would be able to both a) execute AGI manager actions, and b) receive AGI manager events:
 
+```
 ; Define a user called 'hello', with a password of 'world'.
-
 ; Give this user read/write permissions for AGI.
-
 ;
-
-\[hello\]
-
+[hello]
 secret = world
-
 read = agi
-
 write = agi
+```
 
 ## AGI Communication Overview
 
-The preceding section discussed the variations of AGI that can be used. This section goes into more detail about how your custom AGI application communicates with Asterisk once AGI\(\) has been invoked.
+The preceding section discussed the variations of AGI that can be used. This section goes into more detail about how your custom AGI application communicates with Asterisk once AGI() has been invoked.
 
 ### Setting Up an AGI Session
 
@@ -171,7 +184,7 @@ Once AGI\(\) or EAGI\(\) has been invoked from the Asterisk dialplan, some infor
 
 For a process-based AGI application or a connection to a FastAGI server, the variables listed in [Table 18-1](18.%20Asterisk%20Gateway%20Interface%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AGI-variables) will be the first pieces of information sent from Asterisk to your application. Each variable will be on its own line, in the form:
 
-agi\_variable: value
+agi_variable: value
 
 Table 18-1. AGI environment variables
 
@@ -205,15 +218,12 @@ For an example of the variables that might be sent to an AGI application, see th
 
 When you use async AGI, Asterisk will send out a manager event called AsyncAGI to initiate the async AGI session. This event will allow applications listening to manager events to take over control of the call via the AGI manager action. Here is an example manager event sent out by Asterisk:
 
+```
 Event: AsyncAGI
-
 Privilege: agi,all
-
 SubEvent: Start
-
 Channel: SIP/0000FFFF0001-00000000
-
-Env: agi\_request%3A%20async%0Aagi\_channel%3A%20SIP%2F0000FFFF0001-00000000%0A \
+Env: agi_request%3A%20async%0Aagi\_channel%3A%20SIP%2F0000FFFF0001-00000000%0A \
 
  agi\_language%3A%20en%0Aagi\_type%3A%20SIP%0A \
 
@@ -230,8 +240,9 @@ Env: agi\_request%3A%20async%0Aagi\_channel%3A%20SIP%2F0000FFFF0001-00000000%0A 
  agi\_extension%3A%20111%0Aagi\_priority%3A%201%0Aagi\_enhanced%3A%200.0%0A \
 
  agi\_accountcode%3A%20%0Aagi\_threadid%3A%20-1339524208%0A%0A
+```
 
-**Note**
+**Примечание**
 
 The value of the Env header in this AsyncAGI manager event is all on one line. The long value of the Env header has been URI encoded.
 
@@ -239,13 +250,13 @@ The value of the Env header in this AsyncAGI manager event is all on one line. T
 
 Once an AGI session has been set up, Asterisk begins performing call processing in response to commands sent from the AGI application. As soon as an AGI command has been issued to Asterisk, no further commands will be processed on that channel until the current command has been completed. When it finishes processing a command, Asterisk will respond with the result.
 
-**Note**
+**Примечание**
 
 The AGI processes commands in a serial manner. Once a command has been executed, no further commands can be executed until Asterisk has returned a response. Some commands can take a very long time to execute. For example, the EXEC AGI command executes an Asterisk application. If the command is EXEC Dial, AGI communication is blocked until the call is done. If your AGI application needs to interact further with Asterisk at this point, it can do so using the AMI, which is covered in [Chapter 17](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch17.html%22%20/l%20%22asterisk-AMI).
 
 You can retrieve a full list of available AGI commands from the Asterisk console by running the command agi show commands. These commands are described in [Table 18-2](18.%20Asterisk%20Gateway%20Interface%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AGI-commands-table). To get more detailed information on a specific AGI command, including syntax information for any arguments that a command expects, use agi show commands topic COMMAND. For example, to see the built-in documentation for the ANSWER AGI command, you would use agi show commands topic ANSWER.
 
-Table 18-2. AGI commands
+Таблица 18-2. Команды AGI
 
 <table>
   <thead>
@@ -500,7 +511,7 @@ AGI commands are sent to Asterisk on a single line. The line must end with a sin
 
 200 result=0
 
-**Tip**
+**Подсказка**
 
 The Asterisk console allows debugging the communications with an AGI application. To enable AGI communication debugging, run the agi set debug on command. To turn debugging off, use agi set debug off. While this debugging mode is on, all communication to and from an AGI application will be printed out to the Asterisk console. An example of this output can be found in [“Quick Start”](18.%20Asterisk%20Gateway%20Interface%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AGI-quickstart).
 
@@ -508,51 +519,40 @@ The Asterisk console allows debugging the communications with an AGI application
 
 When you’re using async AGI, you issue commands by using the AGI manager action. To see the built-in documentation for the AGI manager action, run manager show command AGI at the Asterisk CLI. A demonstration will help clarify how AGI commands are executed using the async AGI method. First, an extension is created in the dialplan that runs an async AGI session on a channel:
 
-exten =&gt; 240,AGI\(agi:async\)
+```
+exten => 240,AGI(agi:async)
+```
 
 When the AGI dialplan application is executed, a manager event called AsyncAGI will be sent out with all the AGI environment variables. Details about this event are in [“Async AGI”](18.%20Asterisk%20Gateway%20Interface%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AGI_id268960). After this, AGI manager actions can start to take place via AMI.
 
 The following shows an example manager-action execution and the manager events that are emitted during async AGI processing. After the initial execution of the AGI manager action, there is an immediate response to indicate that the command has been queued up for execution. Later, there is a manager event that indicates that the queued command has been executed. The CommandID header can be used to associate the initial request with the event that indicates that the command has been executed:
 
+```
 Action: AGI
-
 Channel: SIP/0004F2060EB4-00000013
-
 ActionID: my-action-id
-
 CommandID: my-command-id
-
 Command: VERBOSE "Puppies like cotton candy." 1
-
 Response: Success
-
 ActionID: my-action-id
-
 Message: Added AGI command to queue
-
 Event: AsyncAGI
-
 Privilege: agi,all
-
 SubEvent: Exec
-
 Channel: SIP/0004F2060EB4-00000013
-
 CommandID: my-command-id
-
 Result: 200%20result%3D1%0A
+```
 
 The following output is what was seen on the Asterisk console during this async AGI session:
 
- -- Executing \[7011@phones:1\] AGI\("SIP/0004F2060EB4-00000013",
-
+```
+ -- Executing [7011@phones:1] AGI("SIP/0004F2060EB4-00000013",
  "agi:async"\) in new stack
-
  agi:async: Puppies like cotton candy.
-
  == Spawn extension \(phones, 7011, 1\)
-
 exited non-zero on 'SIP/0004F2060EB4-00000013'
+```
 
 ### Ending an AGI Session
 
@@ -570,11 +570,11 @@ The next thing that happens after a channel hangs up is that an explicit notific
 
 If you would like to disable having Asterisk send the SIGHUP signal to your process-based AGI application or the HANGUP string to your FastAGI server, you can do so by setting the AGISIGHUP channel variable, as demonstrated in this short example:
 
-; no SIGHUP \(AGI\) or HANGUP \(FastAGI\)
-
-exten =&gt; 237,1,Set\(AGISIGHUP=no\)
-
- same =&gt; n,AGI\(hello-world.sh\)
+```
+; no SIGHUP (AGI) or HANGUP (FastAGI)
+exten => 237,1,Set(AGISIGHUP=no)
+ same =&gt; n,AGI(hello-world.sh)
+```
 
 Once the hangup has happened, the only AGI commands that may be used are those that do not require channel interaction. The documentation for the AGI commands built into Asterisk includes an indication of whether or not each command can be used once the channel has been hung up.
 
