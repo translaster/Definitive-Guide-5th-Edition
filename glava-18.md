@@ -136,41 +136,52 @@ DNS может использоваться для достижения высо
 
 Он является более сложным для реализации сервера FastAGI, чем реализация приложения AGI на основе процессов.
 
-### Async AGI—AMI-Controlled AGI
+### Асинхронный AGI - АМИ-контролируемый AGI
 
-Async AGI allows an application that uses the Asterisk Manager Interface \(AMI\) to asynchronously queue up AGI commands to be executed on a channel. This can be especially useful if you are already making extensive use of the AMI and would like to enhance your application to handle call control, rather than writing a detailed Asterisk dialplan or developing a separate FastAGI server.
+Async AGI позволяет приложению, использующему интерфейс AMI, асинхронно ставить команды AGI в очередь для выполнения на канале. Это может быть особенно полезно, если вы уже широко используете AMI и хотите улучшить свое приложение для обработки управления вызовами, а не писать подробный диалплан Asterisk или разрабатывать отдельный сервер FastAGI.
 
-**Tip**
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="left"><b>Подсказка</b></p>
+      <p>Дополнительную информацию об Asterisk Manager Interface можно найти в [Главе 17](glava-17.md#глава-17-ami-и-файлы-вызовов).</p>
+    </td>
+  </tr>
+</table>
 
-More information on the Asterisk Manager Interface can be found in [Chapter 17](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch17.html%22%20/l%20%22asterisk-AMI).
-
-Async AGI is invoked by the AGI() application in the Asterisk dialplan. The argument to AGI() should be agi:async, as shown in the following example:
-
-exten => 239,AGI(agi:async)
-
-Additional information on how to use async AGI over the AMI can be found in the next section.
-
-Pros of async AGI
-
-An existing AMI application can be used to control calls using AGI commands.
-
-Cons of async AGI
-
-It is the most complex way to implement AGI.
-
-**Setting Up /etc/asterisk/manager.conf for Async AGI**
-
-To make use of async AGI, an AMI account must have the agi permission for both read and write. For example, the following user defined in manager.conf would be able to both a) execute AGI manager actions, and b) receive AGI manager events:
+Асинхронный AGI вызывается приложением `AGI()` в диалплане Asterisk. Аргумент для `AGI()` должен быть `agi:async`, как показано в следующем примере:
 
 ```
-; Define a user called 'hello', with a password of 'world'.
-; Give this user read/write permissions for AGI.
+exten => 239,AGI(agi:async)
+```
+
+Дополнительную информацию о том, как использовать асинхронный AGI через AMI, можно найти в следующем разделе.
+
+**Плюсы асинхронного AGI**
+
+Существующее приложение AMI можно использовать для управления вызовами с помощью команд AGI.
+
+**Минусы асинхронного аги**
+
+Это самый сложный способ реализации аги.
+
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+      <p align="center"><b>Настройка /etc/asterisk/manager.conf для асинхронного AGI</b>
+      <p>Чтобы использовать асинхронный AGI, учетная запись AMI должна иметь разрешение agi как на чтение, так и на запись. Например, следующий пользователь определенный в <i>manager.conf</i> будет иметь возможность как а) выполнять действия диспетчера AGI, так и б) получать события AGI:
+      <p><pre><code>
+; Определите пользователя с именем "hello" и паролем "world".
+; Предоставьте этому пользователю разрешения на чтение/запись для AGI.
 ;
 [hello]
 secret = world
 read = agi
 write = agi
-```
+      </code></pre></p>
+    </td>
+  </tr>
+</table>
 
 ## AGI Communication Overview
 
@@ -178,7 +189,7 @@ The preceding section discussed the variations of AGI that can be used. This sec
 
 ### Setting Up an AGI Session
 
-Once AGI\(\) or EAGI\(\) has been invoked from the Asterisk dialplan, some information is passed to the AGI application to set up the AGI session. This section discusses what steps are taken at the beginning of an AGI session for the different variants of AGI.
+Once AGI() or EAGI() has been invoked from the Asterisk dialplan, some information is passed to the AGI application to set up the AGI session. This section discusses what steps are taken at the beginning of an AGI session for the different variants of AGI.
 
 #### Process-based AGI/FastAGI
 
@@ -190,27 +201,27 @@ Table 18-1. AGI environment variables
 
 | Variable | Value/example | Description |
 | :--- | :--- | :--- |
-| agi\_request | hello-world.sh | The first argument that was passed to the AGI\(\) or EAGI\(\) application. For process-based AGI, this is the name of the AGI application that has been executed. For FastAGI, this would be the URL that was used to reach the FastAGI server. |
-| agi\_channel | SIP/0004F2060EB4-00000009 | The name of the channel that has executed the AGI\(\) or EAGI\(\) application. |
-| agi\_language | en | The language set on agi\_channel. |
-| agi\_type | SIP | The channel type for agi\_channel. |
-| agi\_uniqueid | 1284382003.9 | The uniqueid of agi\_channel. |
-| agi\_version | 1.8.0-beta4 | The Asterisk version in use. |
-| agi\_callerid | 12565551212 | The full caller ID string that is set on agi\_channel. |
-| agi\_calleridname | Russell Bryant | The caller ID name that is set on agi\_channel. |
-| agi\_callingpres | 0 | The caller presentation associated with the caller ID set on agi\_channel. For more information, see the output of core show function CALLERPRES at the Asterisk CLI. |
-| agi\_callingani2 | 0 | The caller ANI2 associated with agi\_channel. |
-| agi\_callington | 0 | The caller ID TON \(Type of Number\) associated with agi\_channel. |
-| agi\_callingtns | 0 | The dialed number TNS \(Transit Network Select\) associated with agi\_channel. |
-| agi\_dnid | 7010 | The dialed number associated with agi\_channel. |
-| agi\_rdnis | unknown | The redirecting number associated with agi\_channel. |
-| agi\_context | phones | The context of the dialplan that agi\_channel was in when it executed the AGI\(\) or EAGI\(\) application. |
-| agi\_extension | 500 | The extension in the dialplan that agi\_channel was executing when it ran the AGI\(\) or EAGI\(\) application. |
-| agi\_priority | 1 | The priority of agi\_extension in agi\_context that executed AGI\(\) or EAGI\(\). |
-| agi\_enhanced | 0.0 | An indication of whether AGI\(\) or EAGI\(\) was used from the dialplan. 0.0 indicates that AGI\(\) was used. 1.0 indicates that EAGI\(\) was used. |
-| agi\_accountcode | myaccount | The accountcode associated with agi\_channel. |
-| agi\_threadid | 140071216785168 | The threadid of the thread in Asterisk that is running the AGI\(\) or EAGI\(\) application. This may be useful for associating logs generated by the AGI application with logs generated by Asterisk, since the Asterisk logs contain thread IDs. |
-| agi\_arg\_&lt;argument number&gt; | my argument | These variables provide the contents of the additional arguments provided to the AGI\(\) or EAGI\(\) application. |
+| `agi_request` | hello-world.sh | The first argument that was passed to the AGI\(\) or EAGI\(\) application. For process-based AGI, this is the name of the AGI application that has been executed. For FastAGI, this would be the URL that was used to reach the FastAGI server. |
+| `agi_channel` | SIP/0004F2060EB4-00000009 | The name of the channel that has executed the AGI\(\) or EAGI\(\) application. |
+| `agi_language` | en | The language set on agi\_channel. |
+| `agi_type` | SIP | The channel type for agi\_channel. |
+| `agi_uniqueid` | 1284382003.9 | The uniqueid of agi\_channel. |
+| `agi_version` | 1.8.0-beta4 | The Asterisk version in use. |
+| `agi_callerid` | 12565551212 | The full caller ID string that is set on agi\_channel. |
+| `agi_calleridname` | Russell Bryant | The caller ID name that is set on agi\_channel. |
+| `agi_callingpres` | 0 | The caller presentation associated with the caller ID set on agi\_channel. For more information, see the output of core show function CALLERPRES at the Asterisk CLI. |
+| `agi_callingani2` | 0 | The caller ANI2 associated with agi\_channel. |
+| `agi_callington` | 0 | The caller ID TON \(Type of Number\) associated with agi\_channel. |
+| `agi_callingtns` | 0 | The dialed number TNS \(Transit Network Select\) associated with agi\_channel. |
+| `agi_dnid` | 7010 | The dialed number associated with agi\_channel. |
+| `agi_rdnis` | unknown | The redirecting number associated with agi\_channel. |
+| `agi_context` | phones | The context of the dialplan that agi\_channel was in when it executed the AGI\(\) or EAGI\(\) application. |
+| `agi_extension` | 500 | The extension in the dialplan that agi\_channel was executing when it ran the AGI\(\) or EAGI\(\) application. |
+| `agi_priority` | 1 | The priority of agi\_extension in agi\_context that executed AGI\(\) or EAGI\(\). |
+| `agi_enhanced` | 0.0 | An indication of whether AGI\(\) or EAGI\(\) was used from the dialplan. 0.0 indicates that AGI\(\) was used. 1.0 indicates that EAGI() was used. |
+| `agi_accountcode` | myaccount | The accountcode associated with agi\_channel. |
+| `agi_threadid` | 140071216785168 | The threadid of the thread in Asterisk that is running the AGI\(\) or EAGI\(\) application. This may be useful for associating logs generated by the AGI application with logs generated by Asterisk, since the Asterisk logs contain thread IDs. |
+| `agi_arg_<argument number>` | my argument | These variables provide the contents of the additional arguments provided to the AGI\(\) or EAGI() application. |
 
 For an example of the variables that might be sent to an AGI application, see the AGI communication debug output in [“Quick Start”](18.%20Asterisk%20Gateway%20Interface%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AGI-quickstart). The end of the list of variables will be indicated by a blank line. The code handles these variables by reading lines of input in a loop until a blank line is received. At that point, the application continues and begins executing AGI commands.
 
