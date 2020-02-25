@@ -1,630 +1,826 @@
 # Глава 21. Системный мониторинг и журналирование
 
-Chaos is inherent in all compounded things. Strive on with diligence.
+> Хаос присущ всем сложным вещам. Стремитесь дальше с усердием.
+>
+> -- Будда
 
-The Buddha
+Asterisk поставляется с несколькими подсистемами, которые позволяют получить подробную информацию о работе вашей системы. Как для устранения неполадок, так и для отслеживания использования в целях выставления счетов или подбора персонала, различные модули мониторинга Asterisk могут помочь вам следить за внутренней работой вашей системы.
+лесоруб.conf
 
-Asterisk comes with several subsystems that allow you to obtain detailed information about the workings of your system. Whether for troubleshooting or for tracking usage for billing or staffing purposes, Asterisk’s various monitoring modules can help you keep tabs on the inner workings of your system.
+При устранении неполадок в системе Asterisk вам будет очень полезно обратиться к некоторым историческим записям того, что происходило в системе в то время, когда произошла указанная проблема. Параметры для хранения этой информации определены в файле _/etc/asterisk/logger.conf_.
 
-## logger.conf
+В идеале, вы можете захотеть, чтобы система хранила запись каждой вещи, которую она делает. Однако для этого есть свои издержки. На занятой системе с включенным полным журналированием отладки будет создан большой объем данных. Хотя сегодня хранение данных намного дешевле, чем было в молодости Asterisk, возможно, все еще необходимо достичь баланса между детализацией и требованиями к хранению.
 
-When troubleshooting issues in your Asterisk system, you will find it very helpful to refer to some sort of historical record of what was going on in the system at the time the reported issue occurred. The parameters for the storing of this information are defined in /etc/asterisk/logger.conf.
+Файл _/etc/asterisk/logger.conf_ позволяет определить все виды различных уровней ведения журнала, чтобы несколько файлов, если это необходимо. Эта гибкость превосходна, но она также может сбивать с толку.
 
-Ideally, you might want the system to store a record of each and every thing it does. However, there is a cost to doing this. On a busy system, with full debug logging enabled, a large amount of data will be generated. Although storage is far cheaper today than it was when Asterisk was young, it may still be necessary to achieve a balance between detail and storage requirements.
+Формат записи в логгере.файл conf выглядит следующим образом:
 
-The /etc/asterisk/logger.conf file allows you to define all sorts of different levels of logging, to multiple files if desired. This flexibility is excellent, but it can also be confusing.
+```
+filename => type[,type[,type[,...]]]
+```
 
-The format of an entry in the logger.conf file is as follows:
+Мы уже работали с _logger.conf_, так что у вас уже будут записи в нем, похожие на следующие:
 
-filename =&gt; type\[,type\[,type\[,...\]\]\]
+```
+[general]
+exec_after_rotate=gzip -9 ${filename}.2;
 
-We have already been working with the logger.conf file, so you will already have entries in it similar to the following:
-
-\[general\]
-
-exec\_after\_rotate=gzip -9 ${filename}.2;
-
-\[logfiles\]
-
-;debug =&gt; debug
-
-;console =&gt; notice,warning,error,verbose
-
-console =&gt; notice,warning,error,debug
-
-messages =&gt; notice,warning,error
-
-full =&gt; notice,warning,error,debug,verbose,dtmf,fax
-
-;full-json =&gt; \[json\]debug,verbose,notice,warning,error,dtmf,fax
-
+[logfiles]
+;debug => debug
+;console => notice,warning,error,verbose
+console => notice,warning,error,debug
+messages => notice,warning,error
+full => notice,warning,error,debug,verbose,dtmf,fax
+;full-json => [json]debug,verbose,notice,warning,error,dtmf,fax
 ;syslog keyword : This special keyword logs to syslog facility
+;syslog.local0 => notice,warning,error
+```
 
-;syslog.local0 =&gt; notice,warning,error
+Если вы внесете какие-либо изменения в этот файл, вам нужно будет перезагрузить регистратор, выполнив следующую команду из командной консоли:
 
-If you make any changes to this file, you will need to reload the logger by issuing the following command from the shell:
-
+```
 $ sudo touch full messages
-
-$ chown asterisk:asterisk /var/log/asterisk/\*
-
+$ chown asterisk:asterisk /var/log/asterisk/*
 $ asterisk -rx 'logger reload'
+```
 
-or from the Asterisk CLI:
+или из интерфейса командной строки Asterisk:
 
-\*CLI&gt; logger reload
+```
+*CLI> logger reload
+```
 
-**Verbose Logging: Useful but Dangerous**
+Подробное ведение журнала: полезно, но опасно
 
-We struggled with whether to recommend adding the following line to your logger.conf file:
+Мы боролись с тем, чтобы рекомендовать добавление следующей строки в ваш регистратор.файл conf:
 
-verbose =&gt; notice,warning,error,verbose
+verbose => уведомление, предупреждение, ошибка, подробный
 
-This is quite possibly one of the most useful debugging tools you have when building and troubleshooting a dialplan, and therefore it is highly recommended. The danger comes from the fact that if you forget to disable this when you are done with your debugging, you will have left a ticking time bomb in your Asterisk system, which will slowly fill up the hard drive and kill your system one day, several months or years from now, when you are least expecting it.
+Это, вполне возможно, один из самых полезных инструментов отладки, которые вы имеете при создании и устранении неисправностей dialplan, и поэтому это настоятельно рекомендуется. Опасность заключается в том, что если вы забудете отключить это, когда закончите отладку, вы оставите бомбу замедленного действия в своей системе Asterisk, которая медленно заполнит жесткий диск и убьет вашу систему однажды, через несколько месяцев или лет, когда вы меньше всего этого ожидаете.
 
-Use it. It’s fantastic. Just remember that you will need to manage your storage to ensure your logfiles don’t fill up your drive!
+Использовать его. Это просто фантастика. Просто помните, что вам нужно будет управлять своим хранилищем, чтобы гарантировать, что ваши файлы журналов не заполняют ваш диск!
 
-You can specify any filename you want, but the special filename console will in fact print the output to the Asterisk CLI, and not to any file on the hard drive. All other filenames will be stored in the filesystem in the directory /var/log/asterisk. The logger.conf types are outlined in [Table 21-1](21.%20System%20Monitoring%20and%20Logging%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Monitoring_id269148).
+Вы можете указать любое имя файла, которое вы хотите, но специальная консоль filename фактически выведет выходные данные в интерфейс командной строки Asterisk, а не в любой файл на жестком диске. Все остальные имена файлов будут сохранены в файловой системе в каталоге / var/log / asterisk . Лесоруб.типы conf описаны в разделе Таблица 21-1.
 
-Table 21-1. logger.conf types
 
-<table>
-  <thead>
-    <tr>
-      <th style="text-align:left">Type</th>
-      <th style="text-align:left">Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align:left">notice</td>
-      <td style="text-align:left">You will see a lot of these during a reload, but they will also happen
-        during normal call flow. A notice is simply any event that Asterisk wishes
-        to inform you of.</td>
-    </tr>
-    <tr>
-      <td style="text-align:left">warning</td>
-      <td style="text-align:left">A warning represents a problem that could be severe enough to affect a
-        call (including disconnecting a call because call flow cannot continue).
-        Warnings need to be addressed.</td>
-    </tr>
-    <tr>
-      <td style="text-align:left">error</td>
-      <td style="text-align:left">Errors represent significant problems in the system that must be addressed
-        immediately.</td>
-    </tr>
-    <tr>
-      <td style="text-align:left">debug</td>
-      <td style="text-align:left">Debugging is only useful if you are troubleshooting a problem with the
-        Asterisk code itself. You would not use debug to troubleshoot your dialplan,
-        but you would use it if the Asterisk developers asked you to provide logs
-        for a problem you were reporting. Do not use debug in production, as the
-        amount of detail stored can fill up a hard drive in a matter of days.
-        <a
-        href="https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch21.html%22%20/l%20%22idm46178396457896">a</a>
-      </td>
-    </tr>
-    <tr>
-      <td style="text-align:left">verbose</td>
-      <td style="text-align:left">This is one of the most useful of the logging types, but it is also one
-        of the more risky to leave unattended, due to the possibility of the output
-        filling your hard drive.<a href="https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch21.html%22%20/l%20%22idm46178396456264">b</a>
-      </td>
-    </tr>
-    <tr>
-      <td style="text-align:left">dtmf</td>
-      <td style="text-align:left">Logging DTMF can be helpful if you are getting complaints that calls are
-        not routing from the automated attendant correctly.</td>
-    </tr>
-    <tr>
-      <td style="text-align:left">fax</td>
-      <td style="text-align:left">This type of logging causes fax-related messages from the fax technology
-        backend (res_fax_spandsp or res_fax_digium) to be logged to the fax logger.</td>
-    </tr>
-    <tr>
-      <td style="text-align:left">*</td>
-      <td style="text-align:left">This will log everything (and we mean everything). Do not use this unless
-        you understand the implications of storing this amount of data. It will
-        not end well.</td>
-    </tr>
-    <tr>
-      <td style="text-align:left">
-        <p><a href="https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch21.html%22%20/l%20%22idm46178396457896-marker">a</a> This
-          is not theory. It has happened to us. It was not fun.</p>
-        <p><a href="https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch21.html%22%20/l%20%22idm46178396456264-marker">b</a> It&#x2019;s
-          not as risky as debug, since it&#x2019;ll take months to fill the hard
-          drive, but the danger is that it will happen, say, a year later when you&#x2019;re
-          on summer vacation, and it will not immediately be obvious what the problem
-          is. Not fun.</p>
-      </td>
-      <td style="text-align:left"></td>
-    </tr>
-  </tbody>
-</table>**Warning**
+_Таблица 21-1. Типы logger.conf_
 
-There is a peculiarity in Asterisk’s logging system that will cause you some consternation if you are unaware of it. The level of logging for the verbose and debug logging types is tied to the verbosity as set in the console. This means that if you are logging to a file with the verbose or debug type, and somebody logs into the CLI and issues the command core set verbose 0, or core set debug 0, the logging of those details to your logfile will stop.
+| Тип | Описание |
+| :-- | :------- |
+| `notice`  | Вы увидите много таких во время перезагрузки, но они также будут происходить во время обычного потока вызовов. Уведомление-это просто любое событие, о котором Asterisk хочет сообщить вам. |
+| `warning` | Предупреждение представляет проблему, которая может быть достаточно серьезной, чтобы повлиять на вызов (включая отключение вызова, поскольку поток вызовов не может продолжаться). Предупреждения должны быть устранены. |
+| `error`   | Ошибки представляют собой значительные проблемы в системе, которые должны быть решены немедленно. |
+| `debug`   | Отладка полезна только в том случае, если вы устраняете неполадки с самим кодом Asterisk. Вы не будете использовать отлаживать для устранения неполадок вашего dialplan, но вы будете использовать его, если разработчики Asterisk попросят вас предоставить журналы для проблемы, о которой вы сообщали. Не использовать отлаживать в производстве, как количество деталей, хранящихся может заполнить жесткий диск в течение нескольких дней.a |
+| `verbose` | Это один из самых полезных типов ведения журнала, но он также является одним из наиболее рискованных, чтобы оставить его без присмотра, из-за возможности вывода заполнения вашего жесткого диска.b |
+| `dtmf`    | Регистрация DTMF может быть полезна, если вы получаете жалобы на то, что вызовы не маршрутизируются от автосекретаря правильно. |
+| `fax`     | Этот тип ведения журнала вызывает сообщения, связанные с факсом, из серверной части технологии факса (res_fax_spandsp или res_fax_digium) для регистрации в системе регистрации факсов. |
+| `*`       | Это будет регистрировать все (и мы имеем в виду все ). Не используйте его, если вы не понимаете последствий хранения такого количества данных. Это не закончится хорошо. |
 
-### Reviewing Asterisk Logs
+a Но это не теория. Это случилось и с нами. Это было совсем невесело.
 
-Searching through logfiles can be a challenge. The trick is to be able to filter what you are seeing so that you are only presented with information that is relevant to what you are searching for.
+b Это не так рискованно, как кажется отлаживать, так как это займет месяцы, чтобы заполнить жесткий диск, но опасность заключается в том, что это произойдет, скажем, через год, когда вы находитесь на летних каникулах, и сразу не будет очевидно, в чем проблема. Совсем не весело.
+Предупреждение
 
-To start with, you will need to have an approximate idea of when the trouble you are looking for occurred. Once you are oriented to the approximate time, you will need to find clues that will help you to identify the call in question. Obviously, the more information you have about the call, the faster you will be able to pin it down.
+---
 
-Asterisk 11 introduced a logging feature that helps with debugging a specific call. Log entries associated with a call now include a call ID. This call ID can be used with grep to find all log entries associated with that call. In the following example log entry, the call ID is C-00000004:
+Существует особенность в системе ведения журнала Asterisk, которая вызовет у вас некоторое замешательство, если вы не знаете об этом. Уровень ведения журнала для объекта многословный и отлаживать типы ведения журнала привязаны к детализации, заданной в консоли. Это означает, что если вы входите в файл с помощью многословный или отлаживать введите, и кто-то входит в CLI и выдает команду core set verbose 0, или основной набор debug 0, регистрация этих данных в вашем лог-файле будет остановлена.
+Просмотр Журналов Asterisk
 
-\[Dec 4 08:22:32\] WARNING\[14199\]\[C-00000004\]: app\_voicemail.c:6286
+Поиск по журнальным файлам может быть проблемой. Хитрость заключается в том, чтобы иметь возможность фильтровать то, что вы видите, так что вам представлена только информация, которая имеет отношение к тому, что вы ищете.
 
-leave\_voicemail: No entry in voicemail config file for '234123452'
+Для начала вам нужно будет иметь приблизительное представление о том, когда произошла неприятность, которую вы ищете. Как только вы сориентируетесь на приблизительное время, вам нужно будет найти подсказки, которые помогут вам идентифицировать данный звонок. Очевидно, что чем больше информации у вас есть о вызове, тем быстрее вы сможете закрепить его.
 
-In earlier versions of Asterisk, there is another trick you can use. If, for example, you are doing verbose logging, you should note that each distinct call has a thread identifier, which, when used with grep, can often help you to filter out everything that does not relate to the call you are trying to debug. For example, in the following verbose log, we have more than one call in the log, and since the calls are happening at the same time, it can be very confusing to trace one call:
+В Asterisk 11 появилась функция ведения журнала, которая помогает отлаживать определенный вызов. Записи журнала, связанные с вызовом теперь включают идентификатор вызова. Этот идентификатор вызова можно использовать с команда grep чтобы найти все записи журнала, связанные с этим вызовом. В следующем примере записи журнала идентификатор вызова является C-00000004:
 
+```
+[Dec  4 08:22:32] WARNING[14199][C-00000004]: app_voicemail.c:6286
+leave_voicemail: No entry in voicemail config file for '234123452'
+```
+
+В более ранних версиях Asterisk есть еще один трюк, который вы можете использовать. Если, например, вы выполняете подробное ведение журнала, следует отметить, что каждый отдельный вызов имеет идентификатор потока, который при использовании с команда grep, часто может помочь вам отфильтровать все, что не относится к вызову, который вы пытаетесь отладить. Например, в следующем подробном журнале у нас есть несколько вызовов в журнале, и поскольку вызовы происходят одновременно, это может быть очень запутанным, чтобы отслеживать один вызов:
+
+```
 $ tail -1000 verbose
-
-\[Mar 11 …\] VERBOSE\[31362\] logger.c: -- IAX2/shifteight-4 answered Zap/1-1
-
-\[Mar 11 …\] VERBOSE\[2973\] logger.c: -- Starting simple switch on 'Zap/1-1'
-
-\[Mar 11 …\] VERBOSE\[31362\] logger.c: == Spawn extension \(shifteight, s, 1\)
-
+[Mar 11 …] VERBOSE[31362] logger.c:     -- IAX2/shifteight-4 answered Zap/1-1
+[Mar 11 …] VERBOSE[2973] logger.c:     -- Starting simple switch on 'Zap/1-1'
+[Mar 11 …] VERBOSE[31362] logger.c:   == Spawn extension (shifteight, s, 1)
 exited non-zero on 'Zap/1-1'
+[Mar 11 …] VERBOSE[2973] logger.c:     -- Hungup 'Zap/1-1'
+[Mar 11 …] VERBOSE[3680] logger.c:     -- Starting simple switch on 'Zap/1-1'
+[Mar 11 …] VERBOSE[31362] logger.c:     -- Hungup 'Zap/1-1'
+```
 
-\[Mar 11 …\] VERBOSE\[2973\] logger.c: -- Hungup 'Zap/1-1'
+Чтобы отфильтровать один вызов конкретно, мы могли бы команда grep на идентификатор потока. Например:
 
-\[Mar 11 …\] VERBOSE\[3680\] logger.c: -- Starting simple switch on 'Zap/1-1'
-
-\[Mar 11 …\] VERBOSE\[31362\] logger.c: -- Hungup 'Zap/1-1'
-
-To filter on one call specifically, we could grep on the thread ID. For example:
-
+```
 $ grep 31362 verbose
+```
 
-would give us:
+дали бы нам ... :
 
-\[Mar 11 …\] VERBOSE\[31362\] logger.c: -- IAX2/shifteight-4 answered Zap/1-1
-
-\[Mar 11 …\] VERBOSE\[31362\] logger.c: == Spawn extension \(shifteight, s, 1\)
-
+```
+[Mar 11 …] VERBOSE[31362] logger.c:     -- IAX2/shifteight-4 answered Zap/1-1
+[Mar 11 …] VERBOSE[31362] logger.c:   == Spawn extension (shifteight, s, 1)
 exited non-zero on 'Zap/1-1'
+[Mar 11 …] VERBOSE[31362] logger.c:     -- Hungup 'Zap/1-1'
+```
 
-\[Mar 11 …\] VERBOSE\[31362\] logger.c: -- Hungup 'Zap/1-1'
+Этот метод не гарантирует, что вы увидите все, что относится к одному вызову, так как вызов теоретически может породить дополнительные потоки, но для основной отладки dialplan мы находим этот подход очень полезным, когда идентификаторы вызовов из Asterisk 11 недоступны.
+Вход в системный журнал Linux Демон
 
-This method does not guarantee that you will see everything relating to one call, since a call could in theory spawn additional threads, but for basic dialplan debugging we find this approach to be very useful when the call IDs from Asterisk 11 are not available.
+Linux содержит очень мощный механизм ведения журнала, которым может воспользоваться Asterisk. В то время как обсуждение всех различных вкусов из системный журнал и все возможные способы обработки журналов Asterisk будут выходить за рамки этой книги, достаточно сказать, что если вы хотите, чтобы Asterisk отправлял журналы в системный журнал демон, вам просто нужно указать следующее в вашем/etc/asterisk / logger.файл conf:
 
-### Logging to the Linux syslog Daemon
+```
+syslog.local0 => notice,warning,error ; or whatever type(s) you want to log
+```
 
-Linux contains a very powerful logging engine, which Asterisk can take advantage of. While a discussion of all the various flavors of syslog and all the possible ways to handle Asterisk logging would be beyond the scope of this book, suffice it to say that if you want to have Asterisk send logs to the syslog daemon, you simply need to specify the following in your /etc/asterisk/logger.conf file:
+Вам понадобится обозначение в вашем файле конфигурации системного журнала1 упомянутый local0, который должен выглядеть примерно так:
 
-syslog.local0 =&gt; notice,warning,error ; or whatever type\(s\) you want to log
+```
+local0.*      /var/log/asterisk/syslog
+```
 
-You will need a designation in your syslog configuration file[1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch21.html%22%20/l%20%22idm46178396419208) named local0, which should look something like:
+Примечание
 
-local0.\* /var/log/asterisk/syslog
+Вы можете использовать local0 через local7 для этого, но проверьте свой системный журнал.conf файл, чтобы убедиться, что ничто другое не использует один из них системный журнал Каналы.
 
-**Note**
+Использование системный журнал2 позволяет гораздо более мощное ведение журнала, но это также требует больше знаний, чем просто позволяет Asterisk войти в файлы. Это в основном будет полезно, если вы уже собираете другие журналы в системе в какой-то централизованный системный журнал сервер.
+Проверка Ведения Журнала
 
-You can use local0 through local7 for this, but check your syslog.conf file to ensure that nothing else is using one of those syslog channels.
+Вы можете просмотреть состояние всех ваших регистраторов.параметры conf через интерфейс командной строки Asterisk, выполнив команду:
 
-The use of syslog[2](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch21.html%22%20/l%20%22idm46178396410888) allows for much more powerful logging, but it also requires more knowledge than simply allowing Asterisk to log to files. It’s mostly going to be useful if you’re already collecting other logs on the system into some centralized syslog server.
+```
+*CLI> logger show channels
+```
 
-### Verifying Logging
+Вы должны увидеть выходные данные, аналогичные:
 
-You can view the status of all your logger.conf settings through the Asterisk CLI by issuing the command:
+```
+Channel                     Type     Status  Configuration
+-------                     ----     ------  -------------
+syslog.local0               Syslog   Enabled  - NOTICE WARNING ERROR VERBOSE
+/var/log/asterisk/verbose   File     Enabled  - NOTICE WARNING ERROR VERBOSE
+/var/log/asterisk/messages  File     Enabled  - NOTICE WARNING ERROR
+                            Console  Enabled  - NOTICE WARNING ERROR DTMF=
+```
+### Ротация лога
 
-\*CLI&gt; logger show channels
+Существует некоторая поддержка ротации журнала, встроенная в Asterisk. Ротация бревен будет производиться в следующих случаях:
 
-You should see output similar to:
+    Если вы запустите приложение лесозаготовительная машина вращается Команда Asterisk CLI:
 
-Channel Type Status Configuration
+*CLI> лесозаготовительная машина вращается
 
-------- ---- ------ -------------
+    Во время перезагрузки конфигурации, если размер любого существующего файла журнала превышает 1 ГБ
 
-syslog.local0 Syslog Enabled - NOTICE WARNING ERROR VERBOSE
+    Если Asterisk получает SIGXFSZ сигнал, указывающий на то, что файл, в который он записывался, слишком велик
 
-/var/log/asterisk/verbose File Enabled - NOTICE WARNING ERROR VERBOSE
+Подробные Записи Вызовов
 
-/var/log/asterisk/messages File Enabled - NOTICE WARNING ERROR
+Система CDR в Asterisk используется для регистрации истории вызовов в системе. В некоторых развертываниях эти записи используются для выставления счетов. В других случаях записи вызовов используются для анализа объемов вызовов с течением времени. Они также могут использоваться в качестве средства отладки администраторами Asterisk.
+Содержание CDR
 
- Console Enabled - NOTICE WARNING ERROR DTMF=
+CDR имеет ряд полей, которые включены по умолчанию. Таблица 21-2 перечислить их.
 
-### Log Rotation
 
-There is some log rotation support built into Asterisk. Log rotation will be done in the following cases:
+Таблица 21-2. Поля CDR по умолчанию
 
-* If you run the logger rotate Asterisk CLI command:
+Вариант
 
-\*CLI&gt; logger rotate
 
-* During a configuration reload if any existing logfiles are greater than 1 GB in size
-* If Asterisk receives the SIGXFSZ signal, indicating that a file it was writing to is too large
+Значение / пример
 
-## Записи деталей вызовов (CDR)
 
-Система CDR в Asterisk используется для регистрации истории вызовов в системе. В некоторых развертываниях эти записи используются для биллинга (выставления счетов). В других случаях записи деталей вызовов используются для анализа объемов вызовов с течением времени. Они также могут использоваться администраторами Asterisk в качестве средства отладки.
+Примечания
 
-### CDR Contents
+код счета
 
-A CDR has a number of fields that are included by default. [Table 21-2](21.%20System%20Monitoring%20and%20Logging%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22default_cdr_fields) lists them.
 
-Table 21-2. Default CDR fields
+12345
 
-| Option | Value/example | Notes |
-| :--- | :--- | :--- |
-| accountcode | 12345 | An account ID. This field is user-defined and is empty by default. |
-| src | 12565551212 | The calling party’s caller ID number. It is set automatically and is read-only. |
-| dst | 102 | The destination extension for the call. This field is set automatically and is read-only. |
-| dcontext | PublicExtensions | The destination context for the call. This field is set automatically and is read-only. |
-| clid | "Big Bird" &lt;12565551212&gt; | The full caller ID, including the name, of the calling party. This field is set automatically and is read-only. |
-| channel | SIP/0004F2040808-a1bc23ef | The calling party’s channel. This field is set automatically and is read-only. |
-| dstchannel | SIP/0004F2046969-9786b0b0 | The called party’s channel. This field is set automatically and is read-only. |
-| lastapp | Dial | The last dialplan application that was executed. This field is set automatically and is read-only. |
-| lastdata | SIP/0004F2046969,30,tT | The arguments passed to the lastapp. This field is set automatically and is read-only. |
-| start | 2010-10-26 12:00:00 | The start time of the call. This field is set automatically and is read-only. |
-| answer | 2010-10-26 12:00:15 | The answered time of the call. This field is set automatically and is read-only. |
-| end | 2010-10-26 12:03:15 | The end time of the call. This field is set automatically and is read-only. |
-| duration | 195 | The number of seconds between the start and end times for the call. This field is set automatically and is read-only. |
-| billsec | 180 | The number of seconds between the answer and end times for the call. This field is set automatically and is read-only. |
-| disposition | ANSWERED | An indication of what happened to the call. This may be NO ANSWER, FAILED, BUSY, ANSWERED, or UNKNOWN. |
-| amaflags | DOCUMENTATION | The Automatic Message Accounting \(AMA\) flag associated with this call. This may be one of the following: OMIT, BILLING, DOCUMENTATION, or Unknown. |
-| userfield | PerMinuteCharge:0.02 | A general-purpose user field. This field is empty by default and can be set to a user-defined string.[a](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch21.html%22%20/l%20%22idm46178396348760) |
-| uniqueid | 1288112400.1 | The unique ID for the src channel. This field is set automatically and is read-only. |
-| [a](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch21.html%22%20/l%20%22idm46178396348760-marker) The userfield is not as relevant now as it used to be. Custom CDR variables are a more flexible way to get custom data into CDRs. |  |  |
 
-You can access all fields of the CDR record in the Asterisk dialplan by using the CDR\(\) function. The CDR\(\) function is also used to set the fields of the CDR that are user-defined:
+Идентификатор учетной записи. Это поле определяется пользователем и по умолчанию является пустым.
 
-exten =&gt; 115,1,Verbose\(Call start time: ${CDR\(start\)}\)
+Src
 
- same =&gt; n,Set\(CDR\(userfield\)=zombie pancakes\)
 
-In addition to the fields that are always included in a CDR, it is possible to add custom fields. You do this in the dialplan by using the Set\(\) application with the CDR\(\) function:
+12565551212
 
-exten =&gt; 115,1,NoOp\(\)
 
- same =&gt; n,Set\(CDR\(mycustomfield\)=coffee\)
+Идентификационный номер вызывающего абонента. Он устанавливается автоматически и доступен только для чтения.
 
- same =&gt; n,Verbose\(I need some more ${CDR\(mycustomfield\)}\)
+летнее время
 
-**Note**
 
-If you choose to use custom CDR variables, make sure that the CDR backend that you choose is capable of logging them.
+102
 
-To view the built-in documentation for the CDR\(\) function, run the following command at the Asterisk console:
 
-\*CLI&gt; core show function CDR
+Целевой добавочный номер для вызова. Это поле устанавливается автоматически и доступно только для чтения.
 
-In addition to the CDR\(\) function, some dialplan applications may be used to influence CDR records. We’ll look at these next.
+dcontext
 
-### Dialplan Applications
 
-A few dialplan applications can be used to influence CDRs for the current call. To get a list of the CDR applications that are loaded into the current version of Asterisk, we can use the following CLI command:
+PublicExtensions
 
-\*CLI&gt; core show applications like CDR
 
- -= Matching Asterisk Applications =-
+Контекст назначения для вызова. Это поле устанавливается автоматически и доступно только для чтения.
 
- ForkCDR: Forks the Call Data Record.
+clid
 
- NoCDR: Tell Asterisk to not maintain a CDR for the current call
 
- ResetCDR: Resets the Call Data Record.
+"Большая Птица" <12565551212>
 
- -= 3 Applications Matching =-
 
-Each application has documentation built into the Asterisk application, which can be viewed using the following command:
+Полный идентификатор вызывающего абонента, включая имя вызывающей стороны. Это поле устанавливается автоматически и доступно только для чтения.
 
-\*CLI&gt; core show application &lt;application name&gt;
+канал
+
+
+SIP / 0004F2040808-a1bc23ef
+
+
+Канал вызывающей стороны. Это поле устанавливается автоматически и доступно только для чтения.
+
+dstchannel
+
+
+SIP / 0004F2046969-9786b0b0
+
+
+Канал вызываемой стороны. Это поле устанавливается автоматически и доступно только для чтения.
+
+lastapp
+
+
+Набирать номер
+
+
+Последнее приложение dialplan, которое было выполнено. Это поле устанавливается автоматически и доступно только для чтения.
+
+последние данные
+
+
+SIP / 0004F2046969, 30, tT
+
+
+Аргументы, переданные на рассмотрение lastapp. Это поле устанавливается автоматически и доступно только для чтения.
+
+начать
+
+
+2010-10-26 12:00:00
+
+
+Время начала вызова. Это поле устанавливается автоматически и доступно только для чтения.
+
+ответ
+
+
+2010-10-26 12:00:15
+
+
+Ответное время вызова. Это поле устанавливается автоматически и доступно только для чтения.
+
+конец
+
+
+2010-10-26 12:03:15
+
+
+Время окончания вызова. Это поле устанавливается автоматически и доступно только для чтения.
+
+Продолжительность
+
+
+195
+
+
+Количество секунд, прошедших между начать и конец время для звонка. Это поле устанавливается автоматически и доступно только для чтения.
+
+billsec
+
+
+180
+
+
+Количество секунд, прошедших между ответ и конец время для звонка. Это поле устанавливается автоматически и доступно только для чтения.
+
+склонность
+
+
+ОТВЕЧЕННЫЙ
+
+
+Указание на то, что случилось со звонком. Это может быть так НЕТ ОТВЕТА, НЕУДАЧНЫЙ, ЗАНЯТЫЙ, ОТВЕЧЕННЫЙ, или НЕИЗВЕСТНЫЙ.
+
+amaflags
+
+
+ДОКУМЕНТАЦИЯ
+
+
+Флаг автоматического учета сообщений (AMA), связанный с этим вызовом. Это может быть одно из следующих действий: ПРОПУСКАТЬ, ФАКТУРИРОВАНИЕ, ДОКУМЕНТАЦИЯ, или Неизвестный.
+
+userfield
+
+
+PerMinuteCharge:0.02
+
+
+Поле пользователя общего назначения. Это поле пусто по умолчанию и может быть установлено в пользовательскую строку.один
+
+uniqueid
+
+
+1288112400.1
+
+
+Уникальный идентификатор для объекта Src канал. Это поле устанавливается автоматически и доступно только для чтения.
+
+один То userfield сейчас это уже не так актуально, как раньше. Пользовательские переменные CDR-это более гибкий способ получения пользовательских данных в CDRs.
+
+Вы можете получить доступ ко всем полям записи CDR в плане набора номера Asterisk с помощью ЦХД() функция. То ЦХД() функция также используется для установки полей CDR, которые определены пользователем:
+
+```
+exten => 115,1,Verbose(Call start time: ${CDR(start)})
+   same => n,Set(CDR(userfield)=zombie pancakes)
+```
+
+В дополнение к полям, которые всегда включены в CDR, можно добавить пользовательские поля. Это можно сделать в dialplan с помощью Набор() применение с помощью ЦХД() функция:
+
+```
+exten => 115,1,NoOp()
+   same => n,Set(CDR(mycustomfield)=coffee)
+   same => n,Verbose(I need some more ${CDR(mycustomfield)})
+```
+
+Примечание
+
+Если вы решите использовать пользовательские переменные CDR, убедитесь, что выбранный сервер CDR способен регистрировать их.
+
+Чтобы Просмотреть встроенную документацию для ЦХД() функция, выполните следующую команду в консоли Asterisk:
+
+```
+*CLI> core show function CDR
+```
+
+В дополнение к тому, что ЦХД() функция, некоторые приложения dialplan могут быть использованы для влияния на записи CDR. Мы еще посмотрим на них.
+Приложения Dialplan
+
+Несколько приложений dialplan можно использовать для влияния CDRs для текущего вызова. Чтобы получить список приложений CDR, загруженных в текущую версию Asterisk, можно использовать следующую команду интерфейса командной строки:
+
+```
+*CLI> core show applications like CDR
+    -= Matching Asterisk Applications =-
+               ForkCDR: Forks the Call Data Record.
+                 NoCDR: Tell Asterisk to not maintain a CDR for the current call
+              ResetCDR: Resets the Call Data Record.
+    -= 3 Applications Matching =-
+```
+
+Каждое приложение имеет документацию, встроенную в приложение Asterisk, которую можно просмотреть с помощью следующей команды:
+
+```
+*CLI> core show application <application name>
+```
 
 ### cdr.conf
 
-The cdr.conf file has a \[general\] section that contains options that apply to the entire CDR system. Additional optional sections may exist in this file that apply to specific CDR logging backend modules. [Table 21-3](21.%20System%20Monitoring%20and%20Logging%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Monitoring_id250739) lists the options available in the \[general\] section.
+ЦДР.файл conf имеет a [генеральный] раздел, содержащий параметры, которые применяются ко всей системе CDR. Дополнительные необязательные разделы могут существовать в этом файле, которые применяются к определенным модулям ведения журнала CDR backend. Таблица 21-3 перечисляет параметры, доступные в разделе [генеральный] Раздел.
 
-Table 21-3. cdr.conf \[general\] section
 
-| Option | Value/example | Notes |
-| :--- | :--- | :--- |
-| enable | yes | Enable CDR logging. The default is yes. |
-| unanswered | no | Log unanswered calls. Normally, only answered calls result in a CDR. Logging all call attempts can result in a large number of extra call records that most people do not care about. The default value is no. |
-| end before hexten | no | Close out CDRs before running the h extension in the Asterisk dialplan. Normally, CDRs are not closed until the dialplan is completely finished running. The default value is no. |
-| initiated seconds | no | When calculating the billsec field, always round up. For example, if the difference between when the call was answered and when the call ended is 1 second and 1 microsecond, billsec will be set to 2 seconds. This helps ensure that Asterisk’s CDRs match the behavior used by telcos. The default value is no. |
-| batch | no | Queue up CDRs to be logged in batches instead of logging synchronously at the end of every call. This prevents CDR logging from blocking the completion of the call teardown process within Asterisk. Using batch mode can be incredibly useful when working with a database that may be slow to process requests. The default value is no, but we recommend turning it on.[a](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch21.html%22%20/l%20%22idm46178396300104) |
-| size | 100 | Set the number of CDRs to queue up before they are logged during batch mode. The default value is 100. |
-| time | 300 | Set the maximum number of seconds that CDRs will wait in the batch queue before being logged. The CDR batch-logging process will run at the end of this time period, even if size has not been reached. The default value is 300 seconds. |
-| scheduler only | no | Set whether CDR batch processing should be done by spawning a new thread, or within the context of the CDR batch scheduler. The default value is no, and we recommend not changing it. |
-| safe shutdown | yes | Block Asterisk shutdown to ensure that all queued CDR records are logged. The default is yes, and we recommend leaving it that way, as this option prevents important data loss. |
-| [a](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch21.html%22%20/l%20%22idm46178396300104-marker) The disadvantage of enabling this option is that if Asterisk were to crash or die for some reason, the CDR records would be lost, as they are only stored in memory while the Asterisk process exists. See safeshutdown for more information. |  |  |
+Таблица 21-3. ЦХД.conf [общий раздел]
 
-### Backends
+Вариант
 
-Asterisk CDR backend modules provide a way to log CDRs. Most CDR backends require specific configuration to get them going.
 
-#### cdr\_adaptive\_odbc
+Значение / пример
 
-As the name suggests, the cdr\_adaptive\_odbc module allows CDRs to be stored in a database through ODBC. The “adaptive” part of the name refers to the fact that it works to adapt to the table structure: there is no static table structure that must be used with this module. When the module is loaded \(or reloaded\), it reads the table structure. When logging CDRs, it looks for a CDR variable that matches each column name. This applies to both the built-in CDR variables and custom variables. If you want to log the built-in channel CDR variable, just create a column called channel.
 
-Adding custom CDR content is as simple as setting it in the dialplan. For example, if we wanted to log the User-Agent that is provided by a SIP device, we could add that as a custom CDR variable:
+Примечания
 
-exten =&gt; 105,n,Set\(CDR\(useragent\)=${CHANNEL\(useragent\)}\)
+включить
 
-To have this custom CDR variable inserted into the database by cdr\_adaptive\_odbc, all we have to do is create a column called useragent.
 
-Multiple tables may be configured in the cdr\_adaptive\_odbc configuration file. Each goes into its own configuration section. The name of the section can be anything; the module does not use it. Here is an example of a simple table configuration:
+ДА
 
-\[mytable\]
 
-connection = asterisk
+Включите ведение журнала CDR. Значение по умолчанию: ДА.
 
-table = asterisk\_cdr
+оставшийся без ответа
 
-A more detailed example of setting up a database for logging CDRs can be found in [“Storing Call Detail Records”](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch15.html%22%20/l%20%22database_storing-cdr).
 
-[Table 21-4](21.%20System%20Monitoring%20and%20Logging%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Monitoring_id263326) lists the options that can be specified in a table configuration section in the cdr\_adaptive\_odbc.conf file.
+НЕТ
 
-Table 21-4. cdr\_adaptive\_odbc.conf table configuration options
 
-| Option | Value/example | Notes |
-| :--- | :--- | :--- |
-| connection | pgsql1 | The database connection to be used. This is a reference to the configured connection in res\_odbc.conf. This field is required. |
-| table | asterisk\_cdr | The table name. This field is required. |
-| usegmtime | no | Indicates whether to log timestamps using GMT instead of local time. The default value for this option is no. |
+Регистрируйте неотвеченные звонки. Обычно, только отвеченные вызовы приводят к CDR. Регистрация всех попыток вызова может привести к большому количеству дополнительных записей вызовов,которые большинство людей не заботятся. Значение по умолчанию: НЕТ.
 
-In addition to the key/value pair fields that are shown in the previous table, cdr\_adaptive\_odbc.conf allows for a few other configuration items. The first is a column alias. Normally, CDR variables are logged to columns of the same name. An alias allows the variable name to be mapped to a column with a different name. The syntax is:
+конец перед hexten
 
-alias CDR variable =&gt; column name
 
-Here is an example column mapping using the alias option:
+НЕТ
 
-alias src =&gt; source
 
-It is also possible to specify a content filter. This allows you to specify criteria that must match for records to be inserted into the table. The syntax is:
+Закройте CDRs перед запуском программы х добавочный номер в dialplan звездочки. Обычно CDRs не закрываются до тех пор, пока dialplan не будет полностью завершен запуск. Значение по умолчанию: НЕТ.
 
-filter CDR variable =&gt; content
+начальные секунды
 
-Here is an example content filter:
 
-filter accountcode =&gt; 123
+НЕТ
 
-Finally, cdr\_adaptive\_odbc.conf allows static content for a column to be defined. This can be useful when combined with a set of filters. This static content can help differentiate records that were inserted into the same table by different configuration sections. The syntax for static content is:
 
-static "Static Content Goes Here" =&gt; column name
+При расчете по формуле billsec поле, всегда кругом. Например, если разница между моментом ответа на вызов и моментом окончания вызова составляет 1 секунду и 1 микросекунду, billsec будет установлено значение 2 секунды. Это помогает гарантировать, что CDRs Asterisk соответствуют поведению, используемому telcos. Значение по умолчанию: НЕТ.
 
-Here is an example of specifying static content to be inserted with CDRs:
+партия
 
-static "My Content" =&gt; my\_identifier
 
-#### cdr\_csv
+НЕТ
 
-The cdr\_csv module is a very simple CDR backend that logs CDRs into a CSV \(comma-separated values\) file. The file is /var/log/asterisk/cdr-csv/Master.csv. As long as CDR logging is enabled in cdr.conf and this module has been loaded, CDRs will be logged to the Master.csv file. We recommend that regardless of any other CDR backend you choose to configure, you leave this configured as well, as it will serve as an excellent backup should you lose other CDR data due to network or related issues.
 
-While no options are required to get this module working, there are some options that customize its behavior. These options, listed in [Table 21-5](21.%20System%20Monitoring%20and%20Logging%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22Monitoring_id263534), are placed in the \[csv\] section of cdr.conf.
+Очередь вверх CDRs, котор нужно зарегистрировать в пакетах вместо вносить в журнал одновременно в конце каждого звонока. Это предотвращает ведение журнала CDR от блокирования завершения процесса отключения вызова в пределах Asterisk. С помощью партия режим может быть невероятно полезен при работе с базой данных, которая может быть медленной для обработки запросов. Значение по умолчанию: НЕТ, но мы рекомендуем включить его.один
 
-Table 21-5. cdr.conf \[csv\] section options
+размер
 
-| Option | Value/example | Notes |
-| :--- | :--- | :--- |
-| usegmtime | no | Log timestamps using GMT instead of local time. The default is no. |
-| loguniqueid | no | Log the uniqueid CDR variable. The default is no. |
-| loguserfield | no | Log the userfield CDR variable. The default is no. |
-| accountlogs | yes | Create a separate CSV file for each different value of the accountcode CDR variable. The default is yes. |
 
-The order of CDR variables in CSV files created by the cdr\_csv module is:
+100
 
-&lt;accountcode&gt;,&lt;src&gt;,&lt;dst&gt;,&lt;dcontext&gt;,&lt;clid&gt;,&lt;channel&gt;,&lt;dstchannel&gt;,&lt;lastapp&gt;, \
 
- &lt;lastadata&gt;,&lt;start&gt;,&lt;answer&gt;,&lt;end&gt;,&lt;duration&gt;,&lt;billsec&gt;,&lt;disposition&gt;, \
+Установите количество CDRs в очередь до их регистрации в пакетном режиме. Значение по умолчанию: 100.
 
- &lt;amaflags&gt;\[,&lt;uniqueid&gt;\]\[,&lt;userfield&gt;\]
+время
 
-Place the following lines into /etc/asterisk/cdr.conf:
 
-\[general\]
+300
+
+
+Установите максимальное количество секунд, в течение которых CDRs будет ожидать в очереди пакетной обработки перед регистрацией. Процесс пакетного ведения журнала CDR будет запущен в конце этого периода времени, даже если размер до него еще не добрались. Значение по умолчанию: 300 секунд.
+
+планировщик Только
+
+
+НЕТ
+
+
+Установите, должна ли пакетная обработка CDR выполняться путем порождения нового потока или в контексте планировщика пакетной обработки CDR. Значение по умолчанию: НЕТ, и мы рекомендуем не менять его.
+
+безопасный выключение
+
+
+ДА
+
+
+Заблокируйте выключение Asterisk, чтобы убедиться, что все записи CDR в очереди зарегистрированы. Значение по умолчанию: ДА, и мы рекомендуем оставить его таким образом, так как этот параметр предотвращает важную потерю данных.
+
+один Недостатком включения этой опции является то, что если Asterisk по какой-либо причине упадет или умрет, записи CDR будут потеряны, так как они хранятся только в памяти, пока существует процесс Asterisk. Видеть safeshutdown за дополнительной информацией.
+
+
+
+Базовая программа
+
+Серверные модули Asterisk CDR предоставляют способ регистрации CDRs. Большинство бэкендов CDR требуют определенной конфигурации, чтобы заставить их работать.
+cdr_adaptive_odbc
+
+Как следует из названия, the cdr_adaptive_odbc модуль позволяет хранить CDRs в базе данных через ODBC. "Адаптивная" часть названия относится к тому, что она работает для адаптации к структуре таблицы: нет статической структуры таблицы, которая должна использоваться с этим модулем. Когда модуль загружен (или перезагружен), он считывает структуру таблицы. При регистрации CDRs он ищет переменную CDR, которая соответствует имени каждого столбца. Это относится как к встроенным переменным CDR, так и к пользовательским переменным. Если вы хотите войти встроенный канал Переменная CDR, просто создайте столбец с именем канал.
+
+Добавление пользовательского содержимого CDR так же просто, как и его настройка в dialplan. Например, если мы хотим войти в систему агент пользователя это обеспечивается устройством SIP, мы могли бы добавить его в качестве пользовательской переменной CDR:
+
+exten = > 105, n, Set (CDR (useragent)=${канал (useragent)})
+
+Чтобы эта пользовательская переменная CDR была вставлена в базу данных с помощью cdr_adaptive_odbc, все, что нам нужно сделать, это создать столбец под названием агент пользователя.
+
+Множественные таблицы могут быть установлены в cdr_adaptive_odbc конфигурационный файл. Каждый идет в свой собственный раздел конфигурации. Название раздела может быть любым; модуль не использует его. Вот пример простой конфигурации таблицы:
+
+[таблица MyTable]
+
+
+соединение = звездочка
+
+таблица = asterisk_cdr
+
+Более подробный пример настройки базы данных для ведения журнала CDRs можно найти в разделе "Хранение Подробных Записей Вызовов”.
+
+Таблица 21-4 перечисляет параметры, которые могут быть указаны в разделе конфигурации таблицы в cdr_adaptive_odbc.файл conf.
+
+
+Таблица 21-4. cdr_adaptive_odbc.параметры конфигурации таблицы conf
+
+Вариант
+
+
+Значение / пример
+
+
+Примечания
+
+соединение
+
+
+pgsql1
+
+
+Подключение к базе данных, которое будет использоваться. Это ссылка на настроенное соединение в res_odbc.conf. Это поле является обязательным.
+
+стол
+
+
+asterisk_cdr
+
+
+Имя таблицы. Это поле является обязательным.
+
+usegmtime
+
+
+НЕТ
+
+
+Указывает, следует ли регистрировать метки времени с помощью GMT вместо местного времени. Значением по умолчанию для этого параметра является НЕТ.
+
+В дополнение к полям пар ключ / значение, которые показаны в предыдущей таблице, cdr_adaptive_odbc.conf позволяет использовать несколько других элементов конфигурации. Первый-это псевдоним столбца. Обычно переменные CDR регистрируются в Столбцах с тем же именем. Один псевдоним позволяет сопоставить имя переменной со столбцом с другим именем. Синтаксис таков:
+
+псевдоним Переменная CDR => имя столбца
+
+Вот пример сопоставления столбцов с помощью псевдоним вариант:
+
+псевдоним src = > источник
+
+Также можно задать фильтр содержимого. Это позволяет задать критерии, которые должны совпадать для записей, вставляемых в таблицу. Синтаксис таков:
+
+Фильтр Переменная CDR => Содержание
+
+Вот пример фильтра содержимого:
+
+фильтр accountcode = > 123
+
+Наконец, cdr_adaptive_odbc.conf позволяет определять статическое содержимое для столбца. Это может быть полезно в сочетании с набором Фильтрs. Это статическое содержимое может помочь дифференцировать записи, вставленные в одну и ту же таблицу, по различным разделам конфигурации. Синтаксис для статического содержимого является:
+
+статический "Статический Контент Идет Сюда" => имя столбца
+
+Ниже приведен пример указания статического содержимого, вставляемого с помощью CDRs:
+
+статический "мой контент" = > my_identifier
+cdr_csv
+
+То cdr_csv модуль-это очень простой сервер CDR, который записывает CDRs в файл CSV (значения, разделенные запятыми). Этот файл называется /var/log/asterisk/cdr-csv / Master.csv. Пока ведение журнала CDR включено в cdr.conf и этот модуль были загружены, CDRs будут зарегистрированы в Master.csv-файл. Мы рекомендуем, чтобы независимо от любого другого бэкенда CDR, который вы выбрали для настройки, вы также оставили этот настроенный, поскольку он будет служить отличной резервной копией, если вы потеряете другие данные CDR из-за сети или связанных с ней проблем.
+
+Хотя никакие параметры не требуются для обеспечения работы этого модуля, есть некоторые параметры, которые настраивают его поведение. Эти параметры перечислены в разделе Таблица 21-5, помещены в [csv] секция cdr.conf.
+
+
+Таблица 21-5. ЦХД.параметры раздела conf [csv]
+
+Вариант
+
+
+Значение / пример
+
+
+Примечания
+
+usegmtime
+
+
+НЕТ
+
+
+Регистрируйте метки времени, используя GMT вместо местного времени. Значение по умолчанию: НЕТ.
+
+loguniqueid
+
+
+НЕТ
+
+
+Войти то uniqueid Переменная CDR. Значение по умолчанию: НЕТ.
+
+loguserfield
+
+
+НЕТ
+
+
+Войти то userfield Переменная CDR. Значение по умолчанию: НЕТ.
+
+учетные записи
+
+
+ДА
+
+
+Создайте отдельный CSV-файл для каждого отдельного значения параметра код счета Переменная CDR. Значение по умолчанию: ДА.
+
+Порядок переменных CDR в CSV файлах, созданных с помощью cdr_csv модуль есть:
+
+<код счета>,<Src>,<летнее время>,<dcontext>,<clid>,<канал>,<dstchannel>,<lastapp>, \
+
+<Ласточка>,<начать>,<ответ>,<конец>,<Продолжительность>,<billsec>,<склонность>, \
+
+<amaflags>[,<uniqueid>][,<userfield>]
+
+Поместите следующие строки в файл /etc / asterisk / cdr.conf:
+
+[генеральный]
 
 enable=yes
 
-\[csv\]
 
-usegmtime=yes ; log date/time in GMT. Default is "no"
+[csv]
 
-loguniqueid=yes ; log uniqueid. Default is "no"
+usegmtime=да; дата/время регистрации в GMT. По умолчанию это "нет"
 
-loguserfield=yes ; log user field. Default is "no"
+loguniqueid=yes; log uniqueid. По умолчанию это "нет"
 
-accountlogs=yes ; create separate log file for each account code. Default is "yes"
+loguserfield=да; поле пользователя журнала. По умолчанию это "нет"
 
-;newcdrcolumns=yes ; Enable logging of post-1.8 CDR columns \(peeraccount,linkedid,sequence\)
+accountlogs=да; создайте отдельный файл журнала для каждого кода учетной записи. По умолчанию это "да"
 
- ; Default is "no".
+; newcdrcolumns=yes; включить ведение журнала столбцов CDR post-1.8 (peeraccount, linkedid, sequence)
 
-Save it, chown it, and reload the CDR module.
+; По умолчанию- "нет".
 
-$ chown asterisk:asterisk /etc/asterisk/cdr.conf
+Сохраните его, chown его, и перезагрузите модуль CDR.
 
-$ sudo asterisk -rx 'module reload cdr'
+$ chown asterisk: asterisk / etc / asterisk / cdr.conf
 
-#### cdr\_custom
 
-This CDR backend allows for custom formatting of CDR records in a logfile. This module is most commonly used for customized CSV output. The configuration file used for this module is /etc/asterisk/cdr\_custom.conf. A single section called \[mappings\] should exist in this file. The \[mappings\] section contains mappings between a filename and the custom template for a CDR. The template is specified using Asterisk dialplan functions.
+$ sudo asterisk-rx 'модуль перезагрузки cdr'
+cdr_custom
 
-The following example shows a sample configuration for cdr\_custom that enables a single CDR logfile, Master.csv. This file will be created as /var/log/asterisk/cdr-custom/Master.csv. The template that has been defined uses both the CDR\(\) and CSV\_QUOTE\(\) dialplan functions. The CDR\(\) function retrieves values from the CDR being logged. The CSV\_QUOTE\(\) function ensures that the values are properly escaped for the CSV file format:
+Этот сервер CDR позволяет выполнять пользовательское форматирование записей CDR в файле журнала. Этот модуль наиболее обыкновенно использован для подгонянного выхода CSV. Файл конфигурации, используемый для этого модуля, - это /etc/asterisk / cdr_custom.conf. Один раздел называется: [отображения] должен существовать в этом файле. То [отображения] раздел содержит сопоставления между именем файла и пользовательским шаблоном для CDR. Шаблон задается с помощью функций Asterisk dialplan.
 
-\[mappings\]
+В следующем примере показан пример конфигурации для cdr_custom это позволяет использовать один CDR-файл журнала, Master.csv. Этот файл будет создан как /var/log/asterisk/cdr-custom / Master.csv. Шаблон, который был определен, использует оба ЦХД() и CSV_QUOTE() функции dialplan. То ЦХД() функция извлекает значения из регистрируемого CDR-файла. То CSV_QUOTE() функция гарантирует, что значения правильно экранированы для формата файла CSV:
 
-Master.csv =&gt; ${CSV\_QUOTE\(${CDR\(clid\)}\)},${CSV\_QUOTE\(${CDR\(src\)}\)},
+[отображения]
 
- ${CSV\_QUOTE\(${CDR\(dst\)}\)},${CSV\_QUOTE\(${CDR\(dcontext\)}\)},
 
- ${CSV\_QUOTE\(${CDR\(channel\)}\)},${CSV\_QUOTE\(${CDR\(dstchannel\)}\)},
+Мастер.csv => ${CSV_QUOTE(${CDR (clid)})},${CSV_QUOTE (${CDR (src)})},
 
- ${CSV\_QUOTE\(${CDR\(lastapp\)}\)},${CSV\_QUOTE\(${CDR\(lastdata\)}\)},
+${CSV_QUOTE(${CDR(dst)})},${CSV_QUOTE (${CDR(dcontext)})},
 
- ${CSV\_QUOTE\(${CDR\(start\)}\)},${CSV\_QUOTE\(${CDR\(answer\)}\)},
+${CSV_QUOTE(${CDR (channel)})},${CSV_QUOTE (${CDR(dstchannel)})},
 
- ${CSV\_QUOTE\(${CDR\(end\)}\)},${CSV\_QUOTE\(${CDR\(duration\)}\)},
+${CSV_QUOTE(${CDR (lastapp)})},${CSV_QUOTE (${CDR (lastdata)})},
 
- ${CSV\_QUOTE\(${CDR\(billsec\)}\)},${CSV\_QUOTE\(${CDR\(disposition\)}\)},
+${CSV_QUOTE(${CDR (start)})},${CSV_QUOTE (${CDR (answer)})},
 
- ${CSV\_QUOTE\(${CDR\(amaflags\)}\)},${CSV\_QUOTE\(${CDR\(accountcode\)}\)},
+${CSV_QUOTE(${CDR (end)})},${CSV_QUOTE (${CDR (duration)})},
 
- ${CSV\_QUOTE\(${CDR\(uniqueid\)}\)},${CSV\_QUOTE\(${CDR\(userfield\)}\)}
+${CSV_QUOTE(${CDR (billsec)})},${CSV_QUOTE (${CDR (disposition)})},
 
-**Note**
+${CSV_QUOTE(${CDR (amaflags)})},${CSV_QUOTE (${CDR(accountcode)})},
 
-In the actual configuration file, the value in the Master.csv mapping should be on a single line.
+${CSV_QUOTE(${CDR (uniqueid)})},${CSV_QUOTE (${CDR (userfield)})}
+Примечание
 
-#### cdr\_manager
+В файле фактической конфигурации, значение в Мастере.отображение csv должно быть на одной строке.
+cdr_manager
 
-The cdr\_manager backend emits CDRs as events on the Asterisk Manager Interface \(AMI\), which we discussed in detail in [Chapter 17](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch17.html%22%20/l%20%22asterisk-AMI). This module is configured in the /etc/asterisk/cdr\_manager.conf file. The first section in this file is the \[general\] section, which contains a single option to enable this module \(the default value is no\):
+То cdr_manager серверная часть выдает CDRs в виде событий на интерфейсе Asterisk Manager Interface (AMI), который мы подробно обсудили в разделе Глава 17. Этот модуль сконфигурирован в файле /etc / asterisk/cdr_manager.файл conf. Первый раздел в этом файле-это [генеральный] раздел, который содержит один параметр для включения этого модуля (значение по умолчанию - НЕТ):
 
-\[general\]
+[генеральный]
 
-enabled = yes
 
-The other section in cdr\_manager.conf is the \[mappings\] section. This allows for adding custom CDR variables to the manager event. The syntax is:
+включено = да
 
-CDR variable =&gt; Header name
+Другой раздел в cdr_manager.conf - это то [отображения] Раздел. Это позволяет добавлять пользовательские переменные CDR в событие диспетчера. Синтаксис таков:
 
-Here is an example of adding two custom CDR variables:
+Переменная CDR => Имя заголовка
 
-\[mappings\]
+Вот пример добавления двух пользовательских переменных CDR:
 
-rate =&gt; Rate
+[отображения]
 
-carrier =&gt; Carrier
 
-With this configuration in place, CDR records will appear as events on the manager interface. To generate an example manager event, we will use the following dialplan example:
+rate = > скорость
 
-exten =&gt; 110,1,Answer\(\)
+carrier = > несущая
 
- same =&gt; n,Set\(CDR\(rate\)=0.02\)
+С этой конфигурацией на месте, записи CDR появятся как события на интерфейсе менеджера. Чтобы создать событие example manager, мы будем использовать следующий пример dialplan:
 
- same =&gt; n,Set\(CDR\(carrier\)=BS&S\)
+exten = > 110,1, ответ()
 
- same =&gt; n,Hangup\(\)
+same = > n, Set(CDR (rate)=0.02)
 
-This is the command used to execute this extension and generate a sample manager event:
+same = > n, Set(CDR (carrier)=BS&S)
 
-\*CLI&gt; console dial 110@testing
+то же самое = > n, отбой()
 
-Finally, this is an example manager event produced as a result of this test call:
+Эта команда используется для выполнения данного расширения и создания примера события диспетчера:
 
-Event: Cdr
+*CLI> консольный набор 110@testing
 
-Privilege: cdr,all
+Наконец, это пример события диспетчера, созданного в результате этого тестового вызова:
 
-AccountCode:
+Событие: Cdr
 
-Source:
+Привилегия: cdr, все
 
-Destination: 110
+Код счета:
 
-DestinationContext: testing
+Источник:
+
+Пункт назначения: 110
+
+DestinationContext: тестирование
 
 CallerID:
 
-Channel: Console/dsp
+Канал: консоль / dsp
 
-DestinationChannel:
+Канал назначения:
 
 LastApplication: Hangup
 
-LastData:
+Последние данные:
 
-StartTime: 2010-08-23 08:27:21
+Время начала: 2010-08-23 08: 27: 21
 
-AnswerTime: 2010-08-23 08:27:21
+Время ответа: 2010-08-23 08: 27: 21
 
-EndTime: 2010-08-23 08:27:21
+Время окончания: 2010-08-23 08: 27: 21
 
-Duration: 0
+Продолжительность: 0
 
 BillableSeconds: 0
 
-Disposition: ANSWERED
+Диспозиция: ответил
 
-AMAFlags: DOCUMENTATION
+AMAFlags: документация
 
 UniqueID: 1282570041.3
 
 UserField:
 
-Rate: 0.02
+Скорость: 0.02
 
-Carrier: BS&S
+Несущая: BS&S
+cdr_odbc
 
-#### cdr\_odbc
+Этот модуль включает устаревший интерфейс ODBC для ведения журнала CDR. Новые установки должны использовать cdr_adaptive_odbc вместо.
+cdr_sqlite
 
-This module enables the legacy ODBC interface for CDR logging. New installations should use cdr\_adaptive\_odbc instead.
+Этот модуль позволяет отправлять CDRs в базу данных SQLite с помощью SQLite версии 2. Если у вас нет особой необходимости в SQLite версии 2 в отличие от версии 3, мы рекомендуем использовать все новые установки cdr_sqlite3_custom.
 
-#### cdr\_sqlite
+Этот модуль не требует никакой конфигурации для работы. Если модуль был скомпилирован и загружен в Asterisk, он вставит CDRs в таблицу под названием ЦХД в базе данных, расположенной по адресу /var/log/asterisk / cdr.дБ .
+cdr_sqlite3_custom
 
-This module allows posting of CDRs to an SQLite database using SQLite version 2. Unless you have a specific need for SQLite version 2 as opposed to version 3, we recommend that all new installations use cdr\_sqlite3\_custom.
+Этот сервер CDR вставляет CDRs в базу данных SQLite с помощью SQLite версии 3. База данных, созданная этим модулем, находится в каталоге /var/log/asterisk / master.дБ . Для этого модуля требуется файл конфигурации, /etc / asterisk/cdr_sqlite3_custom.conf. Файл конфигурации определяет имя таблицы, а также настраивает, какие переменные CDR будут вставлены в базу данных.
+cdr_syslog
 
-This module requires no configuration to work. If the module has been compiled and loaded into Asterisk, it will insert CDRs into a table called cdr in a database located at /var/log/asterisk/cdr.db.
+Этот модуль позволяет вести журнал CDRs используя системный журнал. Чтобы включить эту функцию, сначала добавьте запись в файл конфигурации системного журнала, /etc/syslog.conf. Например:
 
-#### cdr\_sqlite3\_custom
+local4.* /var / log / asterisk/asterisk-cdr.бревно
 
-This CDR backend inserts CDRs into an SQLite database using SQLite version 3. The database created by this module lives at /var/log/asterisk/master.db. This module requires a configuration file, /etc/asterisk/cdr\_sqlite3\_custom.conf. The configuration file identifies the table name, as well as customizes which CDR variables will be inserted into the database.
+Модуль Asterisk также имеет файл конфигурации. Добавьте следующий раздел в файл /etc / asterisk / cdr_syslog.conf:
 
-#### cdr\_syslog
+[ЦХД]
 
-This module allows logging of CDRs using syslog. To enable this, first add an entry to the system’s syslog configuration file, /etc/syslog.conf. For example:
 
-local4.\* /var/log/asterisk/asterisk-cdr.log
+объект = local4
 
-The Asterisk module has a configuration file as well. Add the following section to /etc/asterisk/cdr\_syslog.conf:
+приоритет = информация
 
-\[cdr\]
+template = " мы получили звонок от ${CDR(src)}"
 
-facility = local4
+Вот пример записи системного журнала, использующей эту конфигурацию:
 
-priority = info
+$ cat /var / log / asterisk / asterisk-cdr.бревно
 
-template = "We received a call from ${CDR\(src\)}"
 
-Here is an example syslog entry using this configuration:
+12 августа 19: 17: 36 АТС ЦДР: "нам поступил звонок от 2565551212"
+Пример Записи Сведений О Вызове
 
-$ cat /var/log/asterisk/asterisk-cdr.log
+Мы будем использовать то cdr_custom модуль для иллюстрации некоторых примеров записей CDR для различных сценариев вызовов. Конфигурация, используемая для файла /etc / asterisk/cdr_custom.conf показан на рисунке "cdr_custom”.
+Однопартийный звонок
 
-Aug 12 19:17:36 pbx cdr: "We received a call from 2565551212"
+В этом примере мы покажем, как выглядит CDR для простого однопользовательского вызова:
 
-### Example Call Detail Records
+exten = > 227,1, VoiceMailMain (@${GLOBAL(VOICEMAIL_CONTEXT)})
 
-We will use the cdr\_custom module to illustrate some example CDR records for different call scenarios. The configuration used for /etc/asterisk/cdr\_custom.conf is shown in [“cdr\_custom”](21.%20System%20Monitoring%20and%20Logging%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22cdr_custom).
+Это CDR от /var / log / asterisk/cdr-custom/Master.csv, который был создан в результате вызова этого расширения:
 
-#### Single-party call
+"", "SOFTPHONE_A", "227", "наборы"," 101" " <SOFTPHONE_A>", " PJSIP/SOFTPHONE_A-00000002",
 
-In this example, we’ll show what a CDR looks like for a simple one-party call:
-
-exten =&gt; 227,1,VoiceMailMain\(@${GLOBAL\(VOICEMAIL\_CONTEXT\)}\)
-
-This is the CDR from /var/log/asterisk/cdr-custom/Master.csv that was created as a result of calling this extension:
-
-"","SOFTPHONE\_A","227","sets","""101"" &lt;SOFTPHONE\_A&gt;","PJSIP/SOFTPHONE\_A-00000002",
-
-"","Playback","hear-odd-noise",
+"", "Воспроизведение", " слышать-нечетный-шум",
 
 "2019-03-04 02:31:39","2019-03-04 02:31:39","2019-03-04 02:31:42",
 
-3,3,"ANSWERED","DOCUMENTATION","1551666699.4",""
+3.3, "ОТВЕТИЛ", "ДОКУМЕНТАЦИЯ", " 1551666699.4",""
 
-Open it up in a spreadsheet and it’ll be lined up neatly.
+Откройте его в электронной таблице, и он будет аккуратно выстроен.
+Предостережения
 
-### Caveats
+Система CDR в Asterisk очень хорошо работает для довольно простых сценариев вызовов. Однако, поскольку сценарии вызовов становятся более сложными-включая звонки нескольким сторонам, трансферы, парковку и другие подобные функции—система CDR начинает отставать. Многие пользователи сообщают, что записи не показывают всю информацию, которую они ожидают. Многие исправления ошибок были сделаны для решения некоторых проблем, но стоимость регрессий или изменений в поведении при внесении изменений в этой области очень высока, так как эти записи используются для выставления счетов.
 
-The CDR system in Asterisk works very well for fairly simple call scenarios. However, as call scenarios get more complicated—involving calls to multiple parties, transfers, parking, and other such features—the CDR system starts to fall short. Many users report that the records do not show all the information that they expect. Many bug fixes have been made to address some of the issues, but the cost of regressions or changes in behavior when making changes in this area is very high, since these records are used for billing.
+В результате команда разработчиков Asterisk становится все более устойчивой к внесению дополнительных изменений в систему CDR. Вместо этого была разработана новая система, Channel event logging (CEL), которая предназначена для решения проблемы ведения журнала более сложных сценариев вызовов. Имейте в виду, что детальные записи вызовов являются более простыми и простыми в использовании, однако, поэтому мы все еще рекомендуем использовать CDRs, если они удовлетворяют вашим потребностям.
+Протоколирование Событий Канала
 
-As a result, the Asterisk development team has become increasingly resistant to making additional changes to the CDR system. Instead, a new system, channel event logging \(CEL\), has been developed that is intended to help address logging of more complex call scenarios. Bear in mind that call detail records are simpler and easier to consume, though, so we still recommend using CDRs if they suit your needs.
+Регистрация событий канала (CEL) предоставляет более гибкие средства регистрации деталей сложных сценариев вызова. Вместо сворачивания вызова до одной записи журнала регистрируется ряд событий для вызова. Это дает более точную картину того, что произошло с вызовом, за счет более сложного лога.
 
-## Channel Event Logging
+Для получения более подробной информации о компании CEL, ознакомьтесь с Звездочка wiki.
+Вывод
 
-Channel event logging \(CEL\) provides a more flexible means of logging the details of complex call scenarios. Instead of collapsing a call down to a single log entry, a series of events are logged for the call. This provides a more accurate picture of what has happened to the call, at the expense of a more complex log.
+Asterisk очень хорошо позволяет отслеживать множество различных аспектов его работы, от простых записей детализации вызовов до полной отладки выполняемого кода. Загляните в каталоги исходного кода, и вы найдете гораздо больше компонентов, чем у нас было места для покрытия здесь. Эти различные механизмы помогут вам в ваших усилиях по управлению вашей АТС Asterisk, и они представляют собой один из способов, которым Asterisk значительно превосходит большинство (если не все) традиционных АТС.
 
-For more details on CEL, check out the [Asterisk wiki](https://wiki.asterisk.org/).
+1 Который обычно находится в/etc / syslog.conf.
 
-## Conclusion
-
-Asterisk is very good at allowing you to keep track of many different facets of its operation, from simple call detail records to full debugging of the running code. Take a look in the source code directories, and you’ll find many more components than we’ve had space to cover here. These various mechanisms will help you in your efforts to manage your Asterisk PBX, and they represent one of the ways that Asterisk is vastly superior to most \(if not all\) traditional PBXs.
-
-[1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch21.html%22%20/l%20%22idm46178396419208-marker) Which will normally be found at /etc/syslog.conf.
-
-[2](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch21.html%22%20/l%20%22idm46178396410888-marker) And rsyslog, syslog-ng, and what-all-else.
-
-[Глава 20. WebRTC](glava-20.md) | [Содержание](SUMMARY.md) | [Глава 22. Безопасность](glava-22.md)
+2 И rsyslog, syslog-НГ и что-все-таки еще.

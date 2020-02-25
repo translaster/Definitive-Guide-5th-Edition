@@ -1,69 +1,69 @@
 # Глава 23. Asterisk: Будущее телефонии
 
-> _Hey, I just met you,_
->
-> _And this is crazy,_
->
-> _But here’s my number,_
->
-> _So call me, maybe?_
->
-> -- Carly Rae Jepsen
+> _Эй, я только что познакомился с тобой,_
 
-We have arrived at the final chapter of this book. We’ve covered a lot \(and this book has been massively modified over the years\), but we hope that we have made it clear that we’ve merely scratched the surface of Asterisk. To wrap things up, we want to spend some time exploring what we might see from Asterisk and open source telephony in the near future.
+> _И это безумие!,_
 
-When we wrote the first edition of Asterisk: The Future of Telephony, we confidently asserted that open source communications engines such as Asterisk would cause a shift in thinking that would transform the telecommunications industry. In many ways, our belief has been proven correct; however, some might argue it was a hollow victory, because what has also happened during that time is a shift away from telecommunications as a primary real-time communications medium. Younger generations have little or no use for telephone calls, and consider them disruptive, annoying, and in some cases even rude.
+> _Но вот мой номер телефона,_
 
-So, even as Asterisk ushered in a transformed age for the telecommunications industry, it has now become the standard-bearer for technologies that many say are as good as dead.
+> _Так что позвони мне, может быть?_
 
-While there can be no doubt that the telephone is no longer the primary communications technology in the world \(not by a long shot!\), when we distill communications down to their essence, we find there may be a future for this stuff yet.
+> --Carly Rae Jepsen
 
-## The Telephone Is Dead \(Except When It’s Not\)
+Мы подошли к последней главе этой книги. Мы рассмотрели много (и эта книга была значительно изменена за эти годы), но мы надеемся, что мы ясно дали понять, что мы просто царапали поверхность Asterisk. Чтобы завершить работу, мы хотим потратить некоторое время на изучение того, что мы могли бы увидеть от Asterisk и open source telephony в ближайшем будущем.
 
-While it is obvious that younger generations do not use the telephone much anymore, it is also true that older generations are very frustrated and disillusioned by modern communications technologies. For them, the telephone represents a reliable, predictable, and easy-to-understand communications method, and they are likely to continue using it for the remainder of their lives. Since there are an awful lot of old people in this world, and many of them are senior executives, decision makers, and shareholders—not to mention well-heeled customers—it seems to be a good strategy for businesses today to continue to ensure that their customers can reach them through the telephone.
+Когда мы писали первое издание Asterisk: будущее телефонии мы уверенно утверждали, что коммуникационные механизмы с открытым исходным кодом, такие как Asterisk, вызовут сдвиг в мышлении, который трансформирует телекоммуникационную отрасль. Во многих отношениях наша вера была доказана правильно; однако некоторые могут утверждать, что это была пустая победа, потому что то, что также произошло за это время-это сдвиг от телекоммуникаций как основного средства связи в реальном времени. Более молодые поколения почти не пользуются телефонными звонками и считают их разрушительными, раздражающими, а в некоторых случаях даже грубыми.
 
-When one has tried all other methods of communication, such as email, webforms, and perhaps even text messaging, one will finally pick up the phone and call. It seems that in many cases, a problem that could not get sorted out any other way is finally resolved over the phone.
+Таким образом, несмотря на то, что Asterisk открыл новый век для телекоммуникационной индустрии, теперь он стал эталоном для технологий, которые, по мнению многих, так же хороши, как и мертвы.
 
-It would also be correct to say that the increasingly poor job companies are doing in handling communications with their customers is a source of much frustration and confusion. However, as always, where there is a problem, there exists opportunity. Companies that retain a commitment to an excellent telecom infrastructure may find themselves with a distinct competitive advantage, using nothing more complicated than good old-fashioned customer service. If you wish to service customers over age 50, you would do well to keep your telephone system running well.
+Хотя не может быть никаких сомнений в том, что телефон больше не является основной коммуникационной технологией в мире (далеко не случайно!), когда мы перегоняем коммуникации до их сути, мы обнаруживаем, что у этого материала еще может быть будущее.
 
-Another interesting component of traditional telecommunications networks is that while we can never be sure that we are using the same conferencing software as each other \(never in history have so many near-identical apps had to be installed just to allow people to talk to each other\), we can be reasonably sure that if one of us picks up the phone and dials the other’s phone number, a successful conversation will be possible, without any troubleshooting or software installation. In an age where it seems no conference call can start without someone having to troubleshoot their app, this kind of universal consistency and reliability likely still has some value. Today’s hot new office collaboration software is tomorrow’s forgotten toy \(whither thou, Skype?\). The brave old telephone soldiers on.
+## Телефон мертв (за исключением тех случаев, когда это не так)
 
-We’re not sure the telephone is dead just yet.
+Хотя очевидно, что молодые поколения уже не так часто пользуются телефоном, верно также и то, что старшие поколения очень разочарованы и разочарованы современными коммуникационными технологиями. Для них телефон представляет собой надежный, предсказуемый и простой в понимании способ связи, и они, вероятно, будут продолжать использовать его до конца своей жизни. Поскольку в этом мире ужасно много пожилых людей, и многие из них являются высшими руководителями, лицами, принимающими решения, и акционерами—не говоря уже о состоятельных клиентах-похоже, что сегодня хорошей стратегией для бизнеса является продолжение обеспечения того, чтобы их клиенты могли связаться с ними по телефону.
 
-## Communications Overload
+Когда человек попробует все другие способы коммуникации, такие как электронная почта, веб-формы и, возможно, даже текстовые сообщения, он, наконец, возьмет телефон и позвонит. Похоже, что во многих случаях проблема, которая не могла быть решена никаким другим способом, наконец-то решается по телефону.
 
-In many ways, the ability to communicate defines our species. Yes, other critters are able to signal each other in basic ways, but our fascination with creating ever-changing and innovative ways to connect to each other is not something we’ve encountered in any other being.
+Было бы также правильно сказать, что все более бедные рабочие компании, занимающиеся обработкой коммуникаций со своими клиентами, являются источником большого разочарования и путаницы. Однако, как всегда, там, где есть проблема, есть и возможность. Компании, которые сохраняют приверженность к превосходной телекоммуникационной инфраструктуре, могут оказаться с явным конкурентным преимуществом, не используя ничего более сложного, чем хорошее старомодное обслуживание клиентов. Если вы хотите обслуживать клиентов старше 50 лет, вы должны сделать все возможное, чтобы ваша телефонная система работала хорошо.
 
-From the carrier pigeon to the postal service to the telegraph, telephone, and television, each new technology served the same goal: improving our ability to communicate. Today, we have achieved a most remarkable thing: it is now reasonable to expect instant communication with almost anyone on the planet.
+Еще один интересный компонент традиционных телекоммуникационных сетей заключается в том, что, хотя мы никогда не можем быть уверены в том, что мы используем одно и то же программное обеспечение для конференц-связи (никогда в истории не было так много почти идентичных приложений, которые должны были быть установлены только для того, чтобы люди могли говорить друг с другом), мы можем быть разумно уверены, что если один из нас возьмет телефон и наберет номер телефона другого, успешный разговор будет возможен без каких-либо неисправностей или установки программного обеспечения. В эпоху, когда кажется, что никакая конференция не может начаться без того, чтобы кому-то не пришлось устранять неполадки в своем приложении, этот вид универсальной согласованности и надежности, вероятно, все еще имеет некоторое значение. Сегодняшнее горячее новое программное обеспечение для совместной работы в офисе-это завтрашняя забытая игрушка (куда ты, Skype?). Храбрые старые телефонные солдаты включились.
 
-The challenge we never predicted is that too much of a good thing has begun to overwhelm us. It will be interesting to see how this plays out culturally.
+Мы пока не уверены, что телефон мертв.
 
-## The Problems with Open Source Development
+## Перегрузка связи
 
-Although Alexander Graham Bell is most famously remembered as the father of the telephone,[1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch23.html"%20\l%20"idm46178395940040) the reality is that during the latter half of the 1800s, dozens of minds were working toward the goal of carrying voice over telegraph lines. These people were mostly business-minded folks, looking to create a product through which they might make their fortunes.
+Во многих отношениях способность к общению определяет наш вид. Да, другие существа способны сигнализировать друг другу базовыми способами, но наше увлечение созданием постоянно меняющихся и инновационных способов подключения друг к другу-это не то, с чем мы сталкивались в любом другом существе.
 
-We have come to think of traditional telephone companies as monopolies, but this was not true in their early days. The early history of telephone service took place in a very competitive environment, with new companies springing up all over the world, often with little or no respect for the patents they might be violating. Many famous monopolies got their start through the waging \(and winning\) of patent wars.
+От почтового голубя до телеграфа, телефона и телевидения, каждая новая технология служила одной и той же цели: улучшению нашей способности общаться. Сегодня мы достигли самой замечательной вещи: теперь разумно ожидать мгновенного общения практически с любым человеком на планете.
 
-It’s interesting to contrast the history of the telephone with the history of GNU Linux and the internet. While the telephone was created as a commercial exercise, and the telecom industry was forged through lawsuits and corporate takeovers, Linux and the internet arose out of the academic community, which has tended to value the sharing of knowledge over profit.
+Проблема, которую мы никогда не предсказывали, заключается в том, что слишком много хорошего начало подавлять нас. Будет интересно посмотреть, как это происходит в культурном плане.
 
-Unfortunately, once again too much of a good thing has begun to overwhelm. What we have seen recently is a loss of vision for open source development. Too few developers have gotten tired of the demands of too many users unwilling to contribute. Most open source projects have—out of necessity—had to shield the development team from the selfish demands of those who intend to only take, and never give. This abuse of the developers has, sadly, even extended to companies that have built highly profitable businesses on open source projects that they have never contributed a dime to. Multibillion-dollar businesses, profiting from the efforts of a team barely able to pay their bills, is not a sustainable development model. It remains to be seen how this story will play out, but open source software is not what it was 10 years ago.
+## Проблемы с разработкой открытого исходного кода
 
-Asterisk is fortunate in that it is funded by the efforts of Sangoma/Digium, the parents of the project. Their challenge has and always will be to figure out how to nurture the product in such a way that the requirements of the business are compatible with the needs of the project. Not an easy task. We’ll be cheering for them. They have done a remarkable job thus far.
+Хотя Александр Грэм Белл больше всего известен как отец телефона<sup><a href="#sn1">10</a></sup>, реальность такова, что во второй половине 1800-х годов десятки умов работали над достижением цели передачи голоса по телеграфным линиям. Эти люди были в основном деловыми людьми, стремящимися создать продукт, с помощью которого они могли бы сделать свои состояния.
 
-## The Future of Asterisk
+Мы привыкли думать о традиционных телефонных компаниях как о монополиях, но это было не так в их первые дни. Ранняя история телефонных услуг проходила в очень конкурентной среде, с появлением новых компаний по всему миру, часто почти без уважения к патентам, которые они могли бы нарушить. Многие известные монополии получили свое начало через ведение (и победу) патентных войн.
 
-So, does Asterisk have a future? We don’t see why it shouldn’t. It continues to do what it has always done, and it also works hard to be compatible with suitable technologies coming down the pipe. If nothing else, Asterisk will continue to be very good at integrating with telephone technologies, and we’re not prepared to call that story fully told yet.
+Интересно сравнить историю телефона с историей GNU Linux и интернета. В то время как телефон был создан как коммерческое мероприятие, а телекоммуникационная индустрия была создана с помощью судебных процессов и корпоративных поглощений, Linux и интернет возникли из академического сообщества, которое имело тенденцию ценить обмен знаниями над прибылью.
+
+К сожалению, в очередной раз слишком много хорошего стало захлестывать. То, что мы видели в последнее время, - это потеря видения для разработки с открытым исходным кодом. Слишком мало разработчиков устали от требований слишком многих пользователей, не желающих вносить свой вклад. Большинство проектов с открытым исходным кодом должны были—по необходимости-оградить команду разработчиков от эгоистичных требований тех, кто намерен только брать и никогда не давать. Это злоупотребление разработчиками, к сожалению, даже распространилось на компании, которые построили высокодоходные бизнесы на проектах с открытым исходным кодом, в которые они никогда не вносили ни копейки. Многомиллиардный бизнес, получающий прибыль от усилий команды, едва способной оплачивать свои счета, не является моделью устойчивого развития. Остается посмотреть, как эта история будет развиваться, но программное обеспечение с открытым исходным кодом уже не то, что было 10 лет назад.
+
+Asterisk повезло в том, что он финансируется усилиями Sangoma/Digium, родителей проекта. Их задачей было и всегда будет выяснить, как воспитать продукт таким образом, чтобы требования бизнеса были совместимы с потребностями проекта. Это была не простая задача. Мы будем болеть за них. До сих пор они проделали замечательную работу.
+
+## Будущее Asterisk
+
+Итак, есть ли у Asterisk будущее? Мы не видим, почему этого не должно быть. он продолжает делать то, что он всегда делал, и он также упорно работает, чтобы быть совместимым с подходящими технологиями, идущими по трубе. По крайней мере, Asterisk будет продолжать очень хорошо интегрироваться с телефонными технологиями, и мы пока не готовы назвать эту историю полностью рассказанной.
 
 ### WebRTC
 
-Keep an eye on WebRTC. We suspect that if open source and open-standards communications has any sort of future, WebRTC stands as the most promising candidate to achieve that.
+Следите за WebRTC. Мы подозреваем, что если у open source и open-standards communications есть какое-то будущее, WebRTC выступает в качестве наиболее перспективного кандидата для достижения этого.
 
-Asterisk is not likely to be at the center of that revolution, but it will have a role to play.
+Asterisk вряд ли будет в центре этой революции, но он будет играть определенную роль.
 
-## The Future of Telephony
+### Будущее телефонии
 
-Telephony may look dead, but we still see movement in the tail, and it’s a long tail indeed.
+Телефония может выглядеть мертвой, но мы все еще видим движение в хвосте, и это действительно длинный хвост.
 
-[1](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch23.html"%20\l%20"idm46178395940040-marker) Ever heard of Elisha Gray or Antonio Meucci?
+<a name="sn1">1</a> Вы когда-нибудь слышали об Элише Грее или Антонио Меуччи?
 
 [Глава 22. Безопасность](glava-22.md) | [Содержание](SUMMARY.md) | [Об авторах](about-the-authors.md)
