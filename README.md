@@ -12,3 +12,5 @@
 ![](/pics/aster5_1.jpg)
 
 [Содержание книги](SUMMARY.md)
+
+[![GitHub forks](https://img.shields.io/github/forks/translaster/Definitive-Guide-5th-Edition)](https://github.com/translaster/Definitive-Guide-5th-Edition/network) [![GitHub stars](https://img.shields.io/github/stars/translaster/Definitive-Guide-5th-Edition)](https://github.com/translaster/Definitive-Guide-5th-Edition/stargazers)
