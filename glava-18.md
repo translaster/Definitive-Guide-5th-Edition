@@ -137,7 +137,7 @@ DNS может использоваться для достижения высо
 
 Он является более сложным при реализации сервера FastAGI, чем реализация приложения AGI на основе процессов.
 
-### Асинхронный AGI - АМИ-контролируемый AGI
+### Async AGI - АМИ-контролируемый AGI
 
 Async AGI позволяет приложению, использующему интерфейс AMI, асинхронно ставить команды AGI в очередь для выполнения на канале. Это может быть особенно полезно, если вы уже широко используете AMI и хотите улучшить свое приложение для обработки управления вызовами, а не писать подробный диалплан Asterisk или разрабатывать отдельный сервер FastAGI.
 
@@ -149,27 +149,27 @@ Async AGI позволяет приложению, использующему и
   </tr>
 </table>
 
-Асинхронный AGI вызывается приложением `AGI()` в диалплане Asterisk. Аргумент для `AGI()` должен быть `agi:async`, как показано в следующем примере:
+Async AGI вызывается приложением `AGI()` в диалплане Asterisk. Аргумент для `AGI()` должен быть `agi:async`, как показано в следующем примере:
 
 ```
 exten => 239,AGI(agi:async)
 ```
 
-Дополнительную информацию о том, как использовать асинхронный AGI через AMI, можно найти в следующем разделе.
+Дополнительную информацию о том, как использовать Async AGI через AMI, можно найти в следующем разделе.
 
-**Плюсы асинхронного AGI**
+**Плюсы Async AGI**
 
 Существующее приложение AMI можно использовать для управления вызовами с помощью команд AGI.
 
-**Минусы асинхронного аги**
+**Минусы Async аги**
 
 Это самый сложный способ реализации AGI.
 
 <table border="1" width="100%" cellpadding="5">
   <tr>
     <td>
-      <p align="center"><b>Настройка /etc/asterisk/manager.conf для асинхронного AGI</b></p>
-      <p>Чтобы использовать асинхронный AGI, учетная запись AMI должна иметь разрешение <code>agi</code> как на <code>read</code>, так и на <code>write</code>. Например, следующий пользователь определенный в <i>manager.conf</i> будет иметь возможность как а) выполнять действия менеджера AGI, так и б) получать события AGI:</p>
+      <p align="center"><b>Настройка /etc/asterisk/manager.conf для Async AGI</b></p>
+      <p>Чтобы использовать Async AGI, учетная запись AMI должна иметь разрешение <code>agi</code> как на <code>read</code>, так и на <code>write</code>. Например, следующий пользователь определенный в <i>manager.conf</i> будет иметь возможность как а) выполнять действия менеджера AGI, так и б) получать события AGI:</p>
       <p><pre><code>
 ; Определите пользователя с именем "hello" и паролем "world".
 ; Предоставьте этому пользователю разрешения на чтение/запись для AGI.
@@ -205,31 +205,31 @@ _Таблица 18-1. Переменные среды AGI_
 | :------------ | :--------------- | :------- |
 | `agi_request` | `hello-world.sh` | Первый аргумент, который был передан в приложение `AGI()` или `EAGI()`. Для process-based AGI - это имя выполненного приложения AGI. Для FastAGI это будет URL-адрес, использованный для подключения к серверу FastAGI. |
 | `agi_channel` | `SIP/0004F2060EB4-00000009` | Имя канала, выполнившего команду приложения `AGI()` или `EAGI()`. |
-| `agi_language` | `en` | Язык, установленный на `agi_channel`. |
-| `agi_type` | `SIP` | Тип канала для `agi_channel`. |
-| `agi_uniqueid` | `1284382003.9` | uniqueid для agi_channel. |
-| `agi_version` | `1.8.0-beta4` | Используемая версия Asterisk. |
-| `agi_callerid` | `12565551212` | Полная строка callerID, установленная на `agi_channel`. |
+| `agi_language` | `en`            | Язык, установленный на `agi_channel`. |
+| `agi_type`    | `SIP`            | Тип канала для `agi_channel`. |
+| `agi_uniqueid`| `1284382003.9`   | uniqueid для agi_channel. |
+| `agi_version` | `1.8.0-beta4`    | Используемая версия Asterisk. |
+| `agi_callerid`| `12565551212`    | Полная строка callerID, установленная на `agi_channel`. |
 | `agi_calleridname` | `Russell Bryant` | Имя caller ID, установленное на `agi_channel`. |
-| `agi_callingpres` | `0` | Представление вызывающего абонента, связанное с caller ID, установленное на `agi_channel`. Дополнительные сведения см. в выводе `core show function CALLERPRES` в CLI Asterisk. |
-| `agi_callingani2` | `0` | ANI2 абонента, связанный с `agi_channel`. |
-| `agi_callington` | `0` | ТН (тип номера) ID абонента, связанный с `agi_channel`. |
-| `agi_callingtns` | `0` | Набранный номер TNS (выбор транзитной сети), связанный с `agi_channel`. |
-| `agi_dnid` | `7010` | Набранный номер, связанный с `agi_channel`. |
-| `agi_rdnis` | `unknown` | Номер перенаправления, связанный с agi_channel. |
-| `agi_context` | `phones` | Контекст диалплана, в котором находился `agi_channel` при выполнении приложения `AGI()` или `EAGI()`. |
-| `agi_extension` | `500` | Расширение в диалплане, которое выполнялось `agi_channel` при запуске приложения `AGI()`` или `EAGI()``. |
-| `agi_priority` | `1` | Приоритет `agi_extension` в `agi_context`, в котором выполнилось `AGI()` или `EAGI()`. |
-| `agi_enhanced` | `0.0` | Указание на то, был ли использован `AGI()` или `EAGI()` из диалплана. `0.0` указывает на то, что был использован `AGI()`. `1.0` указывает на то, что был использован `EAGI()`.  |
-| `agi_accountcode` | `myaccount` | Код учетной записи, связанный с `agi_channel`. |
-| `agi_threadid` | `140071216785168` | `threadid` потока в Asterisk, на котором выполняется приложение `AGI()` или `EAGI()`. Это может быть полезно для связывания журналов, созданных приложением AGI, с журналами, созданными Asterisk, поскольку журналы Asterisk содержат идентификаторы потоков. |
+| `agi_callingpres` | `0`          | Представление вызывающего абонента, связанное с caller ID, установленное на `agi_channel`. Дополнительные сведения см. в выводе `core show function CALLERPRES` в CLI Asterisk. |
+| `agi_callingani2` | `0`          | ANI2 абонента, связанный с `agi_channel`. |
+| `agi_callington` | `0`           | ТН (тип номера) ID абонента, связанный с `agi_channel`. |
+| `agi_callingtns` | `0`           | Набранный номер TNS (выбор транзитной сети), связанный с `agi_channel`. |
+| `agi_dnid`    | `7010`           | Набранный номер, связанный с `agi_channel`. |
+| `agi_rdnis`   | `unknown`        | Номер перенаправления, связанный с agi_channel. |
+| `agi_context` | `phones`         | Контекст диалплана, в котором находился `agi_channel` при выполнении приложения `AGI()` или `EAGI()`. |
+| `agi_extension` | `500`          | Расширение в диалплане, которое выполнялось `agi_channel` при запуске приложения `AGI()`` или `EAGI()``. |
+| `agi_priority`| `1`              | Приоритет `agi_extension` в `agi_context`, в котором выполнилось `AGI()` или `EAGI()`. |
+| `agi_enhanced`| `0.0`            | Указание на то, был ли использован `AGI()` или `EAGI()` из диалплана. `0.0` указывает на то, что был использован `AGI()`. `1.0` указывает на то, что был использован `EAGI()`.  |
+| `agi_accountcode` | `myaccount`  | Код учетной записи, связанный с `agi_channel`. |
+| `agi_threadid`| `140071216785168`| `threadid` потока в Asterisk, на котором выполняется приложение `AGI()` или `EAGI()`. Это может быть полезно для связывания журналов, созданных приложением AGI, с журналами, созданными Asterisk, поскольку журналы Asterisk содержат идентификаторы потоков. |
 | `agi_arg_<argument number>` | `my argument` | Эти переменные предоставляют содержимое дополнительных аргументов, предоставленных приложению `AGI()` или `EAGI()`. |
 
 Пример переменных, которые могут быть отправлены в приложение AGI, см. в разделе выходные данные отладки связи AGI в разделе [Быстрый старт](glava-18.md#быстрый-старт). Конец списка переменных будет обозначен пустой строкой. Код обрабатывает эти переменные путем считывания строк ввода в цикле, пока не будет получена пустая строка. В этот момент приложение продолжается и начинает выполнять команды AGI.
 
-#### Асинхронный AGI
+#### Async AGI
 
-При использовании асинхронного AGI, Asterisk будет отправлять событие диспетчера называемое `AsyncAGI` чтобы инициировать сеанс асинхронного AGI. Это событие позволит приложениям, прослушивающим события диспетчера, взять на себя управление вызовом с помощью события менеджера AGI. Вот пример события менеджера, отправленного Asterisk:
+При использовании Async AGI, Asterisk будет отправлять событие диспетчера называемое `AsyncAGI` чтобы инициировать сеанс Async AGI. Это событие позволит приложениям, прослушивающим события диспетчера, взять на себя управление вызовом с помощью события менеджера AGI. Вот пример события менеджера, отправленного Asterisk:
 
 ```
 Event: AsyncAGI
@@ -274,7 +274,7 @@ agi_accountcode%3A%20%0Aagi_threadid%3A%20-1339524208%0A%0A
 | Команда AGI         | Описание                                                                  |
 | :------------------ | :------------------------------------------------------------------------ |
 | `ANSWER`            | Ответ на входящий вызов.                                                  |
-| `ASYNCAGI BREAK`    | Завершение сеанса асинхронного AGI и возврат канала в диалплан Asterisk.  |
+| `ASYNCAGI BREAK`    | Завершение сеанса Async AGI и возврат канала в диалплан Asterisk.  |
 | `CHANNEL STATUS`    | Получение статуса канала. Используется для получения текущего состояния канала, такого как up (ответ), down (трубка положена) или вызов. |
 | `DATABASE DEL`      | Удаляет пару ключ/значение из встроенной базы данных AstDB.               |
 | `DATABASE DELTREE`  | Удаляет дерево пар ключ/значение из встроенной базы данных AstDB.         |
@@ -343,17 +343,17 @@ agi_accountcode%3A%20%0Aagi_threadid%3A%20-1339524208%0A%0A
   </tr>
 </table>
 
-#### Асинхронный AGI
+#### Async AGI
 
-При использовании асинхронного AGI можно выполнять команды с помощью действия менеджера AGI. Чтобы просмотреть встроенную документацию для действия менеджера AGI - выполните `manager show command AGI` в CLI Asterisk. Демонстрация поможет выяснить, как выполняются команды AGI с помощью метода асинхронного AGI. Во-первых, расширение создается в диалплане, который выполняет сеанс асинхронного AGI в канале:
+При использовании Async AGI можно выполнять команды с помощью действия менеджера AGI. Чтобы просмотреть встроенную документацию для действия менеджера AGI - выполните `manager show command AGI` в CLI Asterisk. Демонстрация поможет выяснить, как выполняются команды AGI с помощью метода Async AGI. Во-первых, расширение создается в диалплане, который выполняет сеанс Async AGI в канале:
 
 ```
 exten = > 240,AGI(agi:async)
 ```
 
-При выполнении приложения AGI вызываемое событие менеджера `AsyncAGI` будет отправлено вместе со всеми переменными среды AGI. Подробная информация об этом событии находится в разделе “Асинхронный AGI” . После этого, действия менеджера AGI могут начать выполняться через AMI.
+При выполнении приложения AGI вызываемое событие менеджера `AsyncAGI` будет отправлено вместе со всеми переменными среды AGI. Подробная информация об этом событии находится в разделе "Async AGI” . После этого, действия менеджера AGI могут начать выполняться через AMI.
 
-Ниже приведен пример выполнения действия диспетчера и его события, генерируемые во время обработки асинхронного AGI. После первоначального выполнения действия менеджера AGI немедленно появляется ответ, указывающий на то, что команда была поставлена в очередь на выполнение. Позже появляется событие менеджера, указывающее что команда в очереди была выполнена. Заголовок идентификатора команды можно использовать для связывания начального запроса с событием, указывающим на то, что команда была выполнена:
+Ниже приведен пример выполнения действия диспетчера и его события, генерируемые во время обработки Async AGI. После первоначального выполнения действия менеджера AGI немедленно появляется ответ, указывающий на то, что команда была поставлена в очередь на выполнение. Позже появляется событие менеджера, указывающее что команда в очереди была выполнена. Заголовок идентификатора команды можно использовать для связывания начального запроса с событием, указывающим на то, что команда была выполнена:
 
 ```
 Action: AGI
@@ -374,7 +374,7 @@ CommandID: my-command-id
 Result: 200%20result%3D1%0A
 ```
 
-Следующие выходные данные - это то, что было замечено в консоли Asterisk во время этого сеансе асинхронного AGI:
+Следующие выходные данные - это то, что было замечено в консоли Asterisk во время этого сеансе Async AGI:
 
 ```
     -- Executing [7011@phones:1] AGI("SIP/0004F2060EB4-00000013",
@@ -398,263 +398,161 @@ exited non-zero on 'SIP/0004F2060EB4-00000013'
 
 Следующее что происходит после того, как канал завершается - это отправка уведомления о завершении в ваше приложение. Для process-based AGI, сигнал `SIGHUP` будет отправлен в процесс для уведомления о его завершении. Для быстрого подключения Asterisk отправит строку, содержащую слово `HANGUP`.
 
-Если вы хотите отключить функцию отправки звездочек, то Вздох ... сигнал для вашего приложения AGI на основе процесса или ЗАВИСАНИЕ строка для вашего сервера FastAGI, вы можете сделать это, установив AGISIGHUP переменная канала, как показано в этом коротком примере:
-
-; нет вздоха (учи) или повесить трубку (Фастаги)
-
-exten = > 237,1, Set(AGISIGHUP=нет)
-
-same = > n, AGI(hello-world.sh)
-
-После того, как зависание произошло, единственные команды AGI, которые могут использоваться, являются теми, которые не требуют взаимодействия канала. Документация для команд учи, встроенных в Asterisk, включает указание на то, можно ли использовать каждую команду после того, как канал был отключен.
-Асинхронный учи
-
-При использовании асинхронного AGI интерфейс диспетчера предоставляет механизмы для уведомления о зависаниях канала. Если вы хотите завершить сеанс асинхронного учи для канала, необходимо выполнить следующее ASYNCAGI ПЕРЕРЫВ команда. Когда сеанс асинхронного учи закончится, Asterisk отправит сообщение AsyncAGI событие менеджера с a Подэволюция от Конец. Ниже приведен пример завершения асинхронного сеанса AGI:
-
-Действие: учи
-
-Канал: SIP / 0004F2060EB4-0000001b
-
-ActionID: my-action-id
-
-CommandID: my-command-id
-
-Команда: ASYNCAGI перерыв
-
-
-Ответ: Успех
-
-ActionID: my-action-id
-
-Сообщение: добавлена команда AGI для очереди
-
-
-Событие: AsyncAGI
-
-Привилегия: аги, все
-
-SubEvent: Конец
-
-Канал: SIP / 0004F2060EB4-0000001b
-
-На этом этапе канал возвращается к следующему шагу в плане набора номера Asterisk (если он еще не был отключен).
-Пример: Доступ К Базе Данных Учетной Записи
-
-Пример 18-1 - это пример сценария учи. Чтобы запустить этот скрипт, вы сначала поместите его в каталог /var/lib/asterisk/agi-bin. Тогда вы бы выполнили его из диалплана Asterisk вот так:
-
-exten = > 241,1, AGI(account-lookup.py)
-
-то же самое = > n, отбой()
-
-Этот пример написан на Python и очень скудно документирован для краткости. Это демонстрирует, как сценарий AGI взаимодействует со звездочкой с помощью стандартный ввод и стандартный вывод.
-
-Сценарий предлагает пользователю ввести номер учетной записи, а затем воспроизводит значение, связанное с этим номером. В интересах краткости, мы жестко закодировали несколько поддельных учетных записей в скрипт—это, очевидно, будет что-то нормально обрабатываемое подключением к базе данных.
-
-Сценарий намеренно лаконичен, так как мы заинтересованы в кратком показе некоторых функций учи, не заполняя эту книгу страницами кода.
-Пример 18-1. account-lookup.py
-
-#!/usr / bin / env python
-
-# Пример для AGI (Asterisk Gateway Interface).
-
-
-импортировать sys
-
-
-защита agi_command(cmd):
-
-"Выпишите команду и верните ответ"
-
-Печать УМК
-
-sys.стандартный вывод.промывать() #очистить буфер
-
-Возврат sys.стандартный ввод.readline ().Стриптиз() # полоса пробелов
-
-
-asterisk_env = {} # read AGI env vars from Asterisk
-
-в то время как Правда:
-
-линия = sys.стандартный ввод.readline ().Стриптиз()
-
-если нет лен (линия):
-
-ломать
-
-var_name, var_value = линия.расщеплять':'(, 1)
-
-asterisk_env[var_name] = var_value
-
-
-# Поддельные "базы данных" учетных записей.
-
-СЧЕТА = {
-
-'12345678': {"баланс": '50'},
-
-'11223344': {"баланс": '10'},
-
-'87654321': {"баланс": '100'},
-
-}
-
-
-ответ = agi_command ('ответ')
-
-
-# три аргумента: приглашение, тайм-аут, maxlength
-
-ответ = agi_command ('GET DATA enter_account 3000 8')
-
-
-если 'timeout' в ответ:
-
-ответ = agi_command ('STREAM FILE goodbye""')
-
-sys.выход(0)
-
-
-# Ответ будет выглядеть так: 200 результат= < цифры>
-
-# Split on'=', нам нужен индекс 1
-
-Учетная запись = ответ.расщеплять'='(, 1)[1]
-
-
-если Учетная запись == '-1': # цифры, если ошибка
-
-ответ = agi_command ('STREAM FILE astcc-account-number-invalid ""')
-
-ответ = agi_command ('HANGUP')
-
-sys.выход(0)
-
-
-если Учетная запись нет в СЧЕТА: # недействительный
-
-ответ = agi_command ('STREAM FILE astcc-account-number-invalid ""')
-
-sys.выход(0)
-
-
-баланс = Счета[account] ['balance']
-
-
-ответ = agi_command ('STREAM FILE account-balance-is "")
-
-ответ = agi_command ('SAY NUMBER %s ""' % (баланс))
-
-sys.выход(0)
-рамки развития
-
-Был предпринят ряд усилий по созданию фреймворков или библиотек, облегчающих Программирование учи. Вы заметите, что некоторые из этих рамок также появились в главе 17 . Так же, как и в случае с AMI, при оценке фреймворка мы рекомендуем вам найти тот, который соответствует следующим критериям:
-
-Зрелость
-
-Этот проект существует уже несколько лет? Зрелый проект гораздо менее вероятно будет иметь серьезные ошибки в нем.
-
-Поддержка
-
-Проверьте возраст последнего обновления. Если проект не был обновлен в течение нескольких лет, есть большая вероятность, что он был заброшен. Он все еще может быть полезен, но вы будете сами по себе. Аналогично, как выглядит трекер ошибок? Есть ли много важных ошибок, которые игнорируются? (Будьте проницательны здесь, так как часто реалии поддержания свободного проекта требуют дисциплинированного сортировки—не все функции будут добавлены.)
-
-Качество кода
-
-Это хорошо написанная структура? Если он не был спроектирован хорошо, вы должны знать об этом, решая, стоит ли доверять ему свой проект.
-
-Сообщество
-
-Есть ли активное сообщество разработчиков, использующих этот проект? Скорее всего, вам понадобится помощь; будет ли она доступна, когда вы в ней нуждаетесь?
-
-Документация
-
-Код должен быть хорошо прокомментирован, но в идеале, вики или другая официальная документация для поддержки библиотеки имеет важное значение.
-
-На момент подготовки настоящего документа рамки, перечисленные в таблице 18-3, удовлетворяли всем или большинству из приведенных выше критериев. Если вы не видите здесь библиотеку для вашего предпочтительного языка программирования, она может быть где-то там, но просто не попала в наш список.
-## AGI Communication Overview
-
-The preceding section discussed the variations of AGI that can be used. This section goes into more detail about how your custom AGI application communicates with Asterisk once AGI() has been invoked.
-
-### Setting Up an AGI Session
-
-Once AGI() or EAGI() has been invoked from the Asterisk dialplan, some information is passed to the AGI application to set up the AGI session. This section discusses what steps are taken at the beginning of an AGI session for the different variants of AGI.
-
-#### Process-based AGI/FastAGI
-
-For a process-based AGI application or a connection to a FastAGI server, the variables listed in [Table 18-1](18.%20Asterisk%20Gateway%20Interface%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AGI-variables) will be the first pieces of information sent from Asterisk to your application. Each variable will be on its own line, in the form:
-
-agi_variable: value
-
-Table 18-1. AGI environment variables
-
-| Variable | Value/example | Description |
-| :--- | :--- | :--- |
-| `agi_request` | hello-world.sh | The first argument that was passed to the AGI\(\) or EAGI\(\) application. For process-based AGI, this is the name of the AGI application that has been executed. For FastAGI, this would be the URL that was used to reach the FastAGI server. |
-| `agi_channel` | SIP/0004F2060EB4-00000009 | The name of the channel that has executed the AGI\(\) or EAGI\(\) application. |
-| `agi_language` | en | The language set on agi\_channel. |
-| `agi_type` | SIP | The channel type for agi\_channel. |
-| `agi_uniqueid` | 1284382003.9 | The uniqueid of agi\_channel. |
-| `agi_version` | 1.8.0-beta4 | The Asterisk version in use. |
-| `agi_callerid` | 12565551212 | The full caller ID string that is set on agi\_channel. |
-| `agi_calleridname` | Russell Bryant | The caller ID name that is set on agi\_channel. |
-| `agi_callingpres` | 0 | The caller presentation associated with the caller ID set on agi\_channel. For more information, see the output of core show function CALLERPRES at the Asterisk CLI. |
-| `agi_callingani2` | 0 | The caller ANI2 associated with agi\_channel. |
-| `agi_callington` | 0 | The caller ID TON \(Type of Number\) associated with agi\_channel. |
-| `agi_callingtns` | 0 | The dialed number TNS \(Transit Network Select\) associated with agi\_channel. |
-| `agi_dnid` | 7010 | The dialed number associated with agi\_channel. |
-| `agi_rdnis` | unknown | The redirecting number associated with agi\_channel. |
-| `agi_context` | phones | The context of the dialplan that agi\_channel was in when it executed the AGI\(\) or EAGI\(\) application. |
-| `agi_extension` | 500 | The extension in the dialplan that agi\_channel was executing when it ran the AGI\(\) or EAGI\(\) application. |
-| `agi_priority` | 1 | The priority of agi\_extension in agi\_context that executed AGI\(\) or EAGI\(\). |
-| `agi_enhanced` | 0.0 | An indication of whether AGI\(\) or EAGI\(\) was used from the dialplan. 0.0 indicates that AGI\(\) was used. 1.0 indicates that EAGI() was used. |
-| `agi_accountcode` | myaccount | The accountcode associated with agi\_channel. |
-| `agi_threadid` | 140071216785168 | The threadid of the thread in Asterisk that is running the AGI\(\) or EAGI\(\) application. This may be useful for associating logs generated by the AGI application with logs generated by Asterisk, since the Asterisk logs contain thread IDs. |
-| `agi_arg_<argument number>` | my argument | These variables provide the contents of the additional arguments provided to the AGI\(\) or EAGI() application. |
-
-For an example of the variables that might be sent to an AGI application, see the AGI communication debug output in [“Quick Start”](18.%20Asterisk%20Gateway%20Interface%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AGI-quickstart). The end of the list of variables will be indicated by a blank line. The code handles these variables by reading lines of input in a loop until a blank line is received. At that point, the application continues and begins executing AGI commands.
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td><p>Если вы хотите отключить функцию отправки Asterisk сигнала <code>SIGHUP</code> для вашего приложения process-based AGI или строки <code>HANGUP</code> для вашего сервера FastAGI - вы можете сделать это, установив переменную канала <code>AGISIGHUP</code> как показано в этом коротком примере:</p>
+<p><pre><code>
+; нет SIGHUP (AGI) или HANGUP (FastAGI)
+exten => 237,1,Set(AGISIGHUP=no)
+    same => n,AGI(hello-world.sh)
+</code></pre></p>
+    </td>
+  </tr>
+</table>
+
+После того, как завершение канала произошло - единственные команды AGI, которые могут использоваться, являются теми, которые не требуют взаимодействия с каналом. Документация для команд AGI, встроенных в Asterisk, включает указание на то, можно ли использовать каждую команду после того, как канал был отключен.
 
 #### Async AGI
 
-When you use async AGI, Asterisk will send out a manager event called AsyncAGI to initiate the async AGI session. This event will allow applications listening to manager events to take over control of the call via the AGI manager action. Here is an example manager event sent out by Asterisk:
+При использовании Async AGI интерфейс менеджера предоставляет механизмы для уведомления о завершении канала. Если вы хотите завершить сеанс Async AGI для канала - необходимо выполнить команду `ASYNCAGI BREAK`. Когда сеанс Async AGI закончится - Asterisk отправит событие менеджера `AsyncAGI` с `SubEvent` об `End`. Ниже приведен пример завершения сеанса Async AGI:
 
 ```
+Action: AGI
+Channel: SIP/0004F2060EB4-0000001b
+ActionID: my-action-id
+CommandID: my-command-id
+Command: ASYNCAGI BREAK
+
+Response: Success
+ActionID: my-action-id
+Message: Added AGI command to queue
+
 Event: AsyncAGI
 Privilege: agi,all
-SubEvent: Start
-Channel: SIP/0000FFFF0001-00000000
-Env: agi_request%3A%20async%0Aagi\_channel%3A%20SIP%2F0000FFFF0001-00000000%0A \
-
- agi\_language%3A%20en%0Aagi\_type%3A%20SIP%0A \
-
- agi\_uniqueid%3A%201285219743.0%0A \
-
- agi\_version%3A%201.8.0-beta5%0Aagi\_callerid%3A%2012565551111%0A \
-
- agi\_calleridname%3A%20Julie%20Bryant%0Aagi\_callingpres%3A%200%0A \
-
- agi\_callingani2%3A%200%0Aagi\_callington%3A%200%0Aagi\_callingtns%3A%200%0A \
-
- agi\_dnid%3A%20111%0Aagi\_rdnis%3A%20unknown%0Aagi\_context%3A%20LocalSets%0A \
-
- agi\_extension%3A%20111%0Aagi\_priority%3A%201%0Aagi\_enhanced%3A%200.0%0A \
-
- agi\_accountcode%3A%20%0Aagi\_threadid%3A%20-1339524208%0A%0A
+SubEvent: End
+Channel: SIP/0004F2060EB4-0000001b
 ```
 
-**Примечание**
+На этом этапе канал возвращается к следующему шагу в диалплане Asterisk (если он еще не был отключен).
 
-The value of the Env header in this AsyncAGI manager event is all on one line. The long value of the Env header has been URI encoded.
+## Пример: Доступ к базе данных учетной записи
 
-### Commands and Responses
+Пример 18-1 - это пример сценария AGI. Чтобы запустить этот скрипт - сначала поместите его в каталог _/var/lib/asterisk/agi-bin_. Тогда вы бы выполнили его из диалплана Asterisk вот так:
 
-Once an AGI session has been set up, Asterisk begins performing call processing in response to commands sent from the AGI application. As soon as an AGI command has been issued to Asterisk, no further commands will be processed on that channel until the current command has been completed. When it finishes processing a command, Asterisk will respond with the result.
+```
+exten = > 241,1, AGI(account-lookup.py)
+    same => n,Hangup()
+```
 
-**Примечание**
+Этот пример написан на Python и очень скудно документирован для краткости. Он демонстрирует, как сценарий AGI взаимодействует с Asterisk с помощью `stdin` и `stdout`.
 
-The AGI processes commands in a serial manner. Once a command has been executed, no further commands can be executed until Asterisk has returned a response. Some commands can take a very long time to execute. For example, the EXEC AGI command executes an Asterisk application. If the command is EXEC Dial, AGI communication is blocked until the call is done. If your AGI application needs to interact further with Asterisk at this point, it can do so using the AMI, which is covered in [Chapter 17](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch17.html%22%20/l%20%22asterisk-AMI).
+Сценарий предлагает пользователю ввести номер учетной записи, а затем воспроизводит значение, связанное с этим номером. В интересах краткости, мы жестко закодировали несколько поддельных учетных записей в скрипт — это, очевидно, будет что-то нормально обрабатываемое подключением к базе данных.
 
-You can retrieve a full list of available AGI commands from the Asterisk console by running the command agi show commands. These commands are described in [Table 18-2](18.%20Asterisk%20Gateway%20Interface%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AGI-commands-table). To get more detailed information on a specific AGI command, including syntax information for any arguments that a command expects, use agi show commands topic COMMAND. For example, to see the built-in documentation for the ANSWER AGI command, you would use agi show commands topic ANSWER.
+Сценарий намеренно лаконичен, так как мы заинтересованы в кратком показе некоторых функций AGI, не заполняя эту книгу страницами кода.
 
+_Пример 18-1. account-lookup.py_
+
+```
+#!/usr/bin/env python
+# Пример для AGI (Asterisk Gateway Interface).
+
+import sys
+
+def agi_command(cmd):
+    '''Вписать команду и вернуть ответ'''
+    print cmd
+    sys.stdout.flush() #очистка буфера
+    return sys.stdin.readline().strip() # строка пробелов
+
+asterisk_env = {} # чтерие переменной среды AGI из Asterisk
+while True:
+    line = sys.stdin.readline().strip()
+    if not len(line):
+        break
+    var_name, var_value = line.split(':', 1)
+    asterisk_env[var_name] = var_value
+
+# Поддельные "базы данных" учетных записей.
+ACCOUNTS = {
+    '12345678': {'balance': '50'},
+    '11223344': {'balance': '10'},
+    '87654321': {'balance': '100'},
+}
+
+response = agi_command('ANSWER')
+
+# три аргумента: приглашение, тайм-аут, максимальная длина
+response = agi_command('GET DATA enter_account 3000 8')
+
+if 'timeout' in response:
+    response = agi_command('STREAM FILE goodbye ""')
+    sys.exit(0)
+
+# Ответ будет выглядеть как: 200 result=<digits>
+# С разделителем '=' мы получаем индекс 1
+account = response.split('=', 1)[1]
+
+if account == '-1': # ответ при ошибке
+    response = agi_command('STREAM FILE astcc-account-number-invalid ""')
+    response = agi_command('HANGUP')
+    sys.exit(0)
+
+if account not in ACCOUNTS: # неверный
+    response = agi_command('STREAM FILE astcc-account-number-invalid ""')
+    sys.exit(0)
+
+balance = ACCOUNTS[account]['balance']
+
+response = agi_command('STREAM FILE account-balance-is ""')
+response = agi_command('SAY NUMBER %s ""' % (balance))
+sys.exit(0)
+```
+
+## Разрабатываемые фреймворки
+
+Был предпринят ряд усилий по созданию фреймворков или библиотек, облегчающих программирование AGI. Вы заметите, что некоторые из них уже упоминались в [Главе 17](glava-17.md). Так же, как и в случае с AMI, при оценке фреймворка мы рекомендуем вам найти тот, который соответствует следующим критериям:
+
+_Зрелость_
+
+Этот проект существует уже несколько лет? Зрелый проект гораздо менее вероятно будет иметь серьезные ошибки в нем.
+
+_Поддержка_
+
+Проверьте дату последнего обновления. Если проект не обновлялся в течении нескольких лет - есть большая вероятность, что он был заброшен. Он все еще может быть полезен, но вы будете представлены сами себе. Аналогично, как выглядит трекер ошибок? Много ли важных ошибок, которые игнорируются? (Будьте проницательны здесь, так как часто реалии поддержки свободного проекта требуют тщательного отбора — не все функции будут добавлены.)
+
+_Качество кода_
+
+Это хорошо написанная структура? Если он не был спроектирован хорошо - вы должны знать об этом, решая стоит ли доверять ему свой проект.
+
+_Сообщество_
+
+Есть ли активное сообщество разработчиков, поддерживающих этот проект? В случае если вам понадобится помощь - будет ли она доступна?
+
+_Документация_
+
+Код должен быть хорошо прокомментирован, но в идеале, вики или другая официальная документация для поддержки библиотеки имеет важное значение.
+
+На момент подготовки настоящего документа фреймворки, перечисленные в Таблице 18-3, удовлетворяли всем или большинству из приведенных выше критериев. Если вы не видите здесь библиотеку для вашего предпочтительного языка программирования, она может быть где-то там, но просто не вошедшей в наш список.
+
+_Таблица 18-3. Разрабатываемые фреймворки AGI_
+
+| Фреймворк         | Язык |
+| :---------------- | :--- |
+| Adhearsion        | Ruby |
+| **Asterisk-Java** | Java |
+| **AsterNET**      | .NET |
+| **ding-dong**     | Node.js |
+| **PAGI**          | PHP |
+| **Panoramisk**    | Python |
+| StarPy            | Python + Twisted |
+
+## Вывод
+
+AGI предоставляет мощный интерфейс для Asterisk, который позволяет реализовать управление вызовами от первого лица на выбранном вами языке программирования. Вы можете использовать несколько подходов к реализации приложения AGI. Некоторые подходы могут обеспечить лучшую производительность, но ценой большей сложности. AGI предоставляет среду программирования, которая может облегчить интеграцию Asterisk с другими системами или просто обеспечить более удобную среду программирования управления вызовами для опытного программиста. Во многих случаях наилучшим подходом будет использование предварительно созданной структуры, особенно при оценке или прототипировании сложного проекта. Для максимальной производительности мы по-прежнему рекомендуем вам рассмотреть возможность написания как можно большего объема вашего приложения с помощью диалплана Asterisk.
+
+[Глава 17. AMI и файлы вызовов](glava-17.md) | [Содержание](SUMMARY.md) | [Глава 19. Asterisk REST Interface](glava-19.md)
+
+<!---
 Таблица 18-2. Команды AGI
 
 <table>
@@ -906,245 +804,4 @@ You can retrieve a full list of available AGI commands from the Asterisk console
   </tbody>
 </table>#### Process-based AGI/FastAGI
 
-AGI commands are sent to Asterisk on a single line. The line must end with a single newline character. Once a command has been sent to Asterisk, no further commands will be processed until the last command has finished and a response has been sent back to the AGI application. Here is an example response to an AGI command:
-
-200 result=0
-
-**Подсказка**
-
-The Asterisk console allows debugging the communications with an AGI application. To enable AGI communication debugging, run the agi set debug on command. To turn debugging off, use agi set debug off. While this debugging mode is on, all communication to and from an AGI application will be printed out to the Asterisk console. An example of this output can be found in [“Quick Start”](18.%20Asterisk%20Gateway%20Interface%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AGI-quickstart).
-
-#### Async AGI
-
-When you’re using async AGI, you issue commands by using the AGI manager action. To see the built-in documentation for the AGI manager action, run manager show command AGI at the Asterisk CLI. A demonstration will help clarify how AGI commands are executed using the async AGI method. First, an extension is created in the dialplan that runs an async AGI session on a channel:
-
-```
-exten => 240,AGI(agi:async)
-```
-
-When the AGI dialplan application is executed, a manager event called AsyncAGI will be sent out with all the AGI environment variables. Details about this event are in [“Async AGI”](18.%20Asterisk%20Gateway%20Interface%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AGI_id268960). After this, AGI manager actions can start to take place via AMI.
-
-The following shows an example manager-action execution and the manager events that are emitted during async AGI processing. After the initial execution of the AGI manager action, there is an immediate response to indicate that the command has been queued up for execution. Later, there is a manager event that indicates that the queued command has been executed. The CommandID header can be used to associate the initial request with the event that indicates that the command has been executed:
-
-```
-Action: AGI
-Channel: SIP/0004F2060EB4-00000013
-ActionID: my-action-id
-CommandID: my-command-id
-Command: VERBOSE "Puppies like cotton candy." 1
-Response: Success
-ActionID: my-action-id
-Message: Added AGI command to queue
-Event: AsyncAGI
-Privilege: agi,all
-SubEvent: Exec
-Channel: SIP/0004F2060EB4-00000013
-CommandID: my-command-id
-Result: 200%20result%3D1%0A
-```
-
-The following output is what was seen on the Asterisk console during this async AGI session:
-
-```
- -- Executing [7011@phones:1] AGI("SIP/0004F2060EB4-00000013",
- "agi:async"\) in new stack
- agi:async: Puppies like cotton candy.
- == Spawn extension \(phones, 7011, 1\)
-exited non-zero on 'SIP/0004F2060EB4-00000013'
-```
-
-### Ending an AGI Session
-
-An AGI session ends when your AGI application is ready for it to end. The details about how this happens depend on whether your application is using process-based AGI, FastAGI, or async AGI.
-
-#### Process-based AGI/FastAGI
-
-Your AGI application may exit or close its connection at any time. As long as the channel has not hung up before your application ends, dialplan execution will continue.
-
-If channel hangup occurs while your AGI session is still active, Asterisk will provide notification that this has occurred so that your application can adjust its operation as appropriate.
-
-If a channel hangs up while your AGI application is still executing, a couple of things will happen. If an AGI command is in the middle of executing, you may receive a result code of -1. You should not depend on this, though, since not all AGI commands require channel interaction. If the command being executed does not require channel interaction, the result will not reflect the hangup.
-
-The next thing that happens after a channel hangs up is that an explicit notification of the hangup is sent to your application. For process-based AGI, the signal SIGHUP will be sent to the process to notify it of the hangup. For a FastAGI connection, Asterisk will send a line containing the word HANGUP.
-
-If you would like to disable having Asterisk send the SIGHUP signal to your process-based AGI application or the HANGUP string to your FastAGI server, you can do so by setting the AGISIGHUP channel variable, as demonstrated in this short example:
-
-```
-; no SIGHUP (AGI) or HANGUP (FastAGI)
-exten => 237,1,Set(AGISIGHUP=no)
- same =&gt; n,AGI(hello-world.sh)
-```
-
-Once the hangup has happened, the only AGI commands that may be used are those that do not require channel interaction. The documentation for the AGI commands built into Asterisk includes an indication of whether or not each command can be used once the channel has been hung up.
-
-#### Async AGI
-
-When you’re using async AGI, the manager interface provides mechanisms to notify you about channel hangups. When you would like to end an async AGI session for a channel, you must execute the ASYNCAGI BREAK command. When the async AGI session ends, Asterisk will send an AsyncAGI manager event with a SubEvent of End. The following is an example of ending an async AGI session:
-
-Action: AGI
-
-Channel: SIP/0004F2060EB4-0000001b
-
-ActionID: my-action-id
-
-CommandID: my-command-id
-
-Command: ASYNCAGI BREAK
-
-Response: Success
-
-ActionID: my-action-id
-
-Message: Added AGI command to queue
-
-Event: AsyncAGI
-
-Privilege: agi,all
-
-SubEvent: End
-
-Channel: SIP/0004F2060EB4-0000001b
-
-At this point, the channel returns to the next step in the Asterisk dialplan \(assuming it has not yet been hung up\).
-
-## Example: Account Database Access
-
-[Example 18-1](18.%20Asterisk%20Gateway%20Interface%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22agiexample1) is an example of an AGI script. To run this script you would first place it in the /var/lib/asterisk/agi-bin directory. Then you would execute it from the Asterisk dialplan like this:
-
-exten =&gt; 241,1,AGI\(account-lookup.py\)
-
- same =&gt; n,Hangup\(\)
-
-This example is written in Python and is very sparsely documented for brevity. It demonstrates how an AGI script interfaces with Asterisk using stdin and stdout.
-
-The script prompts a user to enter an account number, and then plays back a value associated with that number. In the interest of brevity, we have hardcoded a few fake accounts into the script—this would obviously be something normally handled by a database connection.
-
-The script is intentionally terse, since we are interested in briefly showing some AGI functions without filling this book with pages of code.
-
-**Example 18-1. account-lookup.py**
-
-\#!/usr/bin/env python
-
-\# An example for AGI \(Asterisk Gateway Interface\).
-
-import sys
-
-def agi\_command\(cmd\):
-
- '''Write out the command and return the response'''
-
- print cmd
-
- sys.stdout.flush\(\) \#clear the buffer
-
- return sys.stdin.readline\(\).strip\(\) \# strip whitespace
-
-asterisk\_env = {} \# read AGI env vars from Asterisk
-
-while True:
-
- line = sys.stdin.readline\(\).strip\(\)
-
- if not len\(line\):
-
- break
-
- var\_name, var\_value = line.split\(':', 1\)
-
- asterisk\_env\[var\_name\] = var\_value
-
-\# Fake "database" of accounts.
-
-ACCOUNTS = {
-
- '12345678': {'balance': '50'},
-
- '11223344': {'balance': '10'},
-
- '87654321': {'balance': '100'},
-
-}
-
-response = agi\_command\('ANSWER'\)
-
-\# three arguments: prompt, timeout, maxlength
-
-response = agi\_command\('GET DATA enter\_account 3000 8'\)
-
-if 'timeout' in response:
-
- response = agi\_command\('STREAM FILE goodbye ""'\)
-
- sys.exit\(0\)
-
-\# The response will look like: 200 result=&lt;digits&gt;
-
-\# Split on '=', we want index 1
-
-account = response.split\('=', 1\)\[1\]
-
-if account == '-1': \# digits if error
-
- response = agi\_command\('STREAM FILE astcc-account-number-invalid ""'\)
-
- response = agi\_command\('HANGUP'\)
-
- sys.exit\(0\)
-
-if account not in ACCOUNTS: \# invalid
-
- response = agi\_command\('STREAM FILE astcc-account-number-invalid ""'\)
-
- sys.exit\(0\)
-
-balance = ACCOUNTS\[account\]\['balance'\]
-
-response = agi\_command\('STREAM FILE account-balance-is ""'\)
-
-response = agi\_command\('SAY NUMBER %s ""' % \(balance\)\)
-
-sys.exit\(0\)
-
-## Development Frameworks
-
-There have been a number of efforts to create frameworks or libraries that make AGI programming easier. You will notice that several of these frameworks also appeared in [Chapter 17](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch17.html%22%20/l%20%22asterisk-AMI). Just as with AMI, when evaluating a framework, we recommend you find one that meets the following criteria:
-
-Maturity
-
-Has this project been around for a few years? A mature project is far less likely to have serious bugs in it.
-
-Maintenance
-
-Check the age of the latest update. If the project hasn’t been updated in a few years, there’s a strong possibility it has been abandoned. It might still be usable, but you’ll be on your own. Similarly, what does the bug tracker look like? Are there a lot of important bugs being ignored? \(Be discerning here, since often the realities of maintaining a free project require disciplined triage—not everybody’s features are going to get added.\)
-
-Quality of the code
-
-Is this a well-written framework? If it was not engineered well, you should be aware of that when deciding whether to trust your project to it.
-
-Community
-
-Is there an active community of developers using this project? It’s likely you’ll need help; will it be available when you need it?
-
-Documentation
-
-The code should be well commented, but ideally, a wiki or other official documentation to support the library is essential.
-
-The frameworks listed in [Table 18-3](18.%20Asterisk%20Gateway%20Interface%20-%20Asterisk%20%20The%20Definitive%20Guide,%205th%20Edition.htm%22%20/l%20%22AGI-frameworks) met all or most of the preceding criteria at this writing. If you do not see a library listed here for your preferred programming language, it might be out there somewhere, but simply didn’t make our list.
-
-Table 18-3. AGI development frameworks
-
-| Framework | Language |
-| :--- | :--- |
-| Adhearsion | Ruby |
-| Asterisk-Java | Java |
-| AsterNET | .NET |
-| ding-dong | Node.js |
-| PAGI | PHP |
-| Panoramisk | Python |
-| StarPy | Python + Twisted |
-
-## Conclusion
-
-AGI provides a powerful interface to Asterisk that allows you to implement first-party call control in the programming language of your choice. You can take multiple approaches to implementing an AGI application. Some approaches can provide better performance, but at the cost of more complexity. AGI provides a programming environment that may make it easier to integrate Asterisk with other systems, or just provide a more comfortable call-control programming environment for the experienced programmer. In many cases, the use of a prebuilt framework will be the best approach, especially when evaluating or prototyping a complex project. For the ultimate performance, we still recommend you consider writing as much of your application as you can using the Asterisk dialplan.
-
-[Глава 17. AMI и файлы вызовов](glava-17.md) | [Содержание](SUMMARY.md) | [Глава 19. Asterisk REST Interface](glava-19.md)
+-->
