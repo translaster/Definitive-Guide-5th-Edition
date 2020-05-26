@@ -1,8 +1,7 @@
 # Об авторах
 
-**Jim Van Meggelen** is a founding partner and CTO of Clearly Core Inc., a Canada-based provider of open source telephony solutions. He has nearly 30 years of enterprise telecom experience, with extensive knowledge of both legacy telecom and VoIP.
+**Джим Ван Меггелен** является партнером-основателем и техническим директором компании Clearly Core Inc. - канадского поставщика решений для телефонии с открытым исходным кодом. Он имеет почти 30-летний опыт работы в сфере корпоративных телекоммуникаций, обладая обширными знаниями как в области устаревших телекоммуникаций, так и в области VoIP.
 
-**Russell Bryant** is a Distinguished Engineer at Red Hat, where he works on cloud infrastructure projects. Prior to working for Red Hat, Russell spent seven years working for Digium on the Asterisk project. Russell’s role at Digium began as a software developer and concluded with being the leader of the Asterisk project and engineering manager for the team focused on Asterisk development.
+**Рассел Брайант** - выдающийся инженер компании Red Hat, где он работает над проектами облачной инфраструктуры. До работы в Red Hat Рассел провел семь лет работая в Digium над проектом Asterisk. Роль Рассела в Digium началась как разработчика программного обеспечения и завершилась тем, что он стал руководителем проекта Asterisk и инженером-менеджером команды, занимающейся разработкой Asterisk.
 
-**Leif Madsen** is the Cloud Service Assurance Architect within the CloudOps team at Red Hat, where he leads the engineering effort to provide Service Assurance to both telecommunications and enterprise companies. He first got involved with the Asterisk community when he was looking for a voice-conferencing solution. Once he learned that there was no official Asterisk documentation, he cofounded the Asterisk Documentation Project.
-
+**Лейф Медсен** является архитектором обеспечения облачных услуг в команде CloudOps в Red Hat, где он руководит инженерными разработками по обеспечению гарантий обслуживания как телекоммуникационных, так и корпоративных компаний. Он впервые связался с сообществом Asterisk, когда искал решение для голосовой конференции. Как только он узнал, что официальной документации Asterisk не существует - он стал соучредителем проекта Asterisk Documentation Project.
