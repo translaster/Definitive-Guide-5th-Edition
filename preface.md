@@ -74,53 +74,57 @@ _`{ вариант-1 | вариант-2 }`_
   </tr>
 </table>
 
-## O’Reilly Online Learning
+## Онлайн обучение O’Reilly
 
-**Note**
+<table border="1" width="100%" cellpadding="5">
+  <tr>
+    <td>
+    <p><img src="pics/oreilly.png" height="100" align="left">На протяжении почти 40 лет [O'Reilly Media](http://oreilly.com/) предоставляет технологии и бизнес-тренинги, знания и понимание, чтобы помочь компаниям добиться успеха.</p>
+    </td>
+  </tr>
+</table>
 
-For almost 40 years, [O’Reilly Media](http://oreilly.com/) has provided technology and business training, knowledge, and insight to help companies succeed.
+Наша уникальная сеть экспертов и новаторов делится своими знаниями и опытом с помощью книг, статей, конференций и нашей онлайн-обучающей платформы. Платформа онлайн-обучения o'Reilly предоставляет вам по запросу доступ к живым учебным курсам, углубленным учебным путям, интерактивным средам кодирования и обширной коллекции текста и видео от O'Reilly и более чем 200 других издателей. Для получения дополнительной информации, пожалуйста, посетите [_http://oreilly.com_](http://www.oreilly.com/).
 
- Our unique network of experts and innovators share their knowledge and expertise through books, articles, conferences, and our online learning platform. O’Reilly’s online learning platform gives you on-demand access to live training courses, in-depth learning paths, interactive coding environments, and a vast collection of text and video from O’Reilly and 200+ other publishers. For more information, please visit [_http://oreilly.com_](http://www.oreilly.com/).
+## Как с нами связаться
 
-## How to Contact Us
+Пожалуйста, направляйте комментарии и вопросы, касающиеся этой книги, издателю:
 
-Please address comments and questions concerning this book to the publisher:
-
-* O’Reilly Media, Inc.
+* O'Reilly Media, Inc.
 * 1005 Gravenstein Highway North
 * Sebastopol, CA 95472
-* 800-998-9938 (in the United States or Canada)
-* 707-829-0515 (international or local)
-* 707-829-0104 (fax)
+* 800-998-9938 (в США или Канаде)
+* 707-829-0515 (международный или местный)
+* 707-829-0104 (факс)
 
-We have a web page for this book, where we list errata, examples, and any additional information. You can access this page at [_https://oreil.ly/asterisk_tdg_5E_](https://oreil.ly/asterisk_tdg_5E).
+У нас есть веб-страница для этой книги, где мы перечисляем ошибки, примеры и любую дополнительную информацию. Вы можете получить доступ к этой странице по адресу [_https://oreil.ly/asterisk_tdg_5E_](https://oreil.ly/asterisk_tdg_5E).
 
-To comment or ask technical questions about this book, send email to [_bookquestions@oreilly.com_](mailto:bookquestions@oreilly.com).
+Чтобы прокомментировать или задать технические вопросы об этой книге, отправьте электронное письмо по адресу [_bookquestions@oreilly.com_](mailto:bookquestions@oreilly.com).
 
-For more information about our books, courses, conferences, and news, see our website at [_http://www.oreilly.com_](http://www.oreilly.com/).
+Для получения дополнительной информации о наших книгах, курсах, конференциях и новостях смотрите наш веб-сайт по адресу [_http://www. oreilly.com_](http://www.oreilly.com/).
 
-Find us on Facebook: [_http://facebook.com/oreilly_](http://facebook.com/oreilly)
+Facebook: [_http://facebook.com/oreilly_](http://facebook.com/oreilly)
 
-Follow us on Twitter: [_http://twitter.com/oreillymedia_](http://twitter.com/oreillymedia)
+Следуйте за нами в Twitter: [_http://twitter.com/oreillymedia_](http://twitter.com/oreillymedia)
 
-Watch us on YouTube: [_http://www.youtube.com/oreillymedia_](http://www.youtube.com/oreillymedia)
+Смотрите нас на YouTube: [_http://www.youtube.com/oreillymedia_](http://www.youtube.com/oreillymedia)
 
-## Acknowledgments from Jim Van Meggelen
+## Благодарности от Джима Ван Меггелена
 
-To David Duffett, thanks for the chapter on internationalization, which properly looks at this technology from a more global perspective.
+Дэвиду Даффетту спасибо за главу об интернационализации, в которой он правильно рассматривает эту технологию с более глобальной точки зрения.
 
-Thanks to Leif Madsen, Jared Smith, and Russell Bryant, for your contributions to the previous editions of this book. It was fun flying solo, but I can’t deny I missed you guys!
+Спасибо Лейфу Мэдсену, Джареду Смиту и Расселу Брайанту за Ваш вклад в предыдущие издания этой книги. Это было весело летать в одиночку, но я не могу отрицать, что скучал по вам, ребята!
 
-Specific thanks to Matt Fredrickson and Matt Jordan of Digium, who generously shared their time and knowledge with me, and without whom I would have been lost. Thanks guys!
+Особая благодарность Мэтту Фредриксону и Мэтту Джордану из Digium, которые щедро делились со мной своим временем и знаниями, и без которых я был бы потерян. Спасибо, ребята!
 
-Thanks to my editor, Jeff Bleiel, for keeping me on track and helping me make important decisions about the content and pacing of the book.
+Спасибо моему редактору Джеффу Блейлу за то, что он держит меня в курсе событий и помогает принимать важные решения о содержании и темпе работы над книгой.
 
-Also thanks to the rest of the unsung heroes in O’Reilly’s production department. These are the folks that take a book and make it an _O’Reilly book_.
+А также благодаря остальным невоспетым героям из производственного отдела О'Рейли. Это те люди, которые берут книгу и делают ее книгой О'Рейли.
 
-Thanks especially to Joyce Wilmot and Dan Jenkins, my technical review team, for taking the time to work through the book and provide essential feedback.
+Особенно я благодарен Джойс Уилмот и Дэну Дженкинсу, моей команде технического рецензирования за то, что они нашли время для работы над книгой и предоставили необходимую обратную связь.
 
-Thomas Cameron of RedHat generously shared his knowledge of Selinux with me, and helped to demystify a Linux component that is too often left disabled.
+Томас Камерон из RedHat щедро поделился со мной своими знаниями о Selinux и помог демистифицировать компонент Linux, который слишком часто остается отключенным.
 
-Everyone in the Asterisk community also needs to thank the late Jim Dixon for creating the first open source telephony hardware interfaces, starting the revolution, and giving his creations to the community at large.
+Все участники сообщества Asterisk также должны поблагодарить покойного Джима Диксона за создание первых аппаратных интерфейсов телефонии с открытым исходным кодом, начало революции и предоставление его творений сообществу в целом.
 
-Finally, and most importantly, thanks go to Mark Spencer, the original author of Asterisk and founder of Digium, for Asterisk, for [Pidgin](http://www.pidgin.im/), and for contributing his creations to the open source community. Asterisk is your legacy!
+Наконец, и это самое главное, спасибо Марку Спенсеру, оригинальному автору Asterisk и основателю Digium, за Asterisk, за [Pidgin](http://www.pidgin.im/), а также за вклад его творений в сообщество с открытым исходным кодом. Asterisk - это ваше наследие!

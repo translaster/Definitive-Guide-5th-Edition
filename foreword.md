@@ -1,6 +1,6 @@
 # Вступление
 
-When contemplating the foreword for every edition of this book, we always had more people we’d like contributions from than pages we could spare. In this fifth edition, we’ve again asked a select group of people from the Asterisk community to write a few words about Asterisk from their perspective.
+Когда мы рассматривали предисловие к каждому изданию этой книги - у нас всегда было больше людей, от которых мы хотели бы получить вклад, чем страниц, которые мы могли бы выделить. В этом пятом издании мы снова попросили избранную группу людей из сообщества Asterisk написать несколько слов об Asterisk с их точки зрения.
 
 ## Joshua Colp (Senior Software Developer, Sangoma/Digium)
 
@@ -34,8 +34,8 @@ Back in 2003 when I started using Asterisk, there were no real “releases.” Y
 
 Among our client base alone, we have several Fortune 500 companies, as well as school districts, social clubs, political organizations, municipal emergency services organizations, and of course, thousands of different types of commercial operations. While the low acquisition cost is a common reason given for going with an Asterisk-based solution, we often hear that the fact that it is open source is a big plus, as well as there being no possibility of vendor lock-in. One of our larger clients even cited their use of open source telephony software as a “distinct strategic advantage” over their competitors because of the flexibility of the systems and their ability to self-manage them without having to rely on outside vendors. From what I’ve seen so far, the future of Asterisk is an ever-growing installed base and continued enhancements. I look forward to working with it for another 16 years, at least.
 
-## Matt Fredrickson (Director of Asterisk Engineering, Sangoma/Digium)
+## Мэтт Фредриксон (директор Asterisk Engineering, Sangoma / Digium)
 
-I have had the opportunity to work with Asterisk for the last 18 years, and have seen it grow from a small project with one or two people into something that has a life of its own with hundreds of contributors. It’s amazing to see the number of different places it has disrupted traditional telecom—at home, in the office, and in the enterprise. As traditional communication patterns shift, the Asterisk project continues to be in the place where it does best—bridging old forms of communication with the new, and pushing the boundaries of what can be done with the new. This book will help you see the most modern face of Asterisk and how to better utilize it in your telecommunications infrastructure. Huge thanks goes to Jim Van Meggelen for all the hard work on putting this most current edition together.
+У меня была возможность работать с Asterisk в течение последних 18 лет и я видел, как он вырос из небольшого проекта с одним или двумя людьми в нечто, что имеет свою собственную жизнь с сотнями участников. Удивительно видеть, сколько разных мест он нарушил традиционные телекоммуникации - дома, в офисе и на предприятии. По мере того как традиционные модели коммуникации меняются, проект Asterisk продолжает оставаться там, где он делает это лучше всего — наводя мосты между старыми формами коммуникации и новыми и раздвигая границы того, что можно сделать с новыми. Эта книга поможет вам увидеть самое современное лицо Asterisk и узнать как лучше использовать его в своей телекоммуникационной инфраструктуре. Огромное спасибо Джиму Ван Меггелену за всю тяжелую работу по составлению этого самого последнего издания.
 
 [Аннотация](README.md) | [Содержание](SUMMARY.md) | [Предисловие](preface.md)
