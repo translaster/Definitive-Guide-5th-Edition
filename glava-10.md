@@ -1009,8 +1009,9 @@ exten => 230,1,Noop(STRFTIME)
 [3](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch10.html%22%20/l%20%22asterisk-CHP-6-FN-3-marker) Если вы не знаете, что ^ имеет отношение к регулярным выражениям, то просто обязаны прочитать [Mastering Regular Expressions](http://shop.oreilly.com/product/9780596528126.do) \(Освоение регулярный выражений\). Это изменит вашу жизнь!
 
 [4](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch10.html%22%20/l%20%22idm46178406809256-marker) Если вы хотите проверить это \(что вы делаете\), то можете выбрать одно из ваших рабочих лабораторных устройств, и в базе данных Asterisk под таблицей `ps_endpoints` установить поле callerid в '`8885551212`'. Затем вы можете позвонить с него на номер 214, чтобы увидеть блок в действии.
-
+```
 UPDATE asterisk.ps\_endpoints SET callerid='8885551212' WHERE id='&lt;конечная точка, которую вы выбрали в качестве жертвы&gt;'
+```
 
 [5](https://learning.oreilly.com/library/view/asterisk-the-definitive/9781492031598/ch10.html%22%20/l%20%22idm46178406801064-marker) Но мы делаем это так, потому что так легче читать.
 
