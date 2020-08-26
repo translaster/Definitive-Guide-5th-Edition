@@ -203,13 +203,13 @@ $ sudo asterisk -rx 'module reload http' ; sudo asterisk -rx 'module reload ari'
 
 Вы увидите страницу, похожую на Рисунок 19-1.
 
-![Swagger UI для ARI](/pics/pic19-1.png)
+![Swagger UI для ARI](pics/pic19-1.png)
 
 _Рисунок 19-1. Swagger UI для ARI_
 
 Замените `localhost` на LAN IP-адрес вашего сервера Asterisk, а в поле api\_key введите Ваш ARI _`user:password`_ из _/etc/asterisk/ari.conf_ (например, `asterisk:чтобывыниделалинеиспользуйтеэтотпароль`). Если у вас есть все настройки верны, то вы будете вознаграждены с результатами как на Рисунке 19-2.
 
-![Рисунок 19-2. ARI Swagger](/pics/pic19-2.png)
+![Рисунок 19-2. ARI Swagger](pics/pic19-2.png)
 
 _Рисунок 19-2. ARI Swagger_
 
@@ -217,7 +217,7 @@ _Рисунок 19-2. ARI Swagger_
 
 В качестве примера того, для чего это нужно, выберите пункт `endpoints:Endpoint resources`, нажмите кнопку `GET` рядом с `/endpoints`, и вы увидите экран, показанный на Рисунке 19-3.
 
-![Рисунок 19-3. Получение конечных точек](/pics/pic19-3.png)
+![Рисунок 19-3. Получение конечных точек](pics/pic19-3.png)
 
 _Рисунок 19-3. Получение конечных точек_
 
