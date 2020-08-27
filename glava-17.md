@@ -531,10 +531,8 @@ Channel: PJSIP/SOFTPHONE_A
 Context: sets
 Exten: 103
 Priority: 1
-<br>
 Response: Success
 Message: Originate successfully queued
-<br>
 Event: Newchannel
 Privilege: call,all
 Channel: PJSIP/SOFTPHONE_A-00000013
@@ -550,10 +548,10 @@ Context: sets
 Exten: s
 Priority: 1
 Uniqueid: 1538939479.29
-Linkedid: 1538939479.29</code></pre></p>
+Linkedid: 1538939479.29
+</code></pre></p>
 
 <p>Событие <code>Newchannel</code> предоставит имя созданного канала, которое в данном примере является <code>PJSIP/SOFTPHONE_A-00000013</code>.</p>
-
 <p>Вам нужно будет отслеживать эти имена каналов, если хотите правильно выполнять действия по текущим вызовам. Как только вызов заканчивается, канал уничтожается. Новому вызову, использующему ту же конечную точку, будет присвоено другое имя канала. Одно определение канала может поддерживать несколько вызовов (например, возможны несколько вызовов на телефон), и именно поэтому имя канала отличается от определения канала.</p>
 </td>
 </tr>
