@@ -35,31 +35,31 @@
     - [Базовые выражения](chapter-10.md#базовые-выражения)
     - [Операторы](chapter-10.md#операторы)
   - [Функции диалплана](chapter-10.md#функции-диалплана)
-    - [Синтаксис]
-    - [Примеры функций диалплана]
+    - [Синтаксис](chapter-10.md#синтаксис)
+    - [Примеры функций диалплана](chapter-10.md#примеры-функций-диалплана)
   - [Условное ветвление](chapter-10.md#условное-ветвление)
-    - [Приложение GotoIf()]
-    - [Условное ветвление по времени с GotoIfTime()]
+    - [Приложение GotoIf()](chapter-10.md#приложение-gotoif)
+    - [Условное ветвление по времени с GotoIfTime()](chapter-10.md#условное-ветвление-по-времени-с-gotoiftime)
   - [GoSub](chapter-10.md#gosub)
-    - [Определение подпрограмм]
-    - [Возврат из подпрограммы]
+    - [Определение подпрограмм](chapter-10.md#определение-подпрограмм)
+    - [Возврат из подпрограммы](chapter-10.md#возврат-из-подпрограммы)
   - [Локальные (Local) каналы](chapter-10.md#локальные-local-каналы)
   - [Использование базы данных Asterisk](chapter-10.md#использование-базы-данных-asterisk)
-    - [Хранение данных в AstDB]
-    - [Получение данных из AstDB]
-    - [Удаление данных из AstDB]
-    - [Использование AstDB в диалплане]
+    - [Хранение данных в AstDB](chapter-10.md#хранение-данных-в-astdb)
+    - [Получение данных из AstDB](chapter-10.md#получение-данных-из-astdb)
+    - [Удаление данных из AstDB](chapter-10.md#удаление-данных-из-astdb)
+    - [Использование AstDB в диалплане](chapter-10.md#использование-в-диалплане)
   - [Полезные функции Asterisk](chapter-10.md#полезные-функции-asterisk)
-    - [Концеренц-связь с ConfBridge()]
+    - [Концеренц-связь с ConfBridge()](chapter-10.md#конференц-связь-с-confbridge)
   - [Полезные функции диалплана](chapter-10.md#полезные-функции-диалплана)
-    - [CALLERID()]
-    - [CHANNEL()]
-    - [CURL()]
-    - [CUT()]
-    - [IF() и STRFTIME()]
-    - [LEN()]
-    - [REGEX()]
-    - [STRFTIME()]
+    - [CALLERID()](chapter-10.md#callerid)
+    - [CHANNEL()](chapter-10.md#channel)
+    - [CURL()](chapter-10.md#curl)
+    - [CUT()](chapter-10.md#cut)
+    - [IF() и STRFTIME()](chapter-10.md#if-и-strftime)
+    - [LEN()](chapter-10.md#len)
+    - [REGEX()](chapter-10.md#regex)
+    - [STRFTIME()](chapter-10.md#strftime)
 * [Глава 11. Функции АТС, включая парковку, пейджинг и конференц-связь](glava-11.md)
 * [Глава 12. Automatic Call Distribution Queues](glava-12.md)
 * [Глава 13. Состояния устройств](glava-13.md)
