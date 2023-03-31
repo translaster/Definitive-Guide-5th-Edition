@@ -13,6 +13,6 @@
 
 [Содержание книги](summary.md)
 
-[Электронную версию книги можно скачать здесь](https://clck.ru/RRNqY)
+[Электронную версию книги можно скачать здесь](https://disk.yandex.ru/i/-H3Z8UdH-Upggg)
 
 [![GitHub forks](https://img.shields.io/github/forks/translaster/Definitive-Guide-5th-Edition)](https://github.com/translaster/Definitive-Guide-5th-Edition/network) [![GitHub stars](https://img.shields.io/github/stars/translaster/Definitive-Guide-5th-Edition)](https://github.com/translaster/Definitive-Guide-5th-Edition/stargazers)
